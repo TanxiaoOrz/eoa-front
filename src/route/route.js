@@ -4,6 +4,7 @@ import {
 import Root from "./root";
 import ErrorPage from "../error-page";
 import Contact from "./contact";
+import BackModule from "../pages/back_module.tsx";
 
 const router = createBrowserRouter([
     {
@@ -13,6 +14,9 @@ const router = createBrowserRouter([
     },{
       path: "contacts/:contactId",
       element: <Contact />,
+    },{
+      path: "back_module",
+      element: <BackModule />,  
     }
 ]);
 
