@@ -1,26 +1,28 @@
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, TableDropdown } from '@ant-design/pro-components';
-import { Button, Dropdown, Space, Tag } from 'antd';
+import { ActionType, ProColumns } from '@ant-design/pro-components';
+import { ProTable } from '@ant-design/pro-components';
+import { Button, Dropdown} from 'antd';
+import React from 'react';
 import { useRef } from 'react';
-import request from 'umi-request';
-export const waitTimePromise = async (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
+import url from '../const/url.js';
+import { getShowData } from '../const/http.js';
 
-export const waitTime = async (time: number = 100) => {
-  await waitTimePromise(time);
-};
 
-type ModuleView = {
+/**
+ * 
+ * @param time 
+ * @returns 
+ */
+
+
+
+
+type ModuleOut = {
   moduleTypeId:number
   moduleTypeName:string
   workflowRemark:string
-  creator:number
+  creatorId:number
+  creatorName:string
   createTime:string
   tableCounts:number
   flowCounts:number
@@ -28,41 +30,83 @@ type ModuleView = {
   chartsCounts:number
 };
 
-const columns: ProColumns<ModuleView>[] = [
+const columns: ProColumns<ModuleOut>[] = [
   {
-    dataIndex: 'index',
-    valueType: 'indexBorder',
-    width: 48,
-  },
-  {
-    title:'应用编号',
+    title:'编号',
     dataIndex:'moduleTypeId',
-  },
-  {
-    title:'应用备注',
-    dataIndex:'workflowRemark',
+    valueType:"indexBorder",
+    width:48,
+    align: "center"
   },
   {
     title:'应用名称',
     dataIndex:'moduleTypeName',
   },
   {
+    title:'应用备注',
+    dataIndex:'workflowRemark',
+    ellipsis: true,
+    tip:"备注过长会自动收缩,鼠标放上去查看",
+    hideInSearch: true,
+  },
+  
+  {
+    title:'表单',
+    dataIndex:'tableCounts',
+    width:72,
+    align: "center",
+    hideInSearch: true,
+  },
+  {
+    title:'流程',
+    dataIndex:'flowCounts',
+    width:72,
+    align: "center",
+    hideInSearch: true,
+  },
+  {
+    title:'列表',
+    dataIndex:'searchCounts',
+    width:72,
+    align: "center",
+    hideInSearch: true,
+  },
+  {
+    title:'图表',
+    dataIndex:'chartsCounts',
+    width:72,
+    align: "center",
+    hideInSearch: true,
+  },
+  {
     title:'创建者',
-    dataIndex:'creator',
+    dataIndex:'creatorId',
+    width:48*2,
+    render:(dom,entity,index,action) => [
+      <a href={url.frontUrl.humanResource+entity.creatorId}>{entity.creatorName}</a>
+    ]
+  },
+  {
+    title:'创建时间',
+    dataIndex:'createTime',
+    valueType: "dateTime",
+    width:48*4
   },
 ];
+
+
 
 const BackModule = () => {
   const actionRef = useRef<ActionType>();
   return (
-    <ProTable<ModuleView>
+    <ProTable<ModuleOut>
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (
         // 第一个参数 params 查询表单和 params 参数的结合
         // 第一个参数中一定会有 pageSize 和  current ，这两个参数是 antd 的规范
-        params: T & {
+        params:{
           pageSize: number;
           current: number;
         },
@@ -71,24 +115,7 @@ const BackModule = () => {
       ) => {
         // 这里需要返回一个 Promise,在返回之前你可以进行数据转化
         // 如果需要转化参数可以在这里进行修改
-        return {
-          data: [{
-            moduleTypeId:1,
-          moduleTypeName:"1",
-          workflowRemark:"1",
-          creator:1,
-          createTime:"20",
-          tableCounts:1,
-          flowCounts:1,
-          searchCounts:1,
-          chartsCounts:1,
-          }],
-          // success 请返回 true，
-          // 不然 table 会停止解析数据，即使有数据
-          success: true,
-          // 不传会使用 data 的长度，如果是分页一定要传
-          total: 1,
-        };
+        return getShowData("/api/v1/module")
       }}
       editable={{
         type: 'multiple',
@@ -126,7 +153,7 @@ const BackModule = () => {
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"
-      headerTitle="高级表格"
+      headerTitle="应用列表"
       toolBarRender={() => [
         <Button
           key="button"

@@ -5,6 +5,9 @@ import Root from "./root";
 import ErrorPage from "../error-page";
 import Contact from "./contact";
 import BackModule from "../pages/back_module.tsx";
+import protable from "../example/protable.tsx"; 
+
+const Protable = protable
 
 const router = createBrowserRouter([
     {
@@ -17,7 +20,11 @@ const router = createBrowserRouter([
     },{
       path: "back_module",
       element: <BackModule />,  
+    },{
+      path: "example/protable",
+      element: <Protable />,
     }
+
 ]);
 
 export default router
