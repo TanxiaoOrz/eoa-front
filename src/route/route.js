@@ -6,6 +6,7 @@ import ErrorPage from "../error-page";
 import Contact from "./contact";
 import BackModule from "../pages/back_module.tsx";
 import protable from "../example/protable.tsx"; 
+import Login from "../pages/login.tsx";
 
 const Protable = protable
 
@@ -23,6 +24,9 @@ const router = createBrowserRouter([
     },{
       path: "example/protable",
       element: <Protable />,
+    },{
+      path: "login",
+      element: <Login />
     }
 
 ]);
