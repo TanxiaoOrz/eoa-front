@@ -6,19 +6,26 @@ const service = axios.create({   // 添加自定义配置新的axios
     timeout: 20000 // 设置接口超时20s
 })
 
-// service.interceptors.request.use(config =>{
-//     config.headers['tokenShort'] = localStorage.getItem()
-// })
+const login = axios.create({
+    baseURL: config.backUrl,  // 请求接口路径
+    timeout: 20000 // 设置接口超时20s
+})
 
-var tokenShort = "";
-var tokenLong = "";
+service.interceptors.request.use(config =>{
+    config.headers['tokens'] = localStorage.getItem('tokens')
+})
+
+service.interceptors.response.use((response) =>{
+    localStorage.setItem("tokens",response.)
+})
+
 
 function getStorageToken() {
-
+    return localStorage.getItem("tokens")
 }
 
-function updateToken() {
-
+function updateToken(response) {
+    localStorage.setItem("tokens",response.) 
 }
 
 export const getShowData = async (url,params) => {
@@ -38,3 +45,5 @@ export const getShowData = async (url,params) => {
         }
     }
 }
+
+ex
