@@ -12,6 +12,7 @@ import { type } from '@testing-library/user-event/dist/type';
 import { Button, Divider, Space, Tabs, message, theme } from 'antd';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
+import {loginPost} from '../const/http.tsx'
 
 type LoginType = 'account';
 
@@ -26,6 +27,18 @@ const forgetPassword = ()=>{
   alert("请联系管理员")
 }
 
+type Tokens = {
+  success:boolean
+  data:any
+}
+
+const onFinish =async (values:any)=>{
+  console.log(values);
+  let tokens:Tokens =await loginPost("/api/v1/token",values)
+  console.log(tokens.data)
+}
+
+
 type LoginConfig = {
   backgroundImageUrl:string
   logoUrl:string
@@ -34,12 +47,27 @@ type LoginConfig = {
   loginSubTitle:string
   activeMainTitle:string
   activeIntroduction:string
+  linkUrl:string
+  linkStr:string
 }
 
 const Page = () => {
   const [loginType, setLoginType] = useState<LoginType>('account');
   const { token } = theme.useToken();
-  const loginConfig:LoginConfig = 
+  const loginConfig:LoginConfig = {
+    backgroundImageUrl:"https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp",
+    logoUrl:"https://github.githubassets.com/images/modules/logos_page/Octocat.png",
+    backgroundVideoUrl:"https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr",
+    loginTitle:"EOA",
+    loginSubTitle:"可配置的低代码办公平台",
+    activeMainTitle:'项目预算特化开发版本',
+    activeIntroduction:'作者相关',
+    linkUrl:"http://127.0.0.1:8080/doc.html",
+    linkStr:"查看"
+  }
+  const subButton = ()=>{
+    window.open(loginConfig.linkUrl);
+  }
   return (
     <div
       style={{
@@ -48,15 +76,16 @@ const Page = () => {
       }}
     >
       <LoginFormPage
-        backgroundImageUrl="https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
-        logo="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
-        backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
-        title="Github"
+        onFinish={onFinish}
+        backgroundImageUrl={loginConfig.backgroundImageUrl}
+        logo={loginConfig.logoUrl}
+        backgroundVideoUrl={loginConfig.backgroundVideoUrl}
+        title={loginConfig.loginTitle}
         containerStyle={{
           backgroundColor: 'rgba(0, 0, 0,0.65)',
           backdropFilter: 'blur(4px)',
         }}
-        subTitle="全球最大的代码托管平台"
+        subTitle={loginConfig.loginSubTitle}
         activityConfig={{
           style: {
             boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.2)',
@@ -65,19 +94,21 @@ const Page = () => {
             backgroundColor: 'rgba(255,255,255,0.25)',
             backdropFilter: 'blur(4px)',
           },
-          title: '活动标题，可配置图片',
-          subTitle: '活动介绍说明文字',
+          title: loginConfig.activeMainTitle,
+          subTitle: loginConfig.activeIntroduction,
           action: (
             <Button
               size="large"
+              onClick={subButton}
               style={{
                 borderRadius: 20,
                 background: token.colorBgElevated,
                 color: token.colorPrimary,
                 width: 120,
-              }}
+              }
+            }
             >
-              去看看
+              {loginConfig.linkStr}
             </Button>
           ),
         }}
@@ -105,7 +136,7 @@ const Page = () => {
         {loginType === 'account' && (
           <>
             <ProFormText
-              name="username"
+              name="loginName"
               fieldProps={{
                 size: 'large',
                 prefix: (
@@ -117,7 +148,7 @@ const Page = () => {
                   />
                 ),
               }}
-              placeholder={'用户名: admin or user'}
+              placeholder={'用户名'}
               rules={[
                 {
                   required: true,
@@ -138,7 +169,7 @@ const Page = () => {
                   />
                 ),
               }}
-              placeholder={'密码: ant.design'}
+              placeholder={'密码'}
               rules={[
                 {
                   required: true,

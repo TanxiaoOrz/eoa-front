@@ -3,7 +3,7 @@ import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown} from 'antd';
 import React, { useRef } from 'react';
 import url from '../const/url.js';
-import { getShowData } from '../const/http.js';
+import { getShowData } from '../const/http.tsx';
 
 
 /**
