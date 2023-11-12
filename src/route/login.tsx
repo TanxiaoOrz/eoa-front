@@ -8,11 +8,11 @@ import {
   ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
-import { type } from '@testing-library/user-event/dist/type';
-import { Button, Divider, Space, Tabs, message, theme } from 'antd';
+import { Button, Tabs, theme, Popconfirm, message } from 'antd';
+import React, { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
 import {loginPost} from '../const/http.tsx'
+import config from '../const/config.js';
 
 type LoginType = 'account';
 
@@ -23,9 +23,6 @@ const iconStyles: CSSProperties = {
   cursor: 'pointer',
 };
 
-const forgetPassword = ()=>{
-  alert("请联系管理员")
-}
 
 type Tokens = {
   success:boolean
@@ -35,7 +32,14 @@ type Tokens = {
 const onFinish =async (values:any)=>{
   console.log(values);
   let tokens:Tokens =await loginPost("/api/v1/token",values)
-  console.log(tokens.data)
+
+  if (tokens.success) {
+    console.log(tokens.data)
+    config.saveTokens((tokens.data))
+    window.location.replace("/front#mainPage")
+  } else {
+    message.error(tokens.data)
+  }
 }
 
 
@@ -49,6 +53,7 @@ type LoginConfig = {
   activeIntroduction:string
   linkUrl:string
   linkStr:string
+  contactManager:string
 }
 
 const Page = () => {
@@ -63,7 +68,8 @@ const Page = () => {
     activeMainTitle:'项目预算特化开发版本',
     activeIntroduction:'作者相关',
     linkUrl:"http://127.0.0.1:8080/doc.html",
-    linkStr:"查看"
+    linkStr:"查看",
+    contactManager:"张骏山:13671985248"
   }
   const subButton = ()=>{
     window.open(loginConfig.linkUrl);
@@ -187,14 +193,20 @@ const Page = () => {
           <ProFormCheckbox noStyle name="autoLogin">
             自动登录
           </ProFormCheckbox>
-          <a
-            style={{
-              float: 'right',
-            }}
-            onClick={forgetPassword}
+          <Popconfirm
+            title="请联系管理员:"
+            description={loginConfig.contactManager}
+            showCancel={false}
+            okText="确认"
           >
-            忘记密码
-          </a>
+            <a
+              style={{
+                float: 'right',
+              }}
+            >
+              忘记密码
+            </a>
+          </Popconfirm>
         </div>
       </LoginFormPage>
     </div>

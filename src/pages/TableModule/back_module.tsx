@@ -2,8 +2,8 @@ import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown} from 'antd';
 import React, { useRef } from 'react';
-import url from '../const/url.js';
-import { getShowData } from '../const/http.tsx';
+import url from '../../const/url.js';
+import { getShowData } from '../../const/http.tsx';
 
 
 /**
@@ -113,7 +113,7 @@ const BackModule = () => {
       ) => {
         // 这里需要返回一个 Promise,在返回之前你可以进行数据转化
         // 如果需要转化参数可以在这里进行修改
-        return getShowData("/api/v1/module")
+        return getShowData("/api/v1/module/back")
       }}
       editable={{
         type: 'multiple',

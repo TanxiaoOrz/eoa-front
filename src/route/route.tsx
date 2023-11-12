@@ -1,12 +1,13 @@
 import {
     createBrowserRouter,
 } from "react-router-dom";
-import Root from "./root";
-import ErrorPage from "../error-page";
-import Contact from "./contact";
-import BackModule from "../pages/back_module.tsx";
+import Root from "./root.tsx";
+import ErrorPage from "./error-page.tsx";
+import BackModule from "../pages/TableModule/back_module.tsx";
 import protable from "../example/protable.tsx"; 
-import Login from "../pages/login.tsx";
+import Login from "./login.tsx";
+import React from "react";
+import { FrontPage } from "./fornt.tsx";
 
 const Protable = protable
 
@@ -16,17 +17,14 @@ const router = createBrowserRouter([
       element: <Root />,
       errorElement: <ErrorPage />,
     },{
-      path: "contacts/:contactId",
-      element: <Contact />,
-    },{
       path: "back_module",
       element: <BackModule />,  
     },{
-      path: "example/protable",
-      element: <Protable />,
-    },{
       path: "login",
       element: <Login />
+    },{
+      path: "front",
+      element: <FrontPage />
     }
 
 ]);

@@ -20,15 +20,17 @@ const login = axios.create({
 
 service.interceptors.request.use(config =>{
     config.headers['tokens'] = localStorage.getItem('tokens')
+    return config
 })
 
 service.interceptors.response.use((response) =>{
     localStorage.setItem("tokens",response.headers['tokens'])
+    return response
 })
 
 
-export const getShowData = async (url,params) => {
-    let response = await service.get(url,params);
+export const getShowData = async (url:string) => {
+    let response = await service.get(url);
     let data:Data=response.data;
     if (data.code == 0) {
         return {
@@ -37,6 +39,8 @@ export const getShowData = async (url,params) => {
             total:data.entity.length
         }
     }else {
+        
+
         return {
             data:null,
             success:false,
