@@ -1,18 +1,56 @@
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown} from 'antd';
+import { ActionType, ModalForm, ProColumns, ProForm, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
+import { Button, Dropdown, Form} from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
-import { getShowData } from '../../const/http.tsx';
+import { getDataList } from '../../const/http.tsx';
 
+type FormModule = {
+  moduleTypeName: string
+  workflowRemark: string
+}
 
-/**
- * 
- * @param time 
- * @returns 
- */
+const CreateModule = () => {
+  const [form] = Form.useForm<FormModule>();
+  return (
+    <ModalForm<{moduleTypeName: string; workflowRemark: string}>
+      title="新建应用"
+      trigger={
+        <Button type="primary">
+          <PlusOutlined />
+          新建应用
+        </Button>
+      }
+      width={400}
+      form={form}
+      submitTimeout={2000}
+      autoFocusFirstInput
+      onFinish={async (values:FormModule)=>{
+        console.log(values.moduleTypeName)
+        console.log(values.workflowRemark)
+      }}
+      modalProps={{
+        destroyOnClose: true,
+        onCancel: () => console.log('run'),
+      }}>
+        <ProFormText
+          width="md"
+          name="moduleTypeName"
+          label="应用名称"
+          tooltip="最长为33位"
+          placeholder="请输入应用名称"
+          required = {true}/>
+        <ProFormTextArea
+          width="md"
+          name="workflowRemark"  
+          label="应用备注"
+          tooltip="最长333位"
+          placeholder="请输入应用备注"
+          required={false}/>
+      </ModalForm>
 
-
+  )
+}
 
 
 type ModuleOut = {
@@ -113,7 +151,7 @@ const BackModule = () => {
       ) => {
         // 这里需要返回一个 Promise,在返回之前你可以进行数据转化
         // 如果需要转化参数可以在这里进行修改
-        return getShowData("/api/v1/module/back")
+        return getDataList("/api/v1/table/back/module")
       }}
       editable={{
         type: 'multiple',
@@ -153,39 +191,7 @@ const BackModule = () => {
       dateFormatter="string"
       headerTitle="应用列表"
       toolBarRender={() => [
-        <Button
-          key="button"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            actionRef.current?.reload();
-          }}
-          type="primary"
-        >
-          新建
-        </Button>,
-        <Dropdown
-          key="menu"
-          menu={{
-            items: [
-              {
-                label: '1st item',
-                key: '1',
-              },
-              {
-                label: '2nd item',
-                key: '1',
-              },
-              {
-                label: '3rd item',
-                key: '1',
-              },
-            ],
-          }}
-        >
-          <Button>
-            <EllipsisOutlined />
-          </Button>
-        </Dropdown>,
+        <CreateModule />,
       ]}
     />
   );

@@ -1,5 +1,6 @@
 ﻿import axios from 'axios'
 import config from './config.js';
+import { message } from 'antd';
 
 type Data = {
     code:number
@@ -29,7 +30,7 @@ service.interceptors.response.use((response) =>{
 })
 
 
-export const getShowData = async (url:string) => {
+export const getDataList = async (url:string) => {
     let response = await service.get(url);
     let data:Data=response.data;
     if (data.code == 0) {
@@ -39,13 +40,24 @@ export const getShowData = async (url:string) => {
             total:data.entity.length
         }
     }else {
-        
-
+        message.error(data.description)
         return {
             data:null,
             success:false,
             total:0
         }
+    }
+}
+
+export const newData =async (url:string,params:any):Promise<boolean> => {
+    let response = await service.post(url,params);
+    let data:Data = response.data;
+    if (data.code == 0) {
+        message.info(data.entity)
+        return true
+    } else {
+        message.error(data.description)
+        return false;
     }
 }
 
