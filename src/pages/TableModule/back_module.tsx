@@ -1,9 +1,11 @@
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import { ActionType, ModalForm, ProColumns, ProForm, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown, Form} from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
+import { Button, Dropdown, Form, MenuProps} from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
-import { getDataList } from '../../const/http.tsx';
+import { UpdateData, deleteData, getDataList, getDataOne } from '../../const/http.tsx';
+
+const baseURL = "/api/v1/table/back/module"
 
 type FormModule = {
   moduleTypeName: string
@@ -28,6 +30,61 @@ const CreateModule = () => {
       onFinish={async (values:FormModule)=>{
         console.log(values.moduleTypeName)
         console.log(values.workflowRemark)
+      }}
+      modalProps={{
+        destroyOnClose: true,
+        onCancel: () => console.log('run'),
+      }}>
+        <ProFormText
+          width="md"
+          name="moduleTypeName"
+          label="应用名称"
+          tooltip="最长为33位"
+          placeholder="请输入应用名称"
+          required = {true}/>
+        <ProFormTextArea
+          width="md"
+          name="workflowRemark"  
+          label="应用备注"
+          tooltip="最长333位"
+          placeholder="请输入应用备注"
+          required={false}/>
+      </ModalForm>
+
+  )
+}
+
+const UpdateModule = (prop:{dataId:number, data:FormModule}) => {
+  const [form] = Form.useForm<FormModule>();
+  const items = [
+    {
+      key: '1',
+      label: '删除',
+      danger: true
+    }
+  ];
+  const deleteMethod: MenuProps['onClick'] = ()=>{
+    deleteData(baseURL+prop.dataId)
+  }
+  return (
+    <ModalForm<{moduleTypeName: string; workflowRemark: string}>
+      initialValues={prop.data}
+      title="编辑应用"
+      trigger={
+        <Dropdown.Button 
+          type="primary"
+          menu={{items,onClick:deleteMethod}}
+        >
+          <PlusOutlined />
+          编辑
+        </Dropdown.Button>
+      }
+      width={400}
+      form={form}
+      submitTimeout={2000}
+      autoFocusFirstInput
+      onFinish={async (values:FormModule)=>{
+        UpdateData(baseURL+prop.dataId,values);
       }}
       modalProps={{
         destroyOnClose: true,
@@ -119,7 +176,7 @@ const columns: ProColumns<ModuleOut>[] = [
     dataIndex:'creatorId',
     width:48*2,
     render:(dom,entity,index,action) => [
-      <a href={url.frontUrl.humanResource+entity.creatorId}>{entity.creatorName}</a>
+      <a href={url.frontUrl.humanResource+entity.creatorId} key={"href"+entity.creatorId}>{entity.creatorName}</a>
     ]
   },
   {
@@ -127,7 +184,18 @@ const columns: ProColumns<ModuleOut>[] = [
     dataIndex:'createTime',
     valueType: "dateTime",
     width:48*4
-  },
+  },{
+    title:'',
+    dataIndex:"moduleTypeId",
+    width:48,
+    render:(dom,entity,index,action)=>
+      <UpdateModule dataId ={entity.moduleTypeId} 
+        data ={{
+          moduleTypeName: entity.moduleTypeName,
+          workflowRemark: entity.workflowRemark
+        }}
+      />
+  }
 ];
 
 
@@ -142,10 +210,7 @@ const BackModule = () => {
       request={async (
         // 第一个参数 params 查询表单和 params 参数的结合
         // 第一个参数中一定会有 pageSize 和  current ，这两个参数是 antd 的规范
-        params:{
-          pageSize: number;
-          current: number;
-        },
+        params,
         sort,
         filter,
       ) => {
@@ -191,7 +256,7 @@ const BackModule = () => {
       dateFormatter="string"
       headerTitle="应用列表"
       toolBarRender={() => [
-        <CreateModule />,
+        <CreateModule key="create"/>,
       ]}
     />
   );

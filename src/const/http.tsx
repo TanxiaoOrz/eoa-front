@@ -49,6 +49,48 @@ export const getDataList = async (url:string) => {
     }
 }
 
+export const getDataOne =async (url:string) => {
+    let response = await service.get(url);
+    let data:Data=response.data;
+    if (data.code == 0) {
+        return {
+            data:data.entity,
+            success:true,
+        }
+    }else {
+        message.error(data.description)
+        return {
+            data:null,
+            success:false,
+        }
+    }
+}
+
+export const UpdateData =async (url:string,params:any):Promise<boolean> => {
+    let response = await service.put(url,params);
+    let data:Data = response.data;
+    if (data.code == 0) {
+        message.info(data.entity)
+        return true
+    } else {
+        message.error(data.description)
+        return false;
+    }
+}
+
+export const deleteData =async (url:string):Promise<boolean> => {
+    let response = await service.delete(url);
+    let data:Data = response.data;
+    if (data.code == 0) {
+        message.info(data.entity)
+        return true
+    } else {
+        message.error(data.description)
+        return false;
+    }
+}
+
+
 export const newData =async (url:string,params:any):Promise<boolean> => {
     let response = await service.post(url,params);
     let data:Data = response.data;
