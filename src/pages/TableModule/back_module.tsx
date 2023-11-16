@@ -3,7 +3,7 @@ import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProTab
 import { Button, Dropdown, Form, MenuProps} from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
-import { UpdateData, deleteData, getDataList, getDataOne } from '../../const/http.tsx';
+import { UpdateData, deleteData, getDataList } from '../../const/http.tsx';
 
 const baseURL = "/api/v1/table/back/module"
 
@@ -130,6 +130,7 @@ const columns: ProColumns<ModuleOut>[] = [
     valueType:"indexBorder",
     width:48,
     align: "center"
+    
   },
   {
     title:'应用名称',
@@ -185,9 +186,9 @@ const columns: ProColumns<ModuleOut>[] = [
     valueType: "dateTime",
     width:48*4
   },{
-    title:'',
+    title:'操作',
     dataIndex:"moduleTypeId",
-    width:48,
+    width:48*3,
     render:(dom,entity,index,action)=>
       <UpdateModule dataId ={entity.moduleTypeId} 
         data ={{
@@ -216,7 +217,10 @@ const BackModule = () => {
       ) => {
         // 这里需要返回一个 Promise,在返回之前你可以进行数据转化
         // 如果需要转化参数可以在这里进行修改
-        return getDataList("/api/v1/table/back/module")
+        console.log(params)
+        console.log(sort);
+        console.log(filter);
+        return getDataList("/api/v1/table/back/module",params)
       }}
       editable={{
         type: 'multiple',
@@ -250,7 +254,7 @@ const BackModule = () => {
         },
       }}
       pagination={{
-        pageSize: 10,
+        pageSize: 3,
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"

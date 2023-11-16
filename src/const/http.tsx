@@ -25,13 +25,16 @@ service.interceptors.request.use(config =>{
 })
 
 service.interceptors.response.use((response) =>{
-    localStorage.setItem("tokens",response.headers['tokens'])
+    if (response.data.code != -1)
+        localStorage.setItem("tokens",response.headers['tokens'])
+    console.log(response.headers);
+    console.log(response.headers.tokens);
     return response
 })
 
 
-export const getDataList = async (url:string) => {
-    let response = await service.get(url);
+export const getDataList = async (url:string,params:any) => {
+    let response = await service.get(url,params);
     let data:Data=response.data;
     if (data.code == 0) {
         return {
@@ -91,15 +94,15 @@ export const deleteData =async (url:string):Promise<boolean> => {
 }
 
 
-export const newData =async (url:string,params:any):Promise<boolean> => {
+export const newData =async (url:string,params:any):Promise<number> => {
     let response = await service.post(url,params);
     let data:Data = response.data;
     if (data.code == 0) {
-        message.info(data.entity)
-        return true
+        message.info(data.description)
+        return data.entity
     } else {
         message.error(data.description)
-        return false;
+        return -1;
     }
 }
 
