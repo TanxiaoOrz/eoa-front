@@ -27,21 +27,27 @@ service.interceptors.request.use(config =>{
 service.interceptors.response.use((response) =>{
     if (response.data.code != -1)
         localStorage.setItem("tokens",response.headers['tokens'])
-    console.log(response.headers);
+    //console.log(response.headers);
     console.log(response.headers.tokens);
     return response
 })
 
 
 export const getDataList = async (url:string,params:any) => {
-    let response = await service.get(url,params);
+    let s:string = new URLSearchParams(params).toString();
+    let urlSend = (url+"?"+s);
+    console.log(urlSend);
+    let response = await service.get(urlSend);
     let data:Data=response.data;
+    console.log(data);
     if (data.code == 0) {
-        return {
+        let returns = {
             data:data.entity,
             success:true,
-            total:data.entity.length
+            total:parseInt(data.description)
         }
+        //console.log(returns)
+        return returns
     }else {
         message.error(data.description)
         return {
