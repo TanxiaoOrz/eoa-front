@@ -125,6 +125,7 @@ type ModuleOut = {
 
 const columns: ProColumns<ModuleOut>[] = [
   {
+    key:'code',
     title:'编号',
     dataIndex:'moduleTypeId',
     valueType:"indexBorder",
@@ -133,18 +134,20 @@ const columns: ProColumns<ModuleOut>[] = [
     
   },
   {
+    key:'name',
     title:'应用名称',
     dataIndex:'moduleTypeName',
   },
   {
+    key:'remark',
     title:'应用备注',
     dataIndex:'workflowRemark',
     ellipsis: true,
     tip:"备注过长会自动收缩,鼠标放上去查看",
     hideInSearch: true,
   },
-  
   {
+    key:'form',
     title:'表单',
     dataIndex:'tableCounts',
     width:72,
@@ -152,6 +155,7 @@ const columns: ProColumns<ModuleOut>[] = [
     hideInSearch: true,
   },
   {
+    key:'flow',
     title:'流程',
     dataIndex:'flowCounts',
     width:72,
@@ -159,6 +163,7 @@ const columns: ProColumns<ModuleOut>[] = [
     hideInSearch: true,
   },
   {
+    key:'serach',
     title:'列表',
     dataIndex:'searchCounts',
     width:72,
@@ -166,6 +171,7 @@ const columns: ProColumns<ModuleOut>[] = [
     hideInSearch: true,
   },
   {
+    key:'chart',
     title:'图表',
     dataIndex:'chartsCounts',
     width:72,
@@ -173,6 +179,7 @@ const columns: ProColumns<ModuleOut>[] = [
     hideInSearch: true,
   },
   {
+    key:'creator',
     title:'创建者',
     dataIndex:'creatorId',
     width:48*2,
@@ -181,14 +188,25 @@ const columns: ProColumns<ModuleOut>[] = [
     ]
   },
   {
+    key:'createTimeShow',
     title:'创建时间',
     dataIndex:'createTime',
     valueType: "dateTime",
-    width:48*4
-  },{
+    width:48*4,
+    hideInSearch:true
+  },
+  {
+    key:'createTime',
+    title:'创建时间',
+    dataIndex:'createTime',
+    valueType:"dateTimeRange"
+  },
+  {
+    key:'action',
     title:'操作',
     dataIndex:"moduleTypeId",
     width:48*3,
+    hideInSearch:true,
     render:(dom,entity,index,action)=>
       <UpdateModule dataId ={entity.moduleTypeId} 
         data ={{
