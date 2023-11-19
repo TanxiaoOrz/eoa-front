@@ -33,7 +33,7 @@ service.interceptors.response.use((response) =>{
 })
 
 
-export const getDataList = async (url:string,params:any) => {
+export const getDataList = async (url:string,params:any = {current:1,pageSize:100}) => {
     let s:string = new URLSearchParams(params).toString();
     let urlSend = (url+"?"+s);
     console.log(urlSend);
@@ -51,7 +51,7 @@ export const getDataList = async (url:string,params:any) => {
     }else {
         message.error(data.description)
         return {
-            data:null,
+            data:[],
             success:false,
             total:0
         }
