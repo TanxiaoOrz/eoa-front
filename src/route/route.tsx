@@ -8,6 +8,7 @@ import protable from "../example/protable.tsx";
 import Login from "./login.tsx";
 import React from "react";
 import { FrontPage } from "./fornt.tsx";
+import BackTable from "../pages/TableModule/back_table.tsx";
 
 const Protable = protable
 
@@ -19,6 +20,9 @@ const router = createBrowserRouter([
     },{
       path: "back_module",
       element: <BackModule />,  
+    },{
+      path:"back_table",
+      element: <BackTable />,
     },{
       path: "login",
       element: <Login />
