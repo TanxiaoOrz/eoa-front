@@ -1,10 +1,11 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown, Form, Layout, MenuProps , Typography } from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
 import { UpdateData, deleteData, getDataList } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
+import { ModuleOut } from '../../const/out.tsx';
 
 const {Title} = Typography
 
@@ -28,7 +29,8 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
   ];
   const deleteMethod: MenuProps['onClick'] = ()=>{
     deleteData(baseURL+"/"+prop.dataId)
-    prop.action.current.reload();
+    if (prop.action.current!==undefined)
+      prop.action.current.reload();
   }
   return (
     <ModalForm<{moduleTypeName: string; workflowRemark: string}>
@@ -39,7 +41,6 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
           type="primary"
           menu={{items,onClick:deleteMethod}}
         >
-          <PlusOutlined />
           编辑
         </Dropdown.Button>
       }
@@ -50,7 +51,8 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
       onFinish={async (values:FormModule)=>{
         let success:boolean = await UpdateData(baseURL+"/"+prop.dataId,values)
         if (success)
-          prop.action.current.reload();
+          if (prop.action.current!==undefined)
+            prop.action.current.reload();
         return success;
       }}
       modalProps={{
@@ -75,23 +77,6 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
 
   )
 }
-
-
-type ModuleOut = {
-  moduleTypeId:number
-  moduleTypeName:string
-  workflowRemark:string
-  creatorId:number
-  creatorName:string
-  createTime:string
-  tableCounts:number
-  flowCounts:number
-  searchCounts:number
-  chartsCounts:number
-};
-
-
-
 
 const CreateModule = () => {
   const [form] = Form.useForm<FormModule>();
@@ -303,7 +288,8 @@ const BackModule = () => {
   return (
     <Layout style={{ minHeight: '100vh'}}>
       <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
-        <div>
+        <div style={{display:'flex'}}>
+          <FolderOpenTwoTone style={{fontSize:"36px",marginTop:"15px",marginLeft:"5px"}}/>
           <Title level={2} style={{color:'GrayText', marginLeft:'10px',marginBottom:'15px'}}>应用列表</Title>
         </div>
       </Header>
