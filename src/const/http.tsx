@@ -87,8 +87,13 @@ export const UpdateData =async (url:string,params:any):Promise<boolean> => {
     }
 }
 
-export const deleteData =async (url:string):Promise<boolean> => {
-    let response = await service.delete(url);
+export const deleteData =async (url:string,params:any = null):Promise<boolean> => {
+    let urlSend = url
+    if (params !=null){
+        let s:string = new URLSearchParams(params).toString();
+        urlSend += ("?"+s)
+    }
+    let response = await service.delete(urlSend);
     let data:Data = response.data;
     if (data.code == 0) {
         message.info(data.entity)
