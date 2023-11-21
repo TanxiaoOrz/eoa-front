@@ -4,14 +4,23 @@ import Sider from 'antd/es/layout/Sider';
 import { Content, Header } from 'antd/es/layout/layout';
 
 import React, { useRef, useState } from 'react';
-import { UpdateData, deleteData, getDataList } from '../../const/http.tsx';
+import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
 import { PaginationAlign, PaginationPosition } from 'antd/es/pagination/Pagination';
 import { ModuleOut, TableOut } from '../../const/out.tsx';
-import { ActionType, ModalForm, ProFormText, ProFormTextArea, ProColumns, ProTable } from '@ant-design/pro-components';
+import { ActionType, ModalForm, ProFormText, ProFormTextArea, ProColumns, ProTable, ProFormSelect, ProFormTreeSelect } from '@ant-design/pro-components';
 import url from '../../const/url.js';
+import { useLocation } from 'react-router';
+
+const baseURL = "/api/v1/table/back/table"
+
+const moduleList:ModuleOut[] =( await getDataList("/api/v1/table/back/module")).data
+const {Title} = Typography;
 
 type TableInSimple = {
-
+  tableViewName:string
+  tableDataName:string
+  moduleNo:number
+  virtual:boolean
 }
 
 
@@ -25,7 +34,7 @@ const UpdateTable = (prop:{dataId:number,action:React.MutableRefObject<ActionTyp
     }
   ];
   const deleteMethod: MenuProps['onClick'] = ()=>{
-    deleteData("/api/v1/table/back/module"+"/"+prop.dataId)
+    deleteData(baseURL+"/"+prop.dataId,{isVirtual:prop.isVirtual})
     if (prop.action.current!==undefined)
       prop.action.current.reload();
   }
@@ -33,6 +42,9 @@ const UpdateTable = (prop:{dataId:number,action:React.MutableRefObject<ActionTyp
       <Dropdown.Button 
         type="primary"
         menu={{items,onClick:deleteMethod}}
+        onClick={()=>{
+          window.location.assign(url.backUrl.table+"/"+prop.dataId)
+        }}
       >
         编辑
       </Dropdown.Button>
@@ -123,7 +135,7 @@ const TableList = (prop:{isvirtual:boolean}) => {
         // console.log(sort);
         // console.log(filter);
         let paramsNew = {params,isVirtual:isVirtual}
-        return getDataList("/api/v1/table/back/table",paramsNew)
+        return getDataList(baseURL,paramsNew)
       }}
       editable={{
         type: 'multiple',
@@ -161,9 +173,9 @@ const TableList = (prop:{isvirtual:boolean}) => {
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"
-      headerTitle="应用列表"
+      headerTitle="表单列表"
       toolBarRender={() => [
-        <CreateTable key="create"/>,
+        <CreateTable key="create" isVirtual={isVirtual}/>,
       ]}
     />
   )
@@ -171,22 +183,64 @@ const TableList = (prop:{isvirtual:boolean}) => {
 
 
 
-const CreateTable = () => {
+const CreateTable = (prop:{isVirtual:boolean}) => {
   const [form] = Form.useForm<TableInSimple>();
+  const query = new URLSearchParams(useLocation().search);
+  let moduleNo = query.get("moduleNo");
+  let title:string;
+  let jump:boolean;
+  if (prop.isVirtual)
+    title = "虚拟视图"
+  else
+    title = "实体表单"
+  // console.log(moduleNo);
+  if (moduleNo == "")
+    moduleNo =null;
+  const valueEnumModule:{title:string,value:number,children:any[]}[] = moduleList.map(
+    (item) => {
+      return {title:item.moduleTypeName,value:item.moduleTypeId,children:[]};
+    })
+  // console.log(valueEnumModule);
   return (
     <ModalForm<TableInSimple>
-      title="新建表单"
+      title={title}
       trigger={
         <Button type="primary">
           <PlusOutlined />
-          新建应用
+          {title}
         </Button>
       }
       width={400}
       form={form}
       submitTimeout={2000}
       autoFocusFirstInput
+      submitter={{
+        searchConfig: {
+          submitText: '新建',
+          resetText: '取消',
+        },
+        render:(prop,defaultDoms)=>{
+          return [
+            ...defaultDoms,
+            <Button
+              key="jump"
+              type='primary'
+              onClick={()=>{
+                jump = true
+                prop.submit()
+              }}>新建并跳转</Button>
+          ]
+        }
+      }}
       onFinish={async (values:TableInSimple)=>{
+        console.log(values)
+        let dataId:number =await newData(baseURL,values)
+        if (dataId!= -1){
+          if (jump)
+            window.location.assign(url.backUrl.table+"/"+dataId);
+          return true
+        }
+          return false
       }}
       modalProps={{
         destroyOnClose: true,
@@ -194,24 +248,64 @@ const CreateTable = () => {
       }}>
         <ProFormText
           width="md"
-          name="moduleTypeName"
-          label="应用名称"
+          name="tableViewName"
+          label="表单名称"
           tooltip="最长为33位"
-          placeholder="请输入应用名称"
+          placeholder="请输入表单显示名称"
           required = {true}/>
+        <ProFormText
+          width="md"
+          name="tableDataName"
+          label="数据库表名"
+          tooltip="最长为33位"
+          placeholder="请输入数据库表名"
+          required = {!prop.isVirtual}
+          hidden = {!prop.isVirtual}/>
+        <ProFormTreeSelect 
+          width="md"
+          name="moduleNo"
+          label="所属模块"
+          tooltip=""
+          required = {true}
+          fieldProps={{
+            suffixIcon: null,
+            filterTreeNode: true,
+            showSearch: true,
+            popupMatchSelectWidth: false,
+            labelInValue: true,
+            autoClearSearchValue: true,
+            multiple: false,
+            treeNodeFilterProp: 'title',
+            fieldNames: {
+              label: 'title',
+            },
+          }}
+          request={async () => valueEnumModule}
+          initialValue={moduleNo}/>  
         <ProFormTextArea
           width="md"
-          name="workflowRemark"  
-          label="应用备注"
+          name="remark"  
+          label="表单备注"
           tooltip="最长333位"
-          placeholder="请输入应用备注"
+          placeholder="请输入表单备注"
           required={false}/>
+        <ProFormSelect
+          readonly = {true}
+          width="md"
+          name="virtual"  
+          label="虚拟视图"
+          tooltip="最长333位"
+          required={true}
+          
+          options={[{label:'是',value:true},{label:'否',value:false}]}
+          initialValue={prop.isVirtual}/>
       </ModalForm>
   )
 }
 
-const moduleList:ModuleOut[] =( await getDataList("/api/v1/table/back/module")).data
-const {Title} = Typography;
+
+
+
 const BackTable = () => {
   const [position, setPosition] = useState<PaginationPosition>('top');
   const [align, setAlign] = useState<PaginationAlign>('center');
