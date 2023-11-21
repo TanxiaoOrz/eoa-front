@@ -3,7 +3,7 @@ import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProTab
 import { Button, Dropdown, Form, Layout, MenuProps , Typography } from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
-import { UpdateData, deleteData, getDataList } from '../../const/http.tsx';
+import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
 import { ModuleOut } from '../../const/out.tsx';
 
@@ -78,7 +78,7 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
   )
 }
 
-const CreateModule = () => {
+const CreateModule = (prop:{action:React.MutableRefObject<ActionType|undefined>}) => {
   const [form] = Form.useForm<FormModule>();
   return (
     <ModalForm<{moduleTypeName: string; workflowRemark: string}>
@@ -94,8 +94,12 @@ const CreateModule = () => {
       submitTimeout={2000}
       autoFocusFirstInput
       onFinish={async (values:FormModule)=>{
-        console.log(values.moduleTypeName)
-        console.log(values.workflowRemark)
+        let dataId = await newData(baseURL,values)
+        if (dataId!=-1) {
+          if (prop.action.current!==undefined)
+            prop.action.current.reload();
+        }
+        return dataId != -1
       }}
       modalProps={{
         destroyOnClose: true,
@@ -278,7 +282,7 @@ const ModuleList = () => {
       dateFormatter="string"
       headerTitle="应用列表"
       toolBarRender={() => [
-        <CreateModule key="create"/>,
+        <CreateModule key="create" action={actionRef}/>,
       ]}
     />
   );
