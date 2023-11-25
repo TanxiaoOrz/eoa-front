@@ -34,4 +34,8 @@ export type TableOut = {
     createName:string
     createTime:string
     moduleName:string
+    defaultEdit:string
+    defaultCreate:string
+    defaultDelete:string
+    defaultShare:string
 }
