@@ -1,3 +1,4 @@
+
 export type ModuleOut = {
     moduleTypeId:number
     moduleTypeName:string
@@ -9,7 +10,7 @@ export type ModuleOut = {
     flowCounts:number
     searchCounts:number
     chartsCounts:number
-};
+}
 
 export type DropSelect = {
     key:number
@@ -38,4 +39,22 @@ export type TableOut = {
     defaultCreate:string
     defaultDelete:string
     defaultShare:string
+}
+
+
+export type ColumnOut = {
+    columnId:number,
+    columnViewName:string,
+    columnDataName:string,
+    columnType:string,
+    columnTypeDescription:string,
+    tableNo:number,
+    columnGroupNo:number,
+    columnViewNo:number,
+    creator:number,
+    creatorName:string,
+    createTime:string,
+    columnDetailNo:number,
+    columnViewDisplay:boolean,
+    virtual:boolean
 }
