@@ -153,13 +153,13 @@ const BackTableConcrete = () => {
     }
     const columnList = () =>{
         return (
-            <iframe src=''
+            <iframe src={url.backUrl.column+"&tableId="+tableId}></iframe>
         )
     }
 
     const AuthorityEdit = ()=>{
         return (
-
+            
         )
     }
     return (
@@ -203,6 +203,7 @@ const BackTableConcrete = () => {
                 {
                 tab: '权限信息',
                 key: '3',
+                disabled: table.virtual
                 },
             ]}
             >
