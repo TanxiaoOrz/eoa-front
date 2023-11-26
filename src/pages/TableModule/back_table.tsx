@@ -43,7 +43,7 @@ const UpdateTable = (prop:{dataId:number,action:React.MutableRefObject<ActionTyp
         type="primary"
         menu={{items,onClick:deleteMethod}}
         onClick={()=>{
-          window.location.assign(url.backUrl.table+"/"+prop.dataId)
+          window.location.assign(url.backUrl.table+"/"+prop.dataId+"?isVirtual"+Number(prop.isVirtual))
         }}
       >
         编辑

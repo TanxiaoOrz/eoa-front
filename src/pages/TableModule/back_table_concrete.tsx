@@ -1,10 +1,10 @@
-﻿import { PageContainer, ProCard, ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
+﻿import { PageContainer, ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import React, { useEffect, useState } from 'react';
 import { ModuleOut, TableOut } from '../../const/out';
 import { UpdateData, deleteData, getDataList, getDataOne } from '../../const/http';
 import config from '../../const/config';
-import { json, useParams } from 'react-router-dom';
-import { Button, Spin, Table } from 'antd';
+import { useParams } from 'react-router-dom';
+import { Button, Spin } from 'antd';
 import url from '../../const/url';
 
 type TableIn = {
@@ -48,8 +48,9 @@ const BackTableConcrete = () => {
     
     const [table, setTable] = useState<TableOut>();
     const tableId = useParams().tableId
+    const isVirtual =Boolean(new URLSearchParams(window.location.search.substring(1)).get("isVirtual"));
     useEffect(()=>{
-        getDataOne(tableUrl + "/" + tableId).then((values)=>{
+        getDataOne(tableUrl + "/" + tableId+"%isVirtual="+isVirtual).then((values)=>{
             if (values.success) {
                 setTable(values.data);
             }
@@ -78,7 +79,7 @@ const BackTableConcrete = () => {
                     changedValues.forEach((element:string) => {
                         table[element] = values[element]
                     });
-                    setTable(table)
+                    // setTable(table)
                 }}
             >
                 <ProFormText
@@ -88,7 +89,7 @@ const BackTableConcrete = () => {
                     tooltip="最长为33位"
                     placeholder="请输入表单显示名称"
                     required = {true}
-                    onMetaChange={}/>
+                />
                 <ProFormText
                     width="md"
                     name="tableDataName"
