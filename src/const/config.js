@@ -10,5 +10,9 @@ export default {
         table : "api/v1/table/back/table",
         module : "api/v1/table/back/module",
         column : "api/v1/table/back/column"
+    },
+    fronts:{
+        character: "/api/v1/front/authority/character",
+        authority: "/api/v1/front/authority/authority"
     }
 }

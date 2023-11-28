@@ -58,3 +58,12 @@ export type ColumnOut = {
     columnViewDisplay:boolean,
     virtual:boolean
 }
+
+export type CharacterOut = {
+    dataId:number
+    characterName:string
+    characterDescription:string
+    createTime:string
+    creator:number
+    createName:String
+}
