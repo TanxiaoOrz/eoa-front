@@ -1,7 +1,7 @@
 import React from "react";
-import { ColumnOut } from "../const/out";
-import { getDataList } from "../const/http";
-import url from "../const/url";
+import { ColumnOut } from "../const/out.tsx";
+import { getDataList } from "../const/http.tsx";
+import url from "../const/url.js";
 import { Tabs } from "antd";
 import { ProForm, ProFormDigit, ProFormSelect } from "@ant-design/pro-components";
 import columnType from "../const/columnType";
@@ -37,10 +37,12 @@ const AllConstraint = (prop:{
             <ProFormDigit
                 label="最小安全等级"
                 name="start"
+                width="sm"
                 fieldProps={{precision:0}}
                 min={0}
                 max={100}
                 tooltip="最小0最大100"
+                required = {true}
             />
             <ProFormDigit
                 label="最大安全等级"
@@ -48,18 +50,18 @@ const AllConstraint = (prop:{
                 fieldProps={{precision:0}}
                 min={0}
                 max={100}
+                width="sm"
                 tooltip="最小0最大100"
+                required = {true}
             />
         </ProForm>)
-        }
-    ]
-    if (prop.useForm)
-        alls.push({
+        },{
             key:"form",
             label:"表单选择",
             children:(
             <ProForm 
                 initialValues={prop.form}
+                layout="inline"
                 onFinish={async (values)=>{
                     return prop.updateForm(JSON.stringify(values))
                 }}    
@@ -67,6 +69,7 @@ const AllConstraint = (prop:{
                 <ProFormSelect
                     label="最小安全等级"
                     name="start"
+                    width="sm"
                     request={async ()=>{
                         let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
                         return columns.filter((column)=>{return column.columnType===columnType.number})
@@ -78,10 +81,12 @@ const AllConstraint = (prop:{
                             })
                     }}
                     placeholder="请选择代表最小安全等级的字段"
+                    required = {true}
                 />
                 <ProFormSelect
                     label="最大安全等级"
                     name="end"
+                    width="sm"
                     request={async ()=>{
                         let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
                         return columns.filter((column)=>{return column.columnType===columnType.number})
@@ -93,9 +98,12 @@ const AllConstraint = (prop:{
                             })
                     }}
                     placeholder="请选择代表最大安全等级的字段"
+                    required = {true}
                 />
             </ProForm>)
-        })
+        }
+    ]
+    if (prop.useForm)
     return (
     <Tabs
         activeKey="default"
@@ -188,9 +196,8 @@ CreatorConstraint.defaultProps = {
 
 
 
-const AuthorityEdit = (prop:{
+export const AuthorityEdit = (prop:{
     entity:any,
-    setTable:React.Dispatch<React.SetStateAction<any>>,
     tableId:number,
     isVirtual:boolean,
     authorityName:string
@@ -199,15 +206,21 @@ const AuthorityEdit = (prop:{
     const tableId = prop.tableId;
     const useForm = tableId !== 0
     
-    const authority:Authority =JSON.parse(prop.entity[prop.authorityName]) 
-
-
+    let authority:Authority =JSON.parse(prop.entity[prop.authorityName]) 
+    if (authority === null)
+        authority = {
+            body:new Map<string,string>(),
+            bodyType:"",
+            table:new Map<string,string>(),
+            tableType:""
+        }
     const tabs = [
         {
             key:"all",
             label:"所有人",
             children:(
-            <AllConstraint 
+            <div style={{display:"flex" ,justifyContent:"center" }}>
+                <AllConstraint 
                 default={authority.body.get("allConstarint")===undefined?undefined:JSON.parse(""+authority.body.get("allConstarint"))}
                 form={authority.table.get("allConstarint")===undefined?undefined:JSON.parse(""+authority.table.get("allConstarint"))}
                 useForm={useForm}
@@ -215,7 +228,9 @@ const AuthorityEdit = (prop:{
                 updateForm={(all)=>{authority.table.set("allConstarint",all);return true}}
                 tableId={tableId}
                 isVirtual={prop.isVirtual}
-            />)
+            />
+            </div>
+            )
         }
     ]
 
@@ -234,12 +249,12 @@ const AuthorityEdit = (prop:{
         prop.entity[prop.authorityName] = JSON.stringify(authority)
     }
     return (
-        <Tabs
-            tabPosition="left"
-            style={{writingMode:"vertical-lr"}}
+        <Tabs 
+            style={{height:"90vh"}}
+            
             items={tabs}>
                 
-            </Tabs>
+        </Tabs>
     )
 }
 

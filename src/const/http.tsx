@@ -21,13 +21,16 @@ const login = axios.create({
 
 service.interceptors.request.use(config =>{
     config.headers['tokens'] = localStorage.getItem('tokens')
+    console.log("up")
     return config
 })
 
 service.interceptors.response.use((response) =>{
     if (response.data.code != -1)
         localStorage.setItem("tokens",response.headers['tokens'])
-    //console.log(response.headers);
+    else
+        window.location.replace("/login")
+    console.log(response.headers);
     console.log(response.headers.tokens);
     return response
 })
@@ -37,6 +40,7 @@ export const getDataList = async (url:string,params:any = {current:1,pageSize:10
     let s:string = new URLSearchParams(params).toString();
     let urlSend = (url+"?"+s);
     console.log(urlSend);
+    console.trace()
     let response = await service.get(urlSend);
     let data:Data=response.data;
     console.log(data);

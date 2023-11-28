@@ -3,17 +3,17 @@ import { Avatar, Button, Dropdown, Form, Layout, List, MenuProps, Tabs, Typograp
 import Sider from 'antd/es/layout/Sider';
 import { Content, Header } from 'antd/es/layout/layout';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
 import { PaginationAlign, PaginationPosition } from 'antd/es/pagination/Pagination';
 import { ModuleOut, TableOut } from '../../const/out.tsx';
 import { ActionType, ModalForm, ProFormText, ProFormTextArea, ProColumns, ProTable, ProFormSelect, ProFormTreeSelect } from '@ant-design/pro-components';
 import url from '../../const/url.js';
 import { useLocation } from 'react-router';
+import config from '../../const/config.js';
 
 const baseURL = "/api/v1/table/back/table"
 
-const moduleList:ModuleOut[] =( await getDataList("/api/v1/table/back/module")).data
 const {Title} = Typography;
 
 type TableInSimple = {
@@ -43,7 +43,7 @@ const UpdateTable = (prop:{dataId:number,action:React.MutableRefObject<ActionTyp
         type="primary"
         menu={{items,onClick:deleteMethod}}
         onClick={()=>{
-          window.location.assign(url.backUrl.table+"/"+prop.dataId+"?isVirtual"+Number(prop.isVirtual))
+          window.location.assign(url.backUrl.table+"/"+prop.dataId+"?isVirtual="+Number(prop.isVirtual))
         }}
       >
         编辑
@@ -74,7 +74,7 @@ const TableList = (prop:{isvirtual:boolean}) => {
     {
       key:'remark',
       title:'表单备注',
-      dataIndex:'workflowRemark',
+      dataIndex:'remark',
       ellipsis: true,
       tip:"备注过长会自动收缩,鼠标放上去查看",
       hideInSearch: true,
@@ -175,7 +175,7 @@ const TableList = (prop:{isvirtual:boolean}) => {
       dateFormatter="string"
       headerTitle="表单列表"
       toolBarRender={() => [
-        <CreateTable key="create" isVirtual={isVirtual}/>,
+        <CreateTable key="create" isVirtual={isVirtual} />,
       ]}
     />
   )
@@ -196,10 +196,6 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
   // console.log(moduleNo);
   if (moduleNo == "")
     moduleNo =null;
-  const valueEnumModule:{title:string,value:number,children:any[]}[] = moduleList.map(
-    (item) => {
-      return {title:item.moduleTypeName,value:item.moduleTypeId,children:[]};
-    })
   // console.log(valueEnumModule);
   return (
     <ModalForm<TableInSimple>
@@ -237,7 +233,7 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
         let dataId:number =await newData(baseURL,values)
         if (dataId!= -1){
           if (jump)
-            window.location.assign(url.backUrl.table+"/"+dataId);
+            window.location.assign(url.backUrl.table+"/"+dataId+"?isVirtual="+values.virtual);
           return true
         }
           return false
@@ -280,7 +276,14 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
               label: 'title',
             },
           }}
-          request={async () => valueEnumModule}
+          request={async () => {
+            let moduleList:ModuleOut[] = (await getDataList(config.backs.module)).data
+            const valueEnumModule:{title:string,value:number,children:any[]}[] = moduleList.map(
+              (item) => {
+                return {title:item.moduleTypeName,value:item.moduleTypeId,children:[]};
+              })
+            return valueEnumModule  
+          }}
           initialValue={moduleNo}/>  
         <ProFormTextArea
           width="md"
@@ -309,6 +312,13 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
 const BackTable = () => {
   const [position, setPosition] = useState<PaginationPosition>('top');
   const [align, setAlign] = useState<PaginationAlign>('center');
+  const [moduleList,setModuleList] = useState<ModuleOut[]>([])
+  useEffect(()=>{
+    if (moduleList.length==0)
+      (getDataList("/api/v1/table/back/module")).then((value)=>{
+        setModuleList(value.data)
+      })
+  })
   const tabs = [
     {
       key:"Entity",

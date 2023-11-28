@@ -1,11 +1,12 @@
 ﻿import { PageContainer, ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import React, { useEffect, useState } from 'react';
 import { ModuleOut, TableOut } from '../../const/out';
-import { UpdateData, deleteData, getDataList, getDataOne } from '../../const/http';
+import { UpdateData, deleteData, getDataList, getDataOne } from '../../const/http.tsx';
 import config from '../../const/config';
 import { useParams } from 'react-router-dom';
-import { Button, Spin } from 'antd';
-import url from '../../const/url';
+import { Button, Spin, Tabs, message } from 'antd';
+import url from '../../const/url.js';
+import { AuthorityEdit } from '../../componet/AuthorityEdit.tsx';
 
 type TableIn = {
      tableViewName:string
@@ -46,41 +47,70 @@ const tableUrl = config.backs.table;
 
 const BackTableConcrete = () => {
     
-    const [table, setTable] = useState<TableOut>();
+
     const tableId = useParams().tableId
-    const isVirtual =Boolean(new URLSearchParams(window.location.search.substring(1)).get("isVirtual"));
+    
+    const [table, setTable] = useState<TableOut>();
+    let virtualStr =  new URLSearchParams(window.location.search.substring(1)).get("isVirtual")
+    if (virtualStr === null)
+        virtualStr = "0"
+    const isVirtual =Boolean(parseInt(virtualStr));
     useEffect(()=>{
-        getDataOne(tableUrl + "/" + tableId+"%isVirtual="+isVirtual).then((values)=>{
-            if (values.success) {
-                setTable(values.data);
-            }
-        })
+        if (table === undefined)
+            getDataOne(tableUrl + "/" + tableId+"?isVirtual="+isVirtual).then((values)=>{
+                if (values.success) {
+                    setTable(values.data);
+                }
+            })
+        console.log(table)
+        if (table === null)
+            message.error("该表单不存在")
     })
+    if (tableId === undefined) {
+        window.location.replace(url.backUrl.table)
+        return (<div></div>)
+    }
     if (table === undefined || table === null)
         return (
             <div
                 style={{
                 background: '#F5F7FA',
+                display:"flex",
+                height:"98vh"
                 }} >
-                    <Spin size='large'></Spin>
+                    <Spin size='large' style={{margin:"auto"}}></Spin>
             </div>)
-    const updateTable = () => {
-        UpdateData(tableUrl+"/"+tableId,getTableIn(table));
+    const updateTable = async () => {
+        return await UpdateData(tableUrl+"/"+tableId,getTableIn(table));
     }
-    const deleteTable = () => {
-        deleteData(tableUrl+"/"+ tableId);
+    const deleteTable = async () => {
+        return await deleteData(tableUrl+"/"+ tableId+"?isVirtual="+isVirtual);
     }
 
     const TableBase = ()=>{
         return (
+            <div style={{height:"85vh",display:"flex"}}>
             <ProForm 
+                style={{
+                    margin:"0 auto"
+                }}
+                submitter={{
+                    searchConfig:{
+                        resetText:"重置",
+                        submitText:"保存"
+                    }
+                }}
+                layout="horizontal"
                 initialValues={table}
                 onValuesChange={(changedValues,values)=>{
-                    changedValues.forEach((element:string) => {
-                        table[element] = values[element]
-                    });
+                    console.log(changedValues)
+                    Object.entries(changedValues).forEach((value,index,array) =>{
+                        table[value[0]] = value[1]
+                    })
+                    console.log(table)
                     // setTable(table)
                 }}
+                onFinish={updateTable}
             >
                 <ProFormText
                     width="md"
@@ -96,7 +126,7 @@ const BackTableConcrete = () => {
                     label="数据库表名"
                     tooltip="最长为33位"
                     placeholder="请输入数据库表名"
-                    readonly = {table.virtual}/>
+                    readonly = {!table.virtual}/>
                 <ProFormTreeSelect 
                     width="md"
                     name="moduleNo"
@@ -146,15 +176,31 @@ const BackTableConcrete = () => {
                     width="md"/>
                 <ProFormText
                     readonly
+                    label="创建人"
                     name="createName"
                     addonAfter={<Button onClick={()=>{window.open(url.frontUrl.humanResource+table.creator)}}>查看</Button>}
                 />
             </ProForm>
-        )
+            </div>)
     }
     const ColumnList = () => {
+        const [state, setState] = useState({
+            iFrameHeight: '0px'
+        })
         return (
-            <iframe src={url.backUrl.column+"&tableId="+tableId}></iframe>
+            <div style={{width:"80vh",height:"70vh"}}>
+                <iframe src={url.backUrl.column+"?tableId="+tableId}
+                scrolling="yes" frameBorder="0"
+                style={{width:'100%',height:state.iFrameHeight, overflow:'visible'}}
+                onLoad={() => {//iframe高度不超过content的高度即可
+                    let h = document.documentElement.clientHeight - 20;
+                    setState({
+                        "iFrameHeight": h + 'px'
+                    });
+                }}
+
+                ></iframe>
+            </div>
         )
     }
     return (
@@ -164,9 +210,10 @@ const BackTableConcrete = () => {
         }}
     >
         <PageContainer
+            
             fixedHeader
             header={{
-                title: '页面标题',
+                title:table.tableViewName,
                 breadcrumb: {
                 items: [
                     {
@@ -199,7 +246,20 @@ const BackTableConcrete = () => {
                 {
                 tab: '权限信息',
                 key: '3',
-                disabled: table.virtual
+                disabled: table.virtual,
+                children:(<div style={{height:"80vh"}}>
+                    <Tabs 
+                        tabPosition='left'
+                        items={[
+                            {
+                                key:"create",
+                                label:"创建权限",
+                                children:( <AuthorityEdit entity={table} tableId={parseInt(tableId) } isVirtual={isVirtual} authorityName='defaultCreate'/>)
+                            }
+                        ]}
+                    ></Tabs>
+                   
+                    </div>)
                 },
             ]}
             >
