@@ -65,5 +65,5 @@ export type CharacterOut = {
     characterDescription:string
     createTime:string
     creator:number
-    createName:String
+    createName:string
 }
