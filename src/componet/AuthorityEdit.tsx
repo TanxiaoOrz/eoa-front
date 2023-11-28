@@ -1,10 +1,11 @@
-import React from "react";
-import { ColumnOut } from "../const/out";
+import React, { useRef } from "react";
+import { CharacterOut, ColumnOut } from "../const/out";
 import { getDataList } from "../const/http";
 import url from "../const/url";
 import { Tabs } from "antd";
-import { ProColumns, ProForm, ProFormDigit, ProFormSelect, ProTable } from "@ant-design/pro-components";
+import { ActionType, ProColumns, ProForm, ProFormDigit, ProFormSelect, ProTable } from "@ant-design/pro-components";
 import columnType from "../const/columnType";
+import config from "../const/config";
 
 type All = {
     start:number
@@ -205,23 +206,49 @@ const CharacterConstraint = (prop:{
     updateForm:(arg0: string) => boolean,
     tableId:number,
     isVirtual:boolean}) => {
+    const getCharacterSelect = async () =>{
+        let characters:CharacterOut[] = (await getDataList(config.fronts.character)).data
+        return characters.map((value,index,array)=>{
+            return {
+                value:value.dataId,
+                label:value.characterName
+            }
+        })
+    }
     const columns:ProColumns<Character>[] = [
         {
             key:"name",
             title:"角色名称",
             dataIndex:"characterId",
-            request:async () =>{
-                return getDataList()
-            }
+            valueType:"select",
+            request:getCharacterSelect,
+        },{
+            key:"grade",
+            title:"角色最低等级",
+            dataIndex:"grade",
+            valueType:"select",
+            request:getCharacterSelect,
+            tooltip:"总部级无特殊要求,分部级要求该角色人员属于创建者分部或上级分部,部门级同理"
         }
     ]
+    const actionRef = useRef<ActionType>();
     const alls = [{
         key:"default",
         label:"默认",
         children:(
-        <ProTable
-            
-        )
+        <ProTable<Character>
+            columns={columns}
+            actionRef={actionRef}
+            cardBordered
+            request={async () => {
+                if (prop.default === undefined)
+                    return []
+                return prop.default
+            }}
+        >
+
+
+        </ProTable>
         }
     ]
     if (prop.useForm)
