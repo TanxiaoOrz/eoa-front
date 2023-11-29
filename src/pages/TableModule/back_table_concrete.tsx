@@ -249,12 +249,30 @@ const BackTableConcrete = () => {
                 disabled: table.virtual,
                 children:(<div style={{height:"80vh"}}>
                     <Tabs 
+                        style={{background:"#fdfdfd"}}
+                        tabBarStyle={{borderBlockColor:"#f7f7f7",border:"3sp"}}
+                        // tabBarGutter={3}
                         tabPosition='left'
+                        
                         items={[
                             {
                                 key:"create",
-                                label:"创建权限",
+                                label:(<span style={{writingMode:"vertical-lr"}}>创建权限</span>),
                                 children:( <AuthorityEdit entity={table} tableId={parseInt(tableId) } isVirtual={isVirtual} authorityName='defaultCreate'/>)
+                            },
+                            {
+                                key:"share",
+                                label:(<span style={{writingMode:"vertical-lr"}}>共享权限</span>),
+                                children:( <AuthorityEdit entity={table} tableId={parseInt(tableId) } isVirtual={isVirtual} authorityName='defaultShare'/>)
+                            },
+                            {
+                                key:"edit",
+                                label:(<span style={{writingMode:"vertical-lr"}}>编辑权限</span>),
+                                children:( <AuthorityEdit entity={table} tableId={parseInt(tableId) } isVirtual={isVirtual} authorityName='defaultEdit'/>)
+                            },{
+                                key:"delete",
+                                label:(<span style={{writingMode:"vertical-lr"}}>删除权限</span>),
+                                children:( <AuthorityEdit entity={table} tableId={parseInt(tableId) } isVirtual={isVirtual} authorityName='defaultDelete'/>)
                             }
                         ]}
                     ></Tabs>
