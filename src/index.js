@@ -7,6 +7,7 @@ import {
 
 import router from "./route/route.tsx"
 
+document.body.parentNode.style.overflowY = "hidden";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
