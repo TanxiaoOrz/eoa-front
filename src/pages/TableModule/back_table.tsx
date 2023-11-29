@@ -233,7 +233,7 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
         let dataId:number =await newData(baseURL,values)
         if (dataId!= -1){
           if (jump)
-            window.location.assign(url.backUrl.table+"/"+dataId+"?isVirtual="+values.virtual);
+            window.location.assign(url.backUrl.table+"/"+dataId+"?isVirtual="+Number(values.virtual));
           return true
         }
           return false
