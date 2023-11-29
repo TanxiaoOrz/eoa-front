@@ -3,7 +3,7 @@ import { CharacterOut, ColumnOut } from "../const/out";
 import { getDataList } from "../const/http.tsx";
 import url from "../const/url";
 import { Tabs } from "antd";
-import { ActionType, ProColumns, ProForm, ProFormDigit, ProFormSelect, ProTable } from "@ant-design/pro-components";
+import { ActionType, ProColumns, ProForm, ProFormDigit, ProFormGroup, ProFormSelect, ProTable } from "@ant-design/pro-components";
 import columnType from "../const/columnType";
 import config from "../const/config";
 
@@ -49,6 +49,12 @@ const AllConstraint = (prop:{
             onFinish={async (values)=>{
                 return prop.update(JSON.stringify(values))
             }}
+            submitter={{
+                searchConfig:{
+                    submitText:"确定",
+                    resetText:"重置"
+                }
+            }}
         >
             <ProFormDigit
                 label="最小安全等级"
@@ -74,12 +80,19 @@ const AllConstraint = (prop:{
         },{
             key:"forms",
             label:"表单选择",
+            
             children:(
                 <ProForm 
                 initialValues={prop.form}
                 onFinish={async (values)=>{
                     return prop.updateForm(JSON.stringify(values))
                 }}    
+                submitter={{
+                    searchConfig:{
+                        submitText:"确定",
+                        resetText:"重置"
+                    }
+                }}
             >
                 <ProFormSelect
                     label="最小安全等级"
@@ -154,6 +167,13 @@ const CreatorConstraint = (prop:{
             onFinish={async (values)=>{
                 return prop.update(JSON.stringify(values))
             }}
+            layout="horizontal"
+            submitter={{
+                searchConfig:{
+                    submitText:"确定",
+                    resetText:"重置"
+                }
+            }}
         >
             <ProFormSelect
                 label="创建人"
@@ -161,36 +181,42 @@ const CreatorConstraint = (prop:{
                 options={items}
                 tooltip="创建人自己是否拥有该权限"
             />
-            <ProFormSelect
-                label="直属领导"
-                name="leader"
-                options={items}
-                tooltip="创建人领导是否拥有该权限"
-            />
-            <ProFormSelect
+                
+            <ProForm.Group>
+                <ProFormSelect
+                    label="直属领导"
+                    name="leader"
+                    options={items}
+                    tooltip="创建人领导是否拥有该权限"
+                />
+                <ProFormSelect
                 label="上级领导"
                 name="leaderRecursion"
                 options={items}
                 tooltip="创建人领导及其领导是否拥有该权限"
-            />
+                />
+            </ProForm.Group>
+
             <ProFormSelect
                 label="同部门"
                 name="depart"
                 options={items}
                 tooltip="创建人同部门是否拥有该权限"
             />
-            <ProFormSelect
-                label="同分部"
-                name="section"
-                options={items}
-                tooltip="创建人同分布是否拥有该权限"
-            />
-            <ProFormSelect
-                label="同分部"
-                name="section"
-                options={items}
-                tooltip="创建人分布及其上级分部是否拥有该权限"
-            />
+            <ProForm.Group>
+                <ProFormSelect
+                    label="同分部"
+                    name="section"
+                    options={items}
+                    tooltip="创建人同分布是否拥有该权限"
+                />
+                <ProFormSelect
+                    label="上级分部"
+                    name="sectionRecursive"
+                    options={items}
+                    tooltip="创建人分布及其上级分部是否拥有该权限"
+                />
+            </ProForm.Group>
         </ProForm>)
         }
     ]
@@ -233,7 +259,20 @@ const CharacterConstraint = (prop:{
             title:"角色最低等级",
             dataIndex:"grade",
             valueType:"select",
-            request:getCharacterSelect,
+            request:async ()=> {
+                return [
+                    {
+                        label:"总部",
+                        value:0
+                    },{
+                        label:"分部",
+                        value:1
+                    },{
+                        label:"部门",
+                        value:2
+                    }
+                ]
+            },
             tooltip:"总部级无特殊要求,分部级要求该角色人员属于创建者分部或上级分部,部门级同理"
         }
     ]
@@ -385,12 +424,14 @@ export const AuthorityEdit = (prop:{
             tableType:""
         }
 
+    const divStyle = {display:"flex" ,justifyContent:"center", background:"#fafafa", height:"72vh"}
+
     const tabs = [
         {
             key:"all",
             label:"所有人",
             children:(
-            <div style={{display:"flex" ,justifyContent:"center" }}>
+            <div style={divStyle}>
                 <AllConstraint 
                 default={authority.body.get("allConstarint")===undefined?undefined:JSON.parse(""+authority.body.get("allConstarint"))}
                 form={authority.table.get("allConstarint")===undefined?undefined:JSON.parse(""+authority.table.get("allConstarint"))}
@@ -405,7 +446,20 @@ export const AuthorityEdit = (prop:{
         },{
             key:"creater",
             label:"创建人相关",
-            children:(<div>test</div>)
+            children:(<div style={divStyle}>
+                <CreatorConstraint
+                    default={authority.body.get("createConstarint")===undefined?undefined:JSON.parse(""+authority.body.get("allConstarint"))}
+                    update={(all)=>{authority.body.set("createConstraint",all);saveAuthority();return true}}
+                />
+            </div>)
+        },{
+            key:"character",
+            label:"角色",
+            children:(<div style={divStyle}>test</div>)
+        },{
+            key:"proposed",
+            label:"指定对象",
+            children:(<div style={divStyle}>test</div>)
         }
     ]
 
@@ -413,8 +467,7 @@ export const AuthorityEdit = (prop:{
     
     return (
         <Tabs 
-            style={{height:"90vh"}}
-            
+            style={{height:"90vh", margin:"5px"}}
             items={tabs}>
                 
         </Tabs>
