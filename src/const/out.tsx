@@ -67,3 +67,62 @@ export type CharacterOut = {
     creator:number
     createName:string
 }
+
+export type HumanOut = {
+    dataId:number
+    loginName:string
+    name:string
+    sex:number
+    birth:string
+    age:number
+    telephone:string
+    mail:string
+    phone:string
+    fax:string
+    workCode:string
+    section:number
+    depart:number
+    job:string
+    directorLeader:number
+    supporter:number
+    photo:number
+    signature:string
+    lastLogin;Date
+    safety:number
+
+    departName:string
+    sectionName:string
+    leaderName:string
+}
+
+export type DepartOut = {
+    dataId:number
+    departName:string
+    departCode:string
+    fullName:string
+    belongDepart:number
+    belongSection:number
+    departManager:number
+    departIntroduction:string
+    createTime:string
+    photo:number
+
+    belongDepartName:string
+    belongSectionName:string
+    managerName:string
+}
+
+export type SectionOut = {
+    dataId:number
+    sectionName:string
+    sectionCode:string
+    fullName:string
+    belongSection:number
+    sectionManager:number
+    sectionIntroduction:string
+    createTime:string
+    photo:number
+
+    belongSectionName:string
+    managerName:string
+}

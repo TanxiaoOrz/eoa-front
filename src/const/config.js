@@ -13,6 +13,9 @@ export default {
     },
     fronts:{
         character: "/api/v1/front/authority/character",
-        authority: "/api/v1/front/authority/authority"
+        authority: "/api/v1/front/authority/authority",
+        human:"/api/v1/organization/front/humnan",
+        depart:"/api/v1/organization/front/depart",
+        section:"/api/v1/organization/front/section"
     }
 }
