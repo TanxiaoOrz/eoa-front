@@ -14,7 +14,7 @@ export default {
     fronts:{
         character: "/api/v1/front/authority/character",
         authority: "/api/v1/front/authority/authority",
-        human:"/api/v1/organization/front/humnan",
+        human:"/api/v1/organization/front/human",
         depart:"/api/v1/organization/front/depart",
         section:"/api/v1/organization/front/section"
     }

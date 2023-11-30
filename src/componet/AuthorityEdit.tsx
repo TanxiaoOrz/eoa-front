@@ -2,12 +2,11 @@ import React, { useRef } from "react";
 import { CharacterOut, ColumnOut, DepartOut, HumanOut, SectionOut } from "../const/out";
 import { getDataList } from "../const/http.tsx";
 import url from "../const/url";
-import { Button, Form, Tabs } from "antd";
-import { ActionType, ModalForm, ProColumns, ProForm, ProFormDigit, ProFormGroup, ProFormSelect, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
+import { Button, Form, Tabs, message } from "antd";
+import { ActionType, ModalForm, ProColumns, ProForm, ProFormDigit, ProFormSelect, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
 import columnType from "../const/columnType";
 import config from "../const/config";
 import { PlusOutlined } from "@ant-design/icons";
-import create from "@ant-design/icons/lib/components/IconFont";
 
 type All = {
     start:number
@@ -61,6 +60,12 @@ const AllConstraint = (prop:{
                 searchConfig:{
                     submitText:"确定",
                     resetText:"重置"
+                },
+                submitButtonProps:{
+                    style:{marginRight:"auto"}
+                },
+                resetButtonProps:{
+                    style:{marginLeft:"auto"}
                 }
             }}
         >
@@ -102,6 +107,12 @@ const AllConstraint = (prop:{
                     searchConfig:{
                         submitText:"确定",
                         resetText:"重置"
+                    },
+                    submitButtonProps:{
+                        style:{marginRight:"auto"}
+                    },
+                    resetButtonProps:{
+                        style:{marginLeft:"auto"}
                     }
                 }}
             >
@@ -169,6 +180,8 @@ const CreatorConstraint = (prop:{
         }
     ]
     let value:Create
+    console.log("create")
+    console.log(prop.default)
     if (prop.default === undefined) {
         value = {
             self:false,
@@ -180,14 +193,15 @@ const CreatorConstraint = (prop:{
         }
     } else {
         value = {
-            self:prop.default.self??false,
-            leader:prop.default.leader??false,
-            leaderRecursion:prop.default.leaderRecursion??false,
-            depart:prop.default.depart??false,
-            section:prop.default.section??false,
-            sectionRecursive:prop.default.sectionRecursive??false
+            self:prop.default.self,
+            leader:prop.default.leader,
+            leaderRecursion:prop.default.leaderRecursion,
+            depart:prop.default.depart,
+            section:prop.default.section,
+            sectionRecursive:prop.default.sectionRecursive
         }
     }
+    console.log(value)
     const alls = [{
         key:"default",
         label:"默认",
@@ -202,6 +216,12 @@ const CreatorConstraint = (prop:{
                 searchConfig:{
                     submitText:"确定",
                     resetText:"重置"
+                },
+                submitButtonProps:{
+                    style:{marginRight:"auto"}
+                },
+                resetButtonProps:{
+                    style:{marginLeft:"auto"}
                 }
             }}
         >
@@ -283,7 +303,10 @@ const CharacterConstraint = (prop:{
             title:"角色名称",
             dataIndex:"characterId",
             valueType:"select",
-            request:getCharacterSelect,
+            request:async () => {
+                let characters:CharacterOut[] =(await getDataList(config.fronts.character)).data
+                return characters.map((value,index,array) => { return {label:value.characterName,value:value.dataId}})
+            },
         },{
             key:"grade",
             title:"角色最低等级",
@@ -304,8 +327,31 @@ const CharacterConstraint = (prop:{
                 ]
             },
             tooltip:"总部级无特殊要求,分部级要求该角色人员属于创建者分部或上级分部,部门级同理"
-        }
+        },{
+            key:'action',
+            title:'操作',
+            dataIndex:"characterId",
+            width:48*3,
+            hideInSearch:true,
+            render:(dom,entity,index,action)=>
+              <Button
+                danger 
+                type="primary"
+                onClick={()=>{
+                    if (prop.default === undefined)
+                        return
+                    let news = prop.default?.filter((value,index,array)=>{return !(entity.characterId===value.characterId&&entity.grade===value.grade)})
+                    while (prop.default?.length>0)
+                        prop.default.pop()
+                    news.forEach((value,index,array)=>{prop.default?.push(value)})
+                    actionRef.current?.reload()
+                    console.log(prop.default)
+                    return prop.update(JSON.stringify(prop.default))
+                }}
+              >删除</Button>
+          }
     ]
+    const actionRef = useRef<ActionType>();
     const columnsForm:ProColumns<Character>[] = [
         {
             key:"name",
@@ -336,9 +382,31 @@ const CharacterConstraint = (prop:{
                 ]
             },
             tooltip:"总部级无特殊要求,分部级要求该角色人员属于创建者分部或上级分部,部门级同理"
-        }
+        },{
+            key:'action',
+            title:'操作',
+            dataIndex:"characterId",
+            width:48*3,
+            hideInSearch:true,
+            render:(dom,entity,index,action)=>
+              <Button
+                type="primary"
+                danger 
+                onClick={()=>{
+                    if (prop.form === undefined)
+                        return
+                    let news = prop.form?.filter((value,index,array)=>{return (entity.characterId===value.characterId&&entity.grade===value.grade)})
+                    while (prop.form?.length>0)
+                        prop.form.pop()
+                    news.forEach((value,index,array)=>{prop.form?.push(value)})
+                    actionRef.current?.reload()
+                    console.log(prop.form)
+                    return prop.update(JSON.stringify(prop.form))
+                }}
+              >删除</Button>
+          }
     ]
-    const actionRef = useRef<ActionType>();
+    
     const CreateCharacterConstraint = (prop:{cons:Character[],update:(arg0: string) => boolean}) => {
         const [form] = Form.useForm<Character>();
         return (
@@ -364,7 +432,6 @@ const CharacterConstraint = (prop:{
                     placeholder="请输入要求的角色"
                     allowClear
                     name="characterId"
-                    width="md"
                     tooltip="角色要求"
                     label="角色"
                     request={async () => {
@@ -376,7 +443,6 @@ const CharacterConstraint = (prop:{
                     placeholder="请输入角色等级"
                     allowClear
                     name="grade"
-                    width="md"
                     label="等级"
                     request={async ()=> {
                         return [
@@ -457,6 +523,8 @@ const CharacterConstraint = (prop:{
             </ModalForm>
         )
     }
+    console.log("createDefault")
+    console.log(prop.default)
     const alls = [{
         key:"default",
         label:"默认",
@@ -465,15 +533,21 @@ const CharacterConstraint = (prop:{
             columns={columns}
             actionRef={actionRef}
             cardBordered
-            request={async () => {
-                if (prop.default === undefined)
-                    return []
-                return prop.default
+            size="large"
+            search={false}
+            request={async (params,sort,filter) => {
+                let con =prop.default ?? []
+                return {
+                    total:con.length,
+                    data:con,
+                    success:true
+                }
             }}
             headerTitle="角色限制"
             pagination={{
                 pageSize: 10,
             }}
+            
             toolBarRender={()=>[<CreateCharacterConstraint key="create" cons={prop.default??[]} update={prop.update} />]}
         />)
         }
@@ -487,10 +561,14 @@ const CharacterConstraint = (prop:{
                     columns={columnsForm}
                     actionRef={actionRef}
                     cardBordered
-                    request={async () => {
-                        if (prop.form === undefined)
-                            return []
-                        return prop.form
+                    search={false}
+                    request={async (params,sort,filter) => {
+                        let con =prop.form ?? []
+                        return {
+                            total:con.length,
+                            data:con,
+                            success:true
+                        }
                     }}
                     headerTitle="角色限制"
                     pagination={{
@@ -503,7 +581,7 @@ const CharacterConstraint = (prop:{
     )
     return (
     <Tabs
-        activeKey="default"
+        defaultActiveKey="default"
         centered
         items={alls}></Tabs>
     )
@@ -525,7 +603,7 @@ const ProposedConstraint = (prop:{
 
         type Row = {type:number,url:string,id:number}
 
-        const getRowsFormConstraint = async (con:Proposed) => {
+        const getRowsFormConstraint = (con:Proposed) => {
             let rows:Row[] = []
             con.humans.forEach((value,index,array)=>{rows.push({type:0,url:"0:"+value,id:value,})})
             con.departs.forEach((value,index,array)=>{rows.push({type:1,url:"1:"+value,id:value})})
@@ -550,6 +628,7 @@ const ProposedConstraint = (prop:{
         const defaults = prop.default??{humans:[],departs:[],section:[]}
         const forms =prop.form??{humans:[],departs:[],section:[]}
         const actionRef = useRef<ActionType>();
+        const actionForm = useRef<ActionType>()
         const columnsForm:ProColumns<Row>[] = [
             {
                 key:"type",
@@ -578,9 +657,38 @@ const ProposedConstraint = (prop:{
                 valueType:"treeSelect",
                 request:async () => {
                     let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
-                    return columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
+                    let con = columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
+                    console.log("con")
+                    console.log(con)
+                    return con
                 }
-            }
+            },{
+                key:'action',
+                title:'操作',
+                dataIndex:"url",
+                width:48*3,
+                hideInSearch:true,
+                render:(dom,entity,index,action)=>
+                  <Button
+                    danger 
+                    type="primary"
+                    onClick={()=>{
+                        switch (entity.type) {
+                            case 0:
+                                forms.humans = forms.humans.filter((value,index,array)=>value!==entity.id)
+                                break
+                            case 1:
+                                forms.departs = forms.departs.filter((value,index,array)=>value!==entity.id)
+                                break
+                            case 2:
+                                forms.section = forms.section.filter((value,index,array)=>value!==entity.id)
+                        }
+                    prop.updateForm(JSON.stringify(forms))
+                    console.log(forms)
+                    actionForm.current?.reload()
+                    }}
+                  >删除</Button>
+              }
         ]
 
         const columns:ProColumns<Row>[] = [
@@ -604,9 +712,9 @@ const ProposedConstraint = (prop:{
                     ]
                 }
             },{
-                key:"type",
+                key:"name",
                 title:"指定对象名称",
-                dataIndex:"id",
+                dataIndex:"url",
                 valueType:"select",
                 request:async () => {
                     let request:{label:string,
@@ -619,7 +727,33 @@ const ProposedConstraint = (prop:{
                     sections.forEach((value,index,array)=>{request.push({label:value.sectionName,value:"2:"+value.dataId})})
                     return request
                 }
-            }
+            },{
+                key:'action',
+                title:'操作',
+                dataIndex:"url",
+                width:48*3,
+                hideInSearch:true,
+                render:(dom,entity,index,action)=>
+                  <Button
+                    danger 
+                    type="primary"
+                    onClick={()=>{
+                        switch (entity.type) {
+                            case 0:
+                                defaults.humans = defaults.humans.filter((value,index,array)=>value!==entity.id)
+                                break
+                            case 1:
+                                defaults.departs = defaults.departs.filter((value,index,array)=>value!==entity.id)
+                                break
+                            case 2:
+                                defaults.section = defaults.section.filter((value,index,array)=>value!==entity.id)
+                        }
+                    prop.update(JSON.stringify(defaults))
+                    console.log(defaults)
+                    actionRef.current?.reload()
+                    }}
+                  >删除</Button>
+              }
         ]
 
         const CreateDefault = () => {
@@ -641,8 +775,10 @@ const ProposedConstraint = (prop:{
                 values.id = parseInt(s[1])
                 values.type = parseInt(s[0])
                 addConstraintFormRows([values],defaults)
+                prop.update(JSON.stringify(defaults))
+                console.log(defaults)
                 actionRef.current?.reload()
-                return prop.update(JSON.stringify(defaults))
+                return true
             }}
             >
                 <ProFormTreeSelect 
@@ -665,7 +801,7 @@ const ProposedConstraint = (prop:{
                         departs.forEach((value,index,array)=>{depart.push({label:value.departName,value:"1:"+value.dataId})})
                         let sections:SectionOut[] = (await getDataList(config.fronts.human)).data
                         sections.forEach((value,index,array)=>{section.push({label:value.sectionName,value:"2:"+value.dataId})})
-                        return [
+                        let request = [
                             {
                                 value:"0",
                                 label:"人员",
@@ -683,6 +819,8 @@ const ProposedConstraint = (prop:{
                                 children:section
                             },
                         ]
+                        console.log(request)
+                        return request
                     }}
                     tooltip="指定拥有该权限的人员"
                 />
@@ -705,8 +843,11 @@ const ProposedConstraint = (prop:{
             autoFocusFirstInput
             onFinish={async (values:Row)=>{
                 addConstraintFormRows([values],forms)
-                actionRef.current?.reload()
-                return prop.updateForm(JSON.stringify(forms))
+                console.log("form")
+                prop.updateForm(JSON.stringify(forms))
+                console.log(forms)
+                await actionForm.current?.reload()
+                return true
             }}
             >
                 <ProFormSelect 
@@ -738,7 +879,7 @@ const ProposedConstraint = (prop:{
                     name="type"
                     width="md"
                     label="指定对象"
-                    required
+                    
                     
                     tooltip="请选择取值字段"
                     request={async () => {
@@ -760,9 +901,16 @@ const ProposedConstraint = (prop:{
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
-                request={async () => {
-                    return getRowsFormConstraint(defaults)
+                search={false}
+                request={async (params,sort,filter) => {
+                    let con =getRowsFormConstraint(defaults)
+                    return {
+                        total:con.length,
+                        data:con,
+                        success:true
+                    }
                 }}
+                dataSource={getRowsFormConstraint(defaults)}
                 headerTitle="角色限制"
                 pagination={{
                     pageSize: 10,
@@ -777,13 +925,19 @@ const ProposedConstraint = (prop:{
                 label:"表单选择",
                 
                 children:(<ProTable<Row>
-                    columns={columns}
-                    actionRef={actionRef}
+                    columns={columnsForm}
+                    actionRef={actionForm}
                     cardBordered
-                    request={async () => {
-                        return getRowsFormConstraint(forms)
+                    request={async (params,sort,filter) => {
+                        let con =getRowsFormConstraint(forms)
+                        return {
+                            total:con.length,
+                            data:con,
+                            success:true
+                        }
                     }}
                     headerTitle="角色限制"
+                    search={false}
                     pagination={{
                         pageSize: 10,
                     }}
@@ -860,6 +1014,7 @@ export const AuthorityEdit = (prop:{
         console.log(JSON.stringify(authority,replacer))
         prop.entity[prop.authorityName] = JSON.stringify(authority,replacer)
         console.log(prop.entity)
+        message.info("修改成功,请保存后刷新页面查看或继续修改")
     }
 
     if (authority === null)
@@ -872,6 +1027,8 @@ export const AuthorityEdit = (prop:{
 
     const divStyle = {display:"flex" ,justifyContent:"center", background:"#fafafa", height:"72vh"}
 
+    console.log(authority)
+    console.log(JSON.parse(authority.body.get("createConstraint")+""))
     const tabs = [
         {
             key:"all",
@@ -879,11 +1036,11 @@ export const AuthorityEdit = (prop:{
             children:(
             <div style={divStyle}>
                 <AllConstraint 
-                default={authority.body.get("allConstarint")===undefined?undefined:JSON.parse(""+authority.body.get("allConstarint"))}
-                form={authority.table.get("allConstarint")===undefined?undefined:JSON.parse(""+authority.table.get("allConstarint"))}
+                default={authority.body.get("allConstraint")===undefined?undefined:JSON.parse(""+authority.body.get("allConstraint"))}
+                form={authority.table.get("allConstraint")===undefined?undefined:JSON.parse(""+authority.table.get("allConstraint"))}
                 useForm={useForm}
-                update={(all)=>{authority.body.set("allConstarint",all);saveAuthority();return true}}
-                updateForm={(all)=>{authority.table.set("allConstarint",all);saveAuthority();return true}}
+                update={(all)=>{authority.body.set("allConstraint",all);saveAuthority();return true}}
+                updateForm={(all)=>{authority.table.set("allConstraint",all);saveAuthority();return true}}
                 tableId={tableId}
                 isVirtual={prop.isVirtual}
             />
@@ -894,18 +1051,34 @@ export const AuthorityEdit = (prop:{
             label:"创建人相关",
             children:(<div style={divStyle}>
                 <CreatorConstraint
-                    default={authority.body.get("createConstarint")===undefined?undefined:JSON.parse(""+authority.body.get("allConstarint"))}
+                    default={authority.body.get("createConstraint")===undefined?undefined:JSON.parse(""+authority.body.get("createConstraint"))}
                     update={(all)=>{authority.body.set("createConstraint",all);saveAuthority();return true}}
                 />
             </div>)
         },{
             key:"character",
             label:"角色",
-            children:(<div style={divStyle}>test</div>)
+            children:(<div >
+                <CharacterConstraint
+                    default={authority.body.get("characterConstraint")===undefined?undefined:JSON.parse(""+authority.body.get("characterConstraint"))}
+                    form={authority.table.get("characterConstraint")===undefined?undefined:JSON.parse(""+authority.table.get("characterConstraint"))}
+                    useForm={useForm}
+                    update={(character)=>{authority.body.set("characterConstraint",character);saveAuthority();return true}}
+                    updateForm={(character)=>{authority.table.set("characterConstraint",character);saveAuthority();return true}}
+                />
+            </div>)
         },{
             key:"proposed",
             label:"指定对象",
-            children:(<div style={divStyle}>test</div>)
+            children:(<div >
+                <ProposedConstraint 
+                    default={authority.body.get("proposedConstraint")===undefined?undefined:JSON.parse(""+authority.body.get("proposedConstraint"))}
+                    form={authority.table.get("proposedConstraint")===undefined?undefined:JSON.parse(""+authority.table.get("proposedConstraint"))}
+                    useForm={useForm}
+                    update={(character)=>{authority.body.set("proposedConstraint",character);saveAuthority();return true}}
+                    updateForm={(character)=>{authority.table.set("proposedConstraint",character);saveAuthority();return true}}
+                />
+            </div>)
         }
     ]
 
