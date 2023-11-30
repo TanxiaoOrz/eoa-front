@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { CharacterOut, ColumnOut } from "../const/out";
+import { CharacterOut, ColumnOut, DepartOut, HumanOut, SectionOut } from "../const/out";
 import { getDataList } from "../const/http.tsx";
 import url from "../const/url";
 import { Button, Form, Tabs } from "antd";
@@ -7,6 +7,7 @@ import { ActionType, ModalForm, ProColumns, ProForm, ProFormDigit, ProFormGroup,
 import columnType from "../const/columnType";
 import config from "../const/config";
 import { PlusOutlined } from "@ant-design/icons";
+import create from "@ant-design/icons/lib/components/IconFont";
 
 type All = {
     start:number
@@ -25,6 +26,12 @@ type Create = {
 type Character = {
     characterId:number
     grade:number
+}
+
+type Proposed = {
+    humans:number[]
+    departs:number[]
+    section:number[]
 }
 
 type Authority = {
@@ -299,6 +306,38 @@ const CharacterConstraint = (prop:{
             tooltip:"总部级无特殊要求,分部级要求该角色人员属于创建者分部或上级分部,部门级同理"
         }
     ]
+    const columnsForm:ProColumns<Character>[] = [
+        {
+            key:"name",
+            title:"指定角色字段名称",
+            dataIndex:"characterId",
+            valueType:"treeSelect",
+            request:async () => {
+                let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                return characters.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
+            }
+        },{
+            key:"grade",
+            title:"角色最低等级",
+            dataIndex:"grade",
+            valueType:"select",
+            request:async ()=> {
+                return [
+                    {
+                        label:"总部",
+                        value:0
+                    },{
+                        label:"分部",
+                        value:1
+                    },{
+                        label:"部门",
+                        value:2
+                    }
+                ]
+            },
+            tooltip:"总部级无特殊要求,分部级要求该角色人员属于创建者分部或上级分部,部门级同理"
+        }
+    ]
     const actionRef = useRef<ActionType>();
     const CreateCharacterConstraint = (prop:{cons:Character[],update:(arg0: string) => boolean}) => {
         const [form] = Form.useForm<Character>();
@@ -317,7 +356,7 @@ const CharacterConstraint = (prop:{
             autoFocusFirstInput
             onFinish={async (values:Character)=>{
                 prop.cons.push(values)
-                actionRef.current?.reload
+                actionRef.current?.reload()
                 return prop.update(JSON.stringify(prop.cons))
             }}
             >
@@ -376,7 +415,7 @@ const CharacterConstraint = (prop:{
             autoFocusFirstInput
             onFinish={async (values:Character)=>{
                 prop.cons.push(values)
-                actionRef.current?.reload
+                actionRef.current?.reload()
                 return prop.update(JSON.stringify(prop.cons))
             }}
             >
@@ -445,7 +484,7 @@ const CharacterConstraint = (prop:{
             label:"表单选择",
             children:(
                 <ProTable<Character>
-                    columns={columns}
+                    columns={columnsForm}
                     actionRef={actionRef}
                     cardBordered
                     request={async () => {
@@ -476,50 +515,260 @@ CharacterConstraint.defaultProps = {
 }
 
 const ProposedConstraint = (prop:{
-    default:Character[]|undefined,
-    form:Character[]|undefined,
+    default:Proposed|undefined,
+    form:Proposed|undefined,
     useForm:boolean,
     update:(arg0: string) => boolean,
     updateForm:(arg0: string) => boolean,
     tableId:number,
     isVirtual:boolean}) => {
+
+        type Row = {type:number,url:string,id:number}
+
+        const getRowsFormConstraint = async (con:Proposed) => {
+            let rows:Row[] = []
+            con.humans.forEach((value,index,array)=>{rows.push({type:0,url:"0:"+value,id:value,})})
+            con.departs.forEach((value,index,array)=>{rows.push({type:1,url:"1:"+value,id:value})})
+            con.section.forEach((value,index,array)=>{rows.push({type:2,url:"2:"+value,id:value})})
+            return rows
+        }
+
+        const addConstraintFormRows = (rows:Row[],con:Proposed) => {
+            rows.forEach((value,index,array)=>{
+                switch (value.type) {
+                    case 0:
+                        con.humans.push(value.id)
+                        break
+                    case 2:
+                        con.departs.push(value.id)
+                        break
+                    case 3:
+                        con.section.push(value.id)
+                }
+            })
+        }
+        const defaults = prop.default??{humans:[],departs:[],section:[]}
+        const forms =prop.form??{humans:[],departs:[],section:[]}
+        const actionRef = useRef<ActionType>();
+        const columnsForm:ProColumns<Row>[] = [
+            {
+                key:"type",
+                title:"指定类型",
+                dataIndex:"type",
+                valueType:"select",
+                request:async () => {
+                    return [
+                        {
+                            value:0,
+                            label:"人员"
+                        },{
+                            value:1,
+                            label:"部门"
+                        },{
+                            value:2,
+                            label:"分部"
+                        } 
+                    ]
+                    
+                }
+            },{
+                key:"type",
+                title:"指定对象字段名称",
+                dataIndex:"id",
+                valueType:"treeSelect",
+                request:async () => {
+                    let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                    return columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
+                }
+            }
+        ]
+
+        const columns:ProColumns<Row>[] = [
+            {
+                key:"type",
+                title:"指定类型",
+                dataIndex:"type",
+                valueType:"select",
+                request:async () => {
+                    return [
+                        {
+                            value:0,
+                            label:"人员"
+                        },{
+                            value:1,
+                            label:"部门"
+                        },{
+                            value:2,
+                            label:"分部"
+                        } 
+                    ]
+                }
+            },{
+                key:"type",
+                title:"指定对象名称",
+                dataIndex:"id",
+                valueType:"select",
+                request:async () => {
+                    let request:{label:string,
+                        value:string}[] = []
+                    let humans:HumanOut[] = (await getDataList(config.fronts.human)).data
+                    humans.forEach((value,index,array)=>{request.push({label:value.name,value:"0:"+value.dataId})})
+                    let departs:DepartOut[] = (await getDataList(config.fronts.human)).data
+                    departs.forEach((value,index,array)=>{request.push({label:value.departName,value:"1:"+value.dataId})})
+                    let sections:SectionOut[] = (await getDataList(config.fronts.human)).data
+                    sections.forEach((value,index,array)=>{request.push({label:value.sectionName,value:"2:"+value.dataId})})
+                    return request
+                }
+            }
+        ]
+
+        const CreateDefault = () => {
+            const [form] = Form.useForm<Row>()
+            return (<ModalForm<Row>
+                title="新建指定对象限制"
+                trigger={
+                <Button type="primary">
+                    <PlusOutlined />
+                    新建
+                </Button>
+            }
+            width={400}
+            form={form}
+            submitTimeout={2000}
+            autoFocusFirstInput
+            onFinish={async (values:Row)=>{
+                let s = values.url.split(":")
+                values.id = parseInt(s[1])
+                values.type = parseInt(s[0])
+                addConstraintFormRows([values],defaults)
+                actionRef.current?.reload()
+                return prop.update(JSON.stringify(defaults))
+            }}
+            >
+                <ProFormTreeSelect 
+                    placeholder="人员|部门|分部"
+                    allowClear
+                    name="url"
+                    width="md"
+                    label="指定对象"
+                    required
+                    request={async ()=> {
+                        let human:{label:string,
+                            value:string}[] = []
+                        let depart:{label:string,
+                            value:string}[] = []
+                        let section:{label:string,
+                            value:string}[] = []    
+                        let humans:HumanOut[] = (await getDataList(config.fronts.human)).data
+                        humans.forEach((value,index,array)=>{human.push({label:value.name,value:"0:"+value.dataId})})
+                        let departs:DepartOut[] = (await getDataList(config.fronts.human)).data
+                        departs.forEach((value,index,array)=>{depart.push({label:value.departName,value:"1:"+value.dataId})})
+                        let sections:SectionOut[] = (await getDataList(config.fronts.human)).data
+                        sections.forEach((value,index,array)=>{section.push({label:value.sectionName,value:"2:"+value.dataId})})
+                        return [
+                            {
+                                value:"0",
+                                label:"人员",
+                                selectable:false,
+                                children:human
+                            },{
+                                value:"1",
+                                label:"部门",
+                                selectable:false,
+                                children:depart
+                            },{
+                                value:"2",
+                                label:"分部",
+                                selectable:false,
+                                children:section
+                            },
+                        ]
+                    }}
+                    tooltip="指定拥有该权限的人员"
+                />
+            </ModalForm>)
+        }
+
+        const CreateForms = () => {
+            const [form] = Form.useForm<Row>()
+            return (<ModalForm<Row>
+                title="新建指定对象限制"
+                trigger={
+                <Button type="primary">
+                    <PlusOutlined />
+                    新建
+                </Button>
+            }
+            width={400}
+            form={form}
+            submitTimeout={2000}
+            autoFocusFirstInput
+            onFinish={async (values:Row)=>{
+                addConstraintFormRows([values],forms)
+                actionRef.current?.reload()
+                return prop.updateForm(JSON.stringify(forms))
+            }}
+            >
+                <ProFormSelect 
+                    placeholder="类型"
+                    allowClear
+                    name="id"
+                    width="md"
+                    label="指定对象"
+                    required                    
+                    tooltip="人员|部门|分部"
+                    request={async () => {
+                        return [
+                            {
+                                value:0,
+                                label:"人员"
+                            },{
+                                value:1,
+                                label:"部门"
+                            },{
+                                value:2,
+                                label:"分部"
+                            } 
+                        ]                    
+                    }}
+                />
+                <ProFormTreeSelect 
+                    placeholder="指定对象赋值字段"
+                    allowClear
+                    name="type"
+                    width="md"
+                    label="指定对象"
+                    required
+                    
+                    tooltip="请选择取值字段"
+                    request={async () => {
+                        let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                        return columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
+                    }}
+                />
+                
+            </ModalForm>)
+        }
+
+
+
         const alls = [{
             key:"default",
             label:"默认",
             children:(
-            <ProForm
-                initialValues={prop.default}
-                onFinish={async (values)=>{
-                    return prop.update(JSON.stringify(values))
+                <ProTable<Row>
+                columns={columns}
+                actionRef={actionRef}
+                cardBordered
+                request={async () => {
+                    return getRowsFormConstraint(defaults)
                 }}
-                submitter={{
-                    searchConfig:{
-                        submitText:"确定",
-                        resetText:"重置"
-                    }
+                headerTitle="角色限制"
+                pagination={{
+                    pageSize: 10,
                 }}
-            >
-                <ProFormDigit
-                    label="最小安全等级"
-                    name="start"
-                    width="sm"
-                    fieldProps={{precision:0}}
-                    min={0}
-                    max={100}
-                    tooltip="最小0最大100"
-                    required = {true}
-                />
-                <ProFormDigit
-                    label="最大安全等级"
-                    name="end"
-                    fieldProps={{precision:0}}
-                    min={0}
-                    max={100}
-                    width="sm"
-                    tooltip="最小0最大100"
-                    required = {true}
-                />
-            </ProForm>)
+                toolBarRender={()=>[<CreateDefault key={"create"}/>]}
+            />)
             },
         ]
         if (prop.useForm)
@@ -527,54 +776,19 @@ const ProposedConstraint = (prop:{
                 key:"forms",
                 label:"表单选择",
                 
-                children:(
-                    <ProForm 
-                    initialValues={prop.form}
-                    onFinish={async (values)=>{
-                        return prop.updateForm(JSON.stringify(values))
-                    }}    
-                    submitter={{
-                        searchConfig:{
-                            submitText:"确定",
-                            resetText:"重置"
-                        }
+                children:(<ProTable<Row>
+                    columns={columns}
+                    actionRef={actionRef}
+                    cardBordered
+                    request={async () => {
+                        return getRowsFormConstraint(forms)
                     }}
-                >
-                    <ProFormSelect
-                        label="最小安全等级"
-                        name="start"
-                        width="sm"
-                        request={async ()=>{
-                            let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
-                            return columns.filter((column)=>{return column.columnType===columnType.number})
-                                .map((value,index,array)=>{
-                                    return {
-                                        value:value.columnId,
-                                        label:value.columnDataName
-                                    }
-                                })
-                        }}
-                        placeholder="请选择代表最小安全等级的字段"
-                        required = {true}
-                    />
-                    <ProFormSelect
-                        label="最大安全等级"
-                        name="end"
-                        width="sm"
-                        request={async ()=>{
-                            let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
-                            return columns.filter((column)=>{return column.columnType===columnType.number})
-                                .map((value,index,array)=>{
-                                    return {
-                                        value:value.columnId,
-                                        label:value.columnDataName
-                                    }
-                                })
-                        }}
-                        placeholder="请选择代表最大安全等级的字段"
-                        required = {true}
-                    />
-                </ProForm>)
+                    headerTitle="角色限制"
+                    pagination={{
+                        pageSize: 10,
+                    }}
+                    toolBarRender={()=>[<CreateForms key={"create"}/>]}
+                />)
             })
         return (
         <Tabs
@@ -590,7 +804,7 @@ ProposedConstraint.defaultProps = {
 }
 
 
-function replacer(key, value) {
+function replacer(key:string, value:any) {
     if(value instanceof Map) {
         let object = {};
         console.log(value)
@@ -604,7 +818,7 @@ function replacer(key, value) {
     }
 }
 
-function receiver(key, value) {
+function receiver(key:string, value:any) {
     if(key === "table" || key === "body") {
       let map =   new Map<string,string>()
       Object.entries(value).forEach((value)=>{
