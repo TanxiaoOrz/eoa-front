@@ -89,7 +89,7 @@ const BackTableConcrete = () => {
 
     const TableBase = ()=>{
         return (
-            <div style={{height:"85vh",display:"flex"}}>
+            <div style={{height:"85vh",display:"flex",background:"#fdfdfd",paddingTop:"30px"}}>
             <ProForm 
                 style={{
                     margin:"0 auto"
