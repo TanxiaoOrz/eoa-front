@@ -126,3 +126,34 @@ export type SectionOut = {
     belongSectionName:string
     managerName:string
 }
+
+export type ContentOut = {
+    dataId:number
+    isDeprecated:boolean
+    contentName:string
+    contentRemark:string
+    creator:string
+    createTime:string
+    defaultEdit:string
+    defaultCreate:string
+    defaultDelete:string
+    defaultShare:string
+    leadContent:number
+    creatorName:string
+    leadName:string
+}
+
+export type FileOut = {
+    dataId:number
+    isDeprecated:boolean
+    fileName:string
+    fileRoute:string
+    creator:number
+    createTime;Date
+    editAuthority:string
+    viewAuthority:string
+    deleteAuthority:string
+    leadContent:string
+    creatorName:string
+    leadName:string
+}
