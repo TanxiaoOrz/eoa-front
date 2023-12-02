@@ -6,10 +6,11 @@ import url from '../../const/url.js';
 import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
 import { ModuleOut } from '../../const/out.tsx';
+import config from '../../const/config.js';
 
 const {Title} = Typography
 
-const baseURL = "/api/v1/table/back/module"
+const baseURL = config.backs.module
 
 type FormModule = {
   moduleTypeName: string
