@@ -1,4 +1,4 @@
-import { FolderOpenTwoTone, PlusOutlined, ProfileFilled } from '@ant-design/icons';
+import { FolderAddTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown, Form, Layout, Typography } from 'antd';
 import React, { useRef } from 'react';
@@ -19,6 +19,7 @@ type ContentInSimple = {
 
 const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>,leadContent:number|undefined}) => {
   const [form] = Form.useForm<ContentInSimple>();
+  let jump:boolean = false
   return (
     <ModalForm<ContentInSimple>
       title="新建目录"
@@ -30,6 +31,24 @@ const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>
       }
       width={400}
       form={form}
+      submitter={{
+        searchConfig: {
+          submitText: '新建',
+          resetText: '取消',
+        },
+        render:(prop,defaultDoms)=>{
+          return [
+            ...defaultDoms,
+            <Button
+              key="jump"
+              type='primary'
+              onClick={()=>{
+                jump = true
+                prop.submit()
+              }}>新建并跳转</Button>
+          ]
+        }
+      }}
       submitTimeout={2000}
       autoFocusFirstInput
       onFinish={async (values:ContentInSimple)=>{
@@ -39,6 +58,8 @@ const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>
           if (prop.action.current!==undefined)
             prop.action.current.reload();
         }
+        if (jump && dataId !== -1)
+          window.location.assign(url.backUrl.content_concrete.replace("{id}",dataId+""))
         return dataId !== -1
       }}
       modalProps={{
@@ -50,14 +71,14 @@ const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>
           name="contentName"
           label="目录名称"
           tooltip="最长为33位"
-          placeholder="请输入应用名称"
+          placeholder="请输入目录名称"
           required = {true}/>
         <ProFormTextArea
           width="md"
           name="contentRemark"  
           label="目录备注"
           tooltip="最长333位"
-          placeholder="请输入应用备注"
+          placeholder="请输入目录备注"
           required={false}/>
         <ProFormTreeSelect
           width="md"
@@ -174,7 +195,8 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
             }
            }
            onClick={()=>{
-            window.location.assign(url.backUrl.content.replace("{id}",entity.dataId+""))
+            // alert(url.backUrl.content_concrete.replace("{id}",entity.dataId+""))
+            window.location.assign(url.backUrl.content_concrete.replace("{id}",entity.dataId+""))
            }}>编辑</Dropdown.Button>
       )
     }
@@ -248,7 +270,7 @@ const BackContent = (prop:{leadContent:number|undefined}) => {
         <Layout style={{ minHeight: '100vh'}}>
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
             <div style={{display:'flex'}}>
-            <ProfileFilled style={{fontSize:"36px",marginTop:"15px",marginLeft:"5px"}}/>
+            <FolderAddTwoTone  style={{fontSize:"36px",marginTop:"15px",marginLeft:"5px"}}/>
             <Title level={2} style={{color:'GrayText', marginLeft:'10px',marginBottom:'15px'}}>{title}</Title>
             </div>
         </Header>
