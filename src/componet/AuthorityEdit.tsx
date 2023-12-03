@@ -229,6 +229,7 @@ const CreatorConstraint = (prop:{
                 label="创建人"
                 name="self"
                 options={items}
+                allowClear={false}
                 tooltip="创建人自己是否拥有该权限"
             />
                 
@@ -237,12 +238,14 @@ const CreatorConstraint = (prop:{
                     label="直属领导"
                     name="leader"
                     options={items}
+                    allowClear={false}
                     tooltip="创建人领导是否拥有该权限"
                 />
                 <ProFormSelect
                 label="上级领导"
                 name="leaderRecursion"
                 options={items}
+                allowClear={false}
                 tooltip="创建人领导及其领导是否拥有该权限"
                 />
             </ProForm.Group>
@@ -251,6 +254,7 @@ const CreatorConstraint = (prop:{
                 label="同部门"
                 name="depart"
                 options={items}
+                allowClear={false}
                 tooltip="创建人同部门是否拥有该权限"
             />
             <ProForm.Group>
@@ -258,12 +262,14 @@ const CreatorConstraint = (prop:{
                     label="同分部"
                     name="section"
                     options={items}
+                    allowClear={false}
                     tooltip="创建人同分布是否拥有该权限"
                 />
                 <ProFormSelect
                     label="上级分部"
                     name="sectionRecursive"
                     options={items}
+                    allowClear={false}
                     tooltip="创建人分布及其上级分部是否拥有该权限"
                 />
             </ProForm.Group>
@@ -1027,8 +1033,8 @@ export const AuthorityEdit = (prop:{
 
     const divStyle = {display:"flex" ,justifyContent:"center", background:"#fafafa", height:"72vh"}
 
-    console.log(authority)
-    console.log(JSON.parse(authority.body.get("createConstraint")+""))
+    // console.log(authority)
+    // console.log(JSON.parse(authority.body.get("createConstraint")+""))
     const tabs = [
         {
             key:"all",
@@ -1094,5 +1100,6 @@ export const AuthorityEdit = (prop:{
 }
 
 AuthorityEdit.defaultProps = {
-    tableId:0
+    tableId:0,
+    isVirtual: true
 }
