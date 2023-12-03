@@ -5,9 +5,10 @@
         table_concrete:'/back_table/{id}',
         column:'/back_column',
         content:'/back_content',
-        content_concrete:'/back_table/{id}'
+        content_concrete:'/back_content/{id}'
     },
     frontUrl:{
-        humanResource:"/human_resource/"
+        humanResource:"/human_resource/",
+        content_concrete:'/front_content/'
     }
 }

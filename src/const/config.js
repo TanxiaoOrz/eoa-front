@@ -19,6 +19,7 @@ export default {
         depart:"/api/v1/organization/front/depart",
         section:"/api/v1/organization/front/section",
         content:"/api/v1/content/front/content",
-        file:"/api/v1/content/front/file"
+        file:"/api/v1/content/front/file",
+        upload:"/api/v1/content/front/upload"
     }
 }
