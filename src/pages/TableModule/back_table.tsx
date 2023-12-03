@@ -86,7 +86,8 @@ const TableList = (prop:{isvirtual:boolean}) => {
       width:48*2,
       render:(dom,entity,index,action) => [
         <a href={url.frontUrl.humanResource+entity.creator} key={"href"+entity.creator}>{entity.createName}</a>
-      ]
+      ],
+      hideInSearch:true
     },
     {
       key:'createTimeShow',

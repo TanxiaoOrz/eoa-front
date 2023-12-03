@@ -122,14 +122,13 @@ export type SectionOut = {
     sectionIntroduction:string
     createTime:string
     photo:number
-
     belongSectionName:string
     managerName:string
 }
 
 export type ContentOut = {
     dataId:number
-    isDeprecated:boolean
+    deprecated:boolean
     contentName:string
     contentRemark:string
     creator:string
@@ -145,7 +144,7 @@ export type ContentOut = {
 
 export type FileOut = {
     dataId:number
-    isDeprecated:boolean
+    deprecated:boolean
     fileName:string
     fileRoute:string
     creator:number

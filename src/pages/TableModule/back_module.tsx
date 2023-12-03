@@ -191,7 +191,8 @@ const ModuleList = () => {
       width:48*2,
       render:(dom,entity,index,action) => [
         <a href={url.frontUrl.humanResource+entity.creatorId} key={"href"+entity.creatorId}>{entity.creatorName}</a>
-      ]
+      ],
+      hideInSearch:true
     },
     {
       key:'createTimeShow',

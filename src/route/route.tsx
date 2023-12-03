@@ -10,6 +10,7 @@ import React from "react";
 import { FrontPage } from "./fornt.tsx";
 import BackTable from "../pages/TableModule/back_table.tsx";
 import BackTableConcrete from "../pages/TableModule/back_table_concrete.tsx";
+import BackContent from "../pages/ContentModule/back_content.tsx";
 
 const Protable = protable
 
@@ -33,6 +34,9 @@ const router = createBrowserRouter([
     },{
       path: "front",
       element: <FrontPage />
+    },{
+      path:"back_content",
+      element: <BackContent />
     }
 
 ]);

@@ -1,14 +1,13 @@
-import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
+import { FolderOpenTwoTone, PlusOutlined, ProfileFilled } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown, Form, Layout, MenuProps , Typography } from 'antd';
+import { Button, Dropdown, Form, Layout, Typography } from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
-import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
+import { deleteData, getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
-import { ContentOut, ModuleOut } from '../../const/out.tsx';
+import { ContentOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
 import { getTree } from '../../utils/tree.tsx';
-import DropdownButton from 'antd/es/dropdown/dropdown-button';
 
 const {Title} = Typography
 
@@ -26,7 +25,7 @@ const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>
       trigger={
         <Button type="primary">
           <PlusOutlined />
-          新建应用
+          新建目录
         </Button>
       }
       width={400}
@@ -34,6 +33,7 @@ const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>
       submitTimeout={2000}
       autoFocusFirstInput
       onFinish={async (values:ContentInSimple)=>{
+        console.log(values)
         let dataId = await newData(config.backs.content,values)
         if (dataId!==-1) {
           if (prop.action.current!==undefined)
@@ -62,9 +62,9 @@ const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>
         <ProFormTreeSelect
           width="md"
           name="leadContent"  
-          label="目录备注"
-          tooltip="最长333位"
-          placeholder="请输入应用备注"
+          label="上级目录"
+          tooltip="不选择代表处于根目录下"
+          placeholder="请选择上级目录,未选择代表处于根目录下"
           initialValue={prop.leadContent}
           request={async ()=>{
             let contents:ContentOut[] = (await getDataList(config.backs.content)).data
@@ -103,6 +103,30 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
       ellipsis: true,
       tip:"备注过长会自动收缩,鼠标放上去查看",
       hideInSearch: true,
+    },{
+      key:"leadContent",
+      title:"上级目录",
+      dataIndex:'leadContent',
+      width:48*2,
+      render:(dom,entity,index,action) => [
+        <a href={url.backUrl.content+"/"+entity.leadContent} key={"href"+entity.leadContent}>{entity.leadName}</a>
+      ],
+      hideInSearch:true,
+    },{
+      key:"deprecated",
+      title:'生效状态',
+      dataIndex:"deprecated",
+      valueType:'select',
+      width:48*2,
+      request:async () => {
+        return [{
+          value:true,
+          label:"废弃"
+        },{
+          value:false,
+          label:"生效"
+        }]
+      },
     },
     {
       key:'creator',
@@ -111,7 +135,8 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
       width:48*2,
       render:(dom,entity,index,action) => [
         <a href={url.frontUrl.humanResource+entity.creator} key={"href"+entity.creator}>{entity.creatorName}</a>
-      ]
+      ],
+      hideInSearch:true
     },
     {
       key:'createTimeShow',
@@ -119,7 +144,7 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
       dataIndex:'createTime',
       valueType: "dateTime",
       width:48*4,
-      hideInSearch:true
+      hideInSearch:true,
     },
     {
       key:'createTime',
@@ -140,7 +165,8 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
             menu={
                 {items:[{
                     key: '1',
-                    label: '删除',
+                    label: '废弃',
+                    danger:true,
                 }],onClick:() => {
                     deleteData(config.backs.content+"/"+entity.dataId).then(
                         (value)=>{if (value) actionRef.current?.reload()}
@@ -204,7 +230,7 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"
-      headerTitle="应用列表"
+      headerTitle="目录列表"
       toolBarRender={() => [
         <CreateContent key="create" action={actionRef} leadContent={prop.leadContent}/>,
       ]}
@@ -213,8 +239,8 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
 };
 
 const BackContent = (prop:{leadContent:number|undefined}) => {
-    let title
-    if (prop.leadContent === undefined)
+    let title:string
+    if (prop.leadContent !== undefined)
         title = "下级目录"
     else
         title = "目录列表"
@@ -222,7 +248,7 @@ const BackContent = (prop:{leadContent:number|undefined}) => {
         <Layout style={{ minHeight: '100vh'}}>
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
             <div style={{display:'flex'}}>
-            <FolderOpenTwoTone style={{fontSize:"36px",marginTop:"15px",marginLeft:"5px"}}/>
+            <ProfileFilled style={{fontSize:"36px",marginTop:"15px",marginLeft:"5px"}}/>
             <Title level={2} style={{color:'GrayText', marginLeft:'10px',marginBottom:'15px'}}>{title}</Title>
             </div>
         </Header>
@@ -235,6 +261,10 @@ const BackContent = (prop:{leadContent:number|undefined}) => {
 
     
   )
+}
+
+BackContent.defaultProps = {
+  leadContent:undefined
 }
 
 export default BackContent;
