@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from "@ant-design/pro-components";
+import { ActionType, ModalForm, ProForm, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from "@ant-design/pro-components";
 import { Button, Dropdown, Form, MenuProps, Modal, Table } from "antd"
 import Title from "antd/lib/typography/Title";
 import React, { useState } from "react";
@@ -112,7 +112,7 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
     }
 }
 
-const updateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect,detaildSelect:DropSelect,actionRef:React.MutableRefObject<ActionType|undefined>}) => {
+const updateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>}) => {
     const [form] = Form.useForm<ColumnOut>()
     const items = [
         {
@@ -178,7 +178,33 @@ const updateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect,detaildSelec
                     label = "字段类型描述"
                     required = {false}
                     name = "columnTypeDescription"
-                    addonAfter = {<ColumnDescription type={form.getFieldValue(columnType)} set={(description:string)=>{form.setFieldValue("columnTypeDescription",description);return true}}}
+                    addonAfter = {
+                    <ColumnDescription 
+                        type={form.getFieldValue(columnType)} 
+                        set={(description:string)=>{form.setFieldValue("columnTypeDescription",description);return true}}
+                        />
+                    }/>
+                <ProFormSelect
+                    width="md"
+                    label = "主表分组"
+                    required = {false}
+                    name = "columnGroup"
+                    readonly
+                    options={prop.groupSelect}/>
+                <ProFormSelect
+                    width="md"
+                    label = "明细分组"
+                    required = {false}
+                    name = "columnDetail"
+                    readonly
+                    options={prop.detaildSelect}/>
+                <ProFormDigit
+                    width="md"
+                    label = "显示排序"
+                    required = {true}
+                    name = "columnDetail"
+                    fieldProps={{precision:0}}/>
+
         </ModalForm>
     )
 }
