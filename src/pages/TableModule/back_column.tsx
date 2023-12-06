@@ -9,6 +9,19 @@ import {deleteData, getDataList, UpdateData} from "../../const/http"
 import { columnType, columnTypeSelect } from "../../const/columnType";
 import {getTree} from '../../utils/tree';
 
+export type ColumnIn = {
+    columnViewName:string,
+    columnDataName:string,
+    columnType:string,
+    columnTypeDescription:string,
+    tableNo:number,
+    columnGroupNo:number,
+    columnViewNo:number,
+    columnDetailNo:number,
+    columnViewDisplay:boolean,
+    virtual:boolean
+}
+
 const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean}) => {
     const trigger = <Button>编辑</Button>
     switch (prop.type) {
@@ -112,8 +125,8 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
     }
 }
 
-const updateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>}) => {
-    const [form] = Form.useForm<ColumnOut>()
+const UpdateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>}) => {
+    const [form] = Form.useForm<ColumnIn>()
     const items = [
         {
           key: '1',
@@ -126,7 +139,7 @@ const updateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSel
         prop.actionRef.current?.reload();
     }
     return (
-        <ModalForm<ColumnOut>
+        <ModalForm<ColumnIn>
             initialValues={prop.column}
             title="编辑字段"
             trigger={
@@ -141,7 +154,111 @@ const updateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSel
             form={form}
             submitTimeout={2000}
             autoFocusFirstInput
-            onFinish={async (values:ColumnOut)=>{
+            onFinish={async (values:ColumnIn)=>{
+                let success:boolean = await UpdateData(config.backs.column+"/"+prop.column.columnId,values)
+                if (success)
+                    prop.actionRef.current?.reload();
+                return success;
+            }}
+            modalProps={{
+                destroyOnClose: true,
+                onCancel: () => console.log('run'),
+            }}>
+                <ProFormText
+                    width="md"
+                    name="columnViewName"
+                    label="字段显示名称"
+                    tooltip="最长为33位"
+                    placeholder="请输入字段显示名称"
+                    required = {true}/>
+                <ProFormText
+                    width="md"
+                    name="columnDataName"
+                    label="字段字段名称"W
+                    tooltip="最长为33位"
+                    placeholder="请输入字段字段名称"
+                    required = {true}
+                    readonly = {!prop.column.virtual}/>
+                <ProFormSelect
+                    width="md"
+                    name = "columnType"
+                    label = "字段类型"
+                    options={columnTypeSelect}
+                    required = {true}
+                    readonly = {!prop.column.virtual}/>
+                <ProFormTextArea
+                    width="md"
+                    label = "字段类型描述"
+                    required = {false}
+                    name = "columnTypeDescription"
+                    addonAfter = {
+                    <ColumnDescription 
+                        type={form.getFieldValue(columnType)} 
+                        set={(description:string)=>{form.setFieldValue("columnTypeDescription",description);return true}}
+                        />
+                    }/>
+                <ProFormSelect
+                    width="md"
+                    label = "主表分组"
+                    required = {false}
+                    name = "columnGroup"
+                    readonly
+                    options={prop.groupSelect}/>
+                <ProFormSelect
+                    width="md"
+                    label = "明细分组"
+                    required = {false}
+                    name = "columnDetail"
+                    readonly
+                    options={prop.detaildSelect}/>
+                <ProFormDigit
+                    width="md"
+                    label = "显示排序"
+                    required = {true}
+                    name = "columnDetail"
+                    fieldProps={{precision:0}}/>
+                 <ProFormSelect
+                    readonly = {true}
+                    width="md"
+                    name="virtual"  
+                    label="虚拟视图字段"
+                    required={true}
+                    options={[{label:'是',value:true},{label:'否',value:false}]}/>
+
+        </ModalForm>
+    )
+}
+
+const CreateColumn = (prop:{virtual:boolean,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>}) => {
+    const [form] = Form.useForm<ColumnIn>()
+    const items = [
+        {
+          key: '1',
+          label: '删除',
+          danger: true
+        }
+      ];
+    const deleteMethod: MenuProps['onClick'] = ()=>{
+        deleteData(config.backs.column+"/"+prop.column.columnId+"?isVirtual="+prop.column.virtual)
+        prop.actionRef.current?.reload();
+    }
+    return (
+        <ModalForm<ColumnIn>
+            initialValues={prop.column}
+            title="编辑字段"
+            trigger={
+                <Dropdown.Button 
+                type="primary"
+                menu={{items,onClick:deleteMethod}}
+                >
+                编辑
+                </Dropdown.Button>
+            }
+            width={400}
+            form={form}
+            submitTimeout={2000}
+            autoFocusFirstInput
+            onFinish={async (values:ColumnIn)=>{
                 let success:boolean = await UpdateData(config.backs.column+"/"+prop.column.columnId,values)
                 if (success)
                     prop.actionRef.current?.reload();
