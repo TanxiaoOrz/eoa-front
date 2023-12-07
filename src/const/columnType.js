@@ -11,24 +11,24 @@ export const columnType = {
 export const columnTypeSelect = [
     {
         label:"单行文本",
-        key:"SINGLE_TEXT"
+        value:'SINGLE_TEXT'
     },{
         label:"多行文本",
-        key:"TEXT"
+        value:'TEXT'
     },{
         label:"数字",
-        key:"NUMBER"
+        value:'NUMBER'
     },{
-        label:"浏览框",
-        key:"BROWSER_BOX"
+        label:"表单浏览框",
+        value:'BROWSER_BOX'
     },{
         label:"选择框",
-        key:"SELECT_ITEM"
+        value:'SELECT_ITEM'
     },{
         label:"时间",
-        key:"DATETIME"
+        value:'DATETIME'
     },{
         label:"文件",
-        key:"FILE"
+        value:'FILE'
     },
 ]

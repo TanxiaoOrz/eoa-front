@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom';
 import { Button, Spin, Tabs, message } from 'antd';
 import url from '../../const/url.js';
 import { AuthorityEdit } from '../../componet/AuthorityEdit.tsx';
+import BackColumn from './back_column.tsx';
+
 
 type TableIn = {
      tableViewName:string
@@ -184,23 +186,15 @@ const BackTableConcrete = () => {
             </div>)
     }
     const ColumnList = () => {
-        const [state, setState] = useState({
-            iFrameHeight: '0px'
-        })
         return (
-            <div style={{width:"80vh",height:"70vh"}}>
-                <iframe src={url.backUrl.column+"?tableId="+tableId}
-                scrolling="yes" frameBorder="0"
-                style={{width:'100%',height:state.iFrameHeight, overflow:'visible'}}
-                onLoad={() => {//iframe高度不超过content的高度即可
-                    let h = document.documentElement.clientHeight - 20;
-                    setState({
-                        "iFrameHeight": h + 'px'
-                    });
+            <div
+                style={{
+                background: '#F5F7FA',
                 }}
-
-                ></iframe>
+            >
+                <BackColumn table={table}/>
             </div>
+            
         )
     }
     return (

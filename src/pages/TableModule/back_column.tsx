@@ -1,13 +1,14 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { ActionType, ModalForm, ProForm, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from "@ant-design/pro-components";
+import { ActionType, ModalForm, ProColumns, ProForm, ProFormDependency, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
 import { Button, Dropdown, Form, MenuProps, Modal, Table } from "antd"
 import Title from "antd/lib/typography/Title";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import config from "../../const/config";
 import { ColumnOut, ContentOut, DropSelect, TableOut } from "../../const/out"
-import {deleteData, getDataList, UpdateData} from "../../const/http"
+import {deleteData, getDataList, newData, UpdateData} from "../../const/http.tsx"
 import { columnType, columnTypeSelect } from "../../const/columnType";
-import {getTree} from '../../utils/tree';
+import {getTree} from '../../utils/tree.tsx';
+import url from "../../const/url.js";
 
 export type ColumnIn = {
     columnViewName:string,
@@ -23,10 +24,13 @@ export type ColumnIn = {
 }
 
 const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean}) => {
+    const [form] = Form.useForm<{isVirtual:boolean,tableId:number,columnId:number}>()
+    const [tableId,setTableId] = useState<number>(0)
+    const [virtual,setVirtual] = useState<boolean>(false)
     const trigger = <Button>编辑</Button>
     switch (prop.type) {
         case columnType.browser :
-            const [form] = Form.useForm<{isVirtual:boolean,tableId:number,columnId:number}>()
+            
             return (
                 <ModalForm
                     title="浏览框编辑"
@@ -34,6 +38,13 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
                         trigger
                     }
                     submitTimeout={2000}
+                    initialValues={
+                        {
+                            isVirtual:false,
+                            tableId:undefined,
+                            columnId:undefined
+                        }
+                    }
                     autoFocusFirstInput
                     form={form}
                     width={300}
@@ -46,30 +57,42 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
                         label="表单类型"
                         placeholder="请选择链接表单"
                         required={true}
-                        options={[
-                            {label:"虚拟视图",key:true},{label:"实体表单",key:false}
-                        ]}/>    
-                    <ProFormTreeSelect
-                        width="md"
-                        name="tableId"  
-                        label="选择表单"
-                        placeholder="请选择链接表单"
-                        required={true}
-                        request={async () => {
-                            let tables:TableOut[] = (await getDataList(config.backs.table+"?isVirtual="+form.getFieldValue("isVirtual"))).data
-                            return tables.map((value,index,array) => {return {title:value.tableViewName,key:value.tableId}})
-                        }}/>    
-                    <ProFormTreeSelect
-                        width="md"
-                        name="显示字段"  
-                        label="选择表单"
-                        placeholder="请选择字段显示字段"
-                        required={true}
-                        request={async () => {
-                            let tables:ColumnOut[] = (await getDataList(config.backs.column,{isVirtual:form.getFieldValue("isVirtual"),tableNo:form.getFieldValue("tableId"),columnDetailNo:0})).data
-                            return tables.map((value,index,array) => {return {title:value.columnDataName,key:value.columnId}})
-                        }}/>  
-                </ModalForm>
+                        request={async () => [
+                            {label:"虚拟视图",value:true},{label:"实体表单",value:false}
+                        ]}
+                        onChange={(value,option)=>{
+                            setVirtual(value === 1)
+                        }}/>
+                        <ProFormTreeSelect
+                            width="md"
+                            name="tableId"  
+                            label="选择表单"
+                            placeholder="请选择链接表单"
+                            required={true}
+                            request={async () => {
+                                let tables:TableOut[] = (await getDataList(config.backs.table,{isVirtual:virtual})).data
+                                return tables.map((value,index,array) => {return {title:value.tableViewName,value:value.tableId}})
+                            }}/>
+
+                        <ProFormDependency name={['isVirtual','tableId']}>
+                            {(object)=>(
+                                <ProFormTreeSelect
+                                    width="md"
+                                    name="columnId"  
+                                    label="选择显示字段"
+                                    placeholder="请选择字段显示字段"
+                                    required={true}
+                                    request={async () => {
+                                        let columns:ColumnOut[] = (await getDataList(config.backs.column,{isVirtual:object.isVirtual,tableNo:object.tableId,columnDetailNo:-1})).data
+                                        let nodes = columns.map((value,index,array) => {return {title:value.columnDataName,label:value.columnDataName,value:value.columnId,key:value.columnId}})
+                                        console.log(nodes)
+                                        return nodes
+                                    }}
+                                />  
+                            )}
+                        </ProFormDependency>   
+                    </ModalForm>
+                   
             )
         case columnType.select :
             return (
@@ -104,6 +127,7 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
                     autoFocusFirstInput
                     width={300}
                     onFinish={async (values:{contentId:number})=>{
+                        console.log(values)
                         return prop.set(JSON.stringify(values));
                     }}>
                     <ProFormTreeSelect
@@ -121,12 +145,13 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
                 </ModalForm>
             )
         default :
-            return (<></>)
+            return (<Button>无需编辑</Button>)
     }
 }
 
-const UpdateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>}) => {
+const UpdateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>,tableNo:number,virtual:boolean}) => {
     const [form] = Form.useForm<ColumnIn>()
+    const [type, setType] = useState<string>(prop.column.columnType)
     const items = [
         {
           key: '1',
@@ -155,6 +180,8 @@ const UpdateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSel
             submitTimeout={2000}
             autoFocusFirstInput
             onFinish={async (values:ColumnIn)=>{
+                values.virtual = prop.virtual
+                values.tableNo = prop.tableNo
                 let success:boolean = await UpdateData(config.backs.column+"/"+prop.column.columnId,values)
                 if (success)
                     prop.actionRef.current?.reload();
@@ -174,7 +201,7 @@ const UpdateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSel
                 <ProFormText
                     width="md"
                     name="columnDataName"
-                    label="字段字段名称"W
+                    label="字段数据库名称"
                     tooltip="最长为33位"
                     placeholder="请输入字段字段名称"
                     required = {true}
@@ -185,84 +212,75 @@ const UpdateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSel
                     label = "字段类型"
                     options={columnTypeSelect}
                     required = {true}
-                    readonly = {!prop.column.virtual}/>
-                <ProFormTextArea
+                    readonly = {!prop.column.virtual}
+                    onChange={(value:string,option) => {
+                        setType(option['data-item'].key)
+                    }}
+                    allowClear = {false}
+                    />
+                <ProFormText
                     width="md"
                     label = "字段类型描述"
                     required = {false}
                     name = "columnTypeDescription"
                     addonAfter = {
                     <ColumnDescription 
-                        type={form.getFieldValue(columnType)} 
+                        type={type} 
                         set={(description:string)=>{form.setFieldValue("columnTypeDescription",description);return true}}
                         />
-                    }/>
+                    }
+                    readonly/>
                 <ProFormSelect
                     width="md"
                     label = "主表分组"
                     required = {false}
-                    name = "columnGroup"
-                    readonly
+                    name = "columnGroupNo"
                     options={prop.groupSelect}/>
                 <ProFormSelect
                     width="md"
                     label = "明细分组"
                     required = {false}
-                    name = "columnDetail"
+                    name = "columnDetailNo"
                     readonly
                     options={prop.detaildSelect}/>
                 <ProFormDigit
                     width="md"
                     label = "显示排序"
                     required = {true}
-                    name = "columnDetail"
+                    name = "columnViewNo"
+                    readonly
                     fieldProps={{precision:0}}/>
-                 <ProFormSelect
-                    readonly = {true}
-                    width="md"
-                    name="virtual"  
-                    label="虚拟视图字段"
-                    required={true}
-                    options={[{label:'是',value:true},{label:'否',value:false}]}/>
-
         </ModalForm>
     )
 }
 
-const CreateColumn = (prop:{virtual:boolean,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>}) => {
+const CreateColumn = (prop:{virtual:boolean,groupSelect:DropSelect[],detaildSelect:DropSelect[],actionRef:React.MutableRefObject<ActionType|undefined>,tableNo:number}) => {
     const [form] = Form.useForm<ColumnIn>()
-    const items = [
-        {
-          key: '1',
-          label: '删除',
-          danger: true
-        }
-      ];
-    const deleteMethod: MenuProps['onClick'] = ()=>{
-        deleteData(config.backs.column+"/"+prop.column.columnId+"?isVirtual="+prop.column.virtual)
-        prop.actionRef.current?.reload();
-    }
+    const [type, setType] = useState<string>("")
     return (
         <ModalForm<ColumnIn>
-            initialValues={prop.column}
-            title="编辑字段"
+            title="新建字段"
             trigger={
-                <Dropdown.Button 
+                <Button 
                 type="primary"
-                menu={{items,onClick:deleteMethod}}
                 >
-                编辑
-                </Dropdown.Button>
+                新建
+                </Button>
             }
             width={400}
             form={form}
             submitTimeout={2000}
             autoFocusFirstInput
             onFinish={async (values:ColumnIn)=>{
-                let success:boolean = await UpdateData(config.backs.column+"/"+prop.column.columnId,values)
-                if (success)
+                values.virtual = prop.virtual
+                values.tableNo = prop.tableNo
+                console.log(values)
+                let id:number = await newData(config.backs.column,values)
+                if (id>0) {
                     prop.actionRef.current?.reload();
-                return success;
+                    return true;
+                }
+                return false
             }}
             modalProps={{
                 destroyOnClose: true,
@@ -278,48 +296,54 @@ const CreateColumn = (prop:{virtual:boolean,groupSelect:DropSelect[],detaildSele
                 <ProFormText
                     width="md"
                     name="columnDataName"
-                    label="字段字段名称"W
+                    label="字段数据库名称"
                     tooltip="最长为33位"
                     placeholder="请输入字段字段名称"
                     required = {true}
-                    readonly = {!prop.column.virtual}/>
+                />
                 <ProFormSelect
                     width="md"
                     name = "columnType"
                     label = "字段类型"
-                    options={columnTypeSelect}
+                    request={async()=>columnTypeSelect}
                     required = {true}
-                    readonly = {!prop.column.virtual}/>
-                <ProFormTextArea
-                    width="md"
+                    allowClear = {false}
+                    onChange={(value:string,option) => {
+                        console.log(value)
+                        console.log(option)
+                        // console.log(option)
+                        console.log(columnTypeSelect)
+                        setType(value)
+                    }}
+                />
+                <ProFormText
+                    width="sm"
                     label = "字段类型描述"
                     required = {false}
                     name = "columnTypeDescription"
                     addonAfter = {
                     <ColumnDescription 
-                        type={form.getFieldValue(columnType)} 
+                        type={type} 
                         set={(description:string)=>{form.setFieldValue("columnTypeDescription",description);return true}}
                         />
-                    }/>
+                    }
+                    readonly/>
                 <ProFormSelect
                     width="md"
                     label = "主表分组"
                     required = {false}
-                    name = "columnGroup"
-                    readonly
+                    name = "columnGroupNo"
                     options={prop.groupSelect}/>
                 <ProFormSelect
                     width="md"
                     label = "明细分组"
                     required = {false}
-                    name = "columnDetail"
-                    readonly
+                    name = "columnDetailNo"
                     options={prop.detaildSelect}/>
                 <ProFormDigit
                     width="md"
                     label = "显示排序"
-                    required = {true}
-                    name = "columnDetail"
+                    name = "columnViewNo"
                     fieldProps={{precision:0}}/>
 
         </ModalForm>
@@ -353,19 +377,15 @@ const NewGroupOrDetail = (prop:{add:(name:string)=>boolean,type:string}) => {
     )
 }
 
-
+const toNovel = (names:string[]) => {
+    return  names.map((value,index,array)=>{
+        return (<li tabIndex={index}>{value}</li>)
+    })
+}
 
 const ColumnGroup = (prop:{table:TableOut})=>{
 
-    const toNovel = (names:string[]) => {
-        let str = ""
-        names.forEach((value,index,array)=>{
-            str += ("<p>"+(index+1)+" ")
-            str += value
-            str += " </p>"
-        })
-        return str
-    }
+    
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [groups,setGroups] = useState(toNovel(prop.table.groupNames))
@@ -393,6 +413,10 @@ const ColumnGroup = (prop:{table:TableOut})=>{
         <Button type="primary" onClick={showModel}>查看字段分组</Button>
         <Modal title="字段分组信息"
             open={isModalOpen}
+            onCancel={() => {
+                setIsModalOpen(false);
+            }}
+            width={350}
             footer={()=>(
                 <>
                     <NewGroupOrDetail 
@@ -406,14 +430,185 @@ const ColumnGroup = (prop:{table:TableOut})=>{
                 </>
             )}
         >
-            <Title>主表组别</Title>
-            <>{groups}</>    
-            <Title>明细组别</Title>
-            <>{detailNames}</>      
+            <div style={{display:"flex",justifyContent:"center"}}>
+                <ol>
+                    <Title level={5}>主表分组</Title>
+                    {groups}
+                </ol>
+                <ol></ol>    
+                <ol>
+                    <Title level={5}>明细子表</Title>
+                    {detailNames}
+                </ol>
+            </div>    
         </Modal>
     </>)
 }
 
-const ColumnList = (prop:{table:TableOut})=>{
+const BackColumn = (prop:{table:TableOut|undefined})=>{
+    const actionRef = useRef<ActionType>();
+    const columnsList: ProColumns<ColumnOut>[] = [
+        {
+            key:'id',
+            title:'字段编号',
+            valueType:'indexBorder',
+            dataIndex:'columnId',
+            width:'48',
+            align:'center',
+            hideInSearch:true
+        },{
+            key:'name',
+            title:'字段名称',
+            dataIndex:'columnViewName',
+        },{
+            key:'dataName',
+            title:'数据库名称',
+            dataIndex:'columnDataName'
+        },{
+            key:'type',
+            title:'字段类型',
+            valueType:'select',
+            dataIndex:'columnType',
+            request: async () =>{
+                return columnTypeSelect;
+            }
+        },{
+            key:'order',
+            title:'显示顺序',
+            valueType:'index',
+            dataIndex:'columnViewNo'
+        },{
+            key:'group',
+            title:'主表分组',
+            valueType:'select',
+            dataIndex:'columnGroupNo',
+            request: async () => {
+                if (prop.table === undefined)
+                    return []
+                return prop.table.groupSelect
+            }
+        },{
+            key:'detail',
+            title:'明细分组',
+            valueType:'select',
+            dataIndex:'columnDetailNo',
+            request: async () => {
+                if (prop.table === undefined)
+                    return []
+                return prop.table.detailSelect
+            }
+        },{
+            key:'creator',
+            title:'创建者',
+            dataIndex:'creator',
+            width:48*2,
+            render:(dom,entity,index,action) => [
+              <a href={url.frontUrl.humanResource+entity.creator} key={"href"+entity.creator}>{entity.creatorName}</a>
+            ],
+            hideInSearch:true
+        },{
+            key:'createTimeShow',
+            title:'创建时间',
+            dataIndex:'createTime',
+            valueType: "dateTime",
+            width:48*4,
+            hideInSearch:true,
+        },{
+            key:'createTime',
+            title:'创建时间',
+            dataIndex:'createTime',
+            valueType:"dateTimeRange",
+            hideInTable:true
+        },{
+            key:'action',
+            title:'操作',
+            dataIndex:"columnId",
+            width:48*3,
+            hideInSearch:true,
+            render:(dom,entity,index,action)=>{
+                if (prop.table === undefined)
+                return (<></>)
+                return (
+                    <UpdateColumn column={entity} groupSelect={prop.table.groupSelect} detaildSelect={prop.table.detailSelect} actionRef={actionRef} tableNo={entity.tableNo} virtual={entity.virtual}/>
+                )
+            }
+        }
+    ]
 
+    return (
+        <ProTable<ColumnOut> 
+            columns={columnsList}
+            actionRef={actionRef}
+            cardBordered
+            request={async (params,
+                sort,
+                filter
+              ) => {
+                if (prop.table !== undefined) {
+                    params.tableNo = prop.table.tableId
+                    params.virtual = prop.table.virtual
+                }
+                return getDataList(config.backs.column, params)
+              }
+            }
+            editable={{
+                type: 'multiple',
+              }}
+            columnsState={{
+            persistenceKey: 'pro-table-singe-demos',
+            persistenceType: 'localStorage',
+            onChange(value) {
+                console.log('value: ', value);
+            },
+            }}
+            rowKey="id"
+            search={{
+            labelWidth: 'auto',
+            }}
+            options={{
+            setting: {
+                listsHeight: 400,
+            },
+            }}
+            form={{
+            // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
+            syncToUrl: (values, type) => {
+                if (type === 'get') {
+                return {
+                    ...values,
+                    created_at: [values.startTime, values.endTime],
+                };
+                }
+                return values;
+            },
+            }}
+            pagination={{
+            pageSize: 10,
+            onChange: (page) => console.log(page),
+            }}
+            dateFormatter="string"
+            headerTitle="字段列表"
+            toolBarRender={() => {
+                if (prop.table === undefined)
+                    return []
+                let create = [
+                    <CreateColumn 
+                        virtual={prop.table.virtual} 
+                        actionRef={actionRef}
+                        groupSelect={prop.table.groupSelect}
+                        detaildSelect={prop.table.detailSelect}
+                        tableNo={prop.table.tableId}
+                    />,
+                    <ColumnGroup table={prop.table}/>
+                ]
+                return create
+            }}
+        />
+    )
 }
+
+BackColumn.defaultProps = {
+    table:undefined
+}
+
+export default BackColumn

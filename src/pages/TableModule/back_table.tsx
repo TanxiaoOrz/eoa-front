@@ -118,6 +118,7 @@ const TableList = (prop:{isvirtual:boolean}) => {
         />
     }
   ]
+  const query = new URLSearchParams(useLocation().search);
   return (
     <ProTable<TableOut>
       columns={columns}
@@ -135,8 +136,11 @@ const TableList = (prop:{isvirtual:boolean}) => {
         // console.log(params)
         // console.log(sort);
         // console.log(filter);
-        let paramsNew = {params,isVirtual:isVirtual}
-        return getDataList(baseURL,paramsNew)
+        let moduleNo = query.get("moduleNo");
+        params.isVirtual = isVirtual
+        if (moduleNo!==null)
+          params.moduleNo = moduleNo
+        return getDataList(baseURL,params)
       }}
       editable={{
         type: 'multiple',
@@ -264,19 +268,6 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
           label="所属模块"
           tooltip=""
           required = {true}
-          fieldProps={{
-            suffixIcon: null,
-            filterTreeNode: true,
-            showSearch: true,
-            popupMatchSelectWidth: false,
-            labelInValue: true,
-            autoClearSearchValue: true,
-            multiple: false,
-            treeNodeFilterProp: 'title',
-            fieldNames: {
-              label: 'title',
-            },
-          }}
           request={async () => {
             let moduleList:ModuleOut[] = (await getDataList(config.backs.module)).data
             const valueEnumModule:{title:string,value:number,children:any[]}[] = moduleList.map(
