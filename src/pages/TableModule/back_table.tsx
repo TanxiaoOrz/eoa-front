@@ -1,10 +1,10 @@
 import { FolderOpenTwoTone, PlusOutlined, SnippetsFilled } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Form, Layout, List, MenuProps, Tabs, Typography } from 'antd';
+import { Button, Dropdown, Form, Layout, List, MenuProps, Tabs, Typography } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { Content, Header } from 'antd/es/layout/layout';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
+import { deleteData, getDataList, newData } from '../../const/http.tsx';
 import { PaginationAlign, PaginationPosition } from 'antd/es/pagination/Pagination';
 import { ModuleOut, TableOut } from '../../const/out.tsx';
 import { ActionType, ModalForm, ProFormText, ProFormTextArea, ProColumns, ProTable, ProFormSelect, ProFormTreeSelect } from '@ant-design/pro-components';

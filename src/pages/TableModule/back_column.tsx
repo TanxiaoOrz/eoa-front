@@ -1,6 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { ActionType, ModalForm, ProColumns, ProForm, ProFormDependency, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
-import { Button, Dropdown, Form, MenuProps, Modal, Table } from "antd"
+import { ActionType, ModalForm, ProColumns, ProFormDependency, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
+import { Button, Dropdown, Form, MenuProps, Modal } from "antd"
 import Title from "antd/lib/typography/Title";
 import React, { useRef, useState } from "react";
 import config from "../../const/config";
@@ -25,7 +25,6 @@ export type ColumnIn = {
 
 const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean}) => {
     const [form] = Form.useForm<{isVirtual:boolean,tableId:number,columnId:number}>()
-    const [tableId,setTableId] = useState<number>(0)
     const [virtual,setVirtual] = useState<boolean>(false)
     const trigger = <Button>编辑</Button>
     switch (prop.type) {
@@ -379,7 +378,7 @@ const NewGroupOrDetail = (prop:{add:(name:string)=>boolean,type:string}) => {
 
 const toNovel = (names:string[]) => {
     return  names.map((value,index,array)=>{
-        return (<li tabIndex={index}>{value}</li>)
+        return (<li key={"main"+value} tabIndex={index}>{value}</li>)
     })
 }
 
@@ -593,13 +592,14 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
                     return []
                 let create = [
                     <CreateColumn 
+                        key="create"
                         virtual={prop.table.virtual} 
                         actionRef={actionRef}
                         groupSelect={prop.table.groupSelect}
                         detaildSelect={prop.table.detailSelect}
                         tableNo={prop.table.tableId}
                     />,
-                    <ColumnGroup table={prop.table}/>
+                    <ColumnGroup key="group" table={prop.table}/>
                 ]
                 return create
             }}

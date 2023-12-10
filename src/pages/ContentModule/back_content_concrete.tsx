@@ -1,10 +1,10 @@
-import { PageContainer, ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
+import { PageContainer, ProForm, ProFormDatePicker, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import React, { useEffect, useState } from 'react';
-import { ContentOut, ModuleOut, TableOut } from '../../const/out';
+import { ContentOut } from '../../const/out';
 import { UpdateData, deleteData, getDataList, getDataOne } from '../../const/http.tsx';
 import config from '../../const/config';
 import { useParams } from 'react-router-dom';
-import { Button, Spin, Tabs, message } from 'antd';
+import { Button, Tabs, message } from 'antd';
 import url from '../../const/url.js';
 import { AuthorityEdit } from '../../componet/AuthorityEdit.tsx';
 import { getTree } from '../../utils/tree.tsx';
