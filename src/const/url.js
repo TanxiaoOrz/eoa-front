@@ -8,7 +8,8 @@
         content_concrete:'/back_content/{id}'
     },
     frontUrl:{
-        humanResource:"/human_resource/",
-        content_concrete:'/front_content/'
+        humanResource:"/human/",
+        content_concrete:'/content/',
+        form_concrete:'/form/'
     }
 }

@@ -87,7 +87,7 @@ export type HumanOut = {
     supporter:number
     photo:number
     signature:string
-    lastLogin;Date
+    lastLogin:Date
     safety:number
 
     departName:string
@@ -100,7 +100,7 @@ export type DepartOut = {
     departName:string
     departCode:string
     fullName:string
-    belongDepart:number
+    benumberDepart:number
     belongSection:number
     departManager:number
     departIntroduction:string
@@ -148,11 +148,47 @@ export type FileOut = {
     fileName:string
     fileRoute:string
     creator:number
-    createTime;Date
+    createTime:Date
     editAuthority:string
     viewAuthority:string
     deleteAuthority:string
     leadContent:string
     creatorName:string
     leadName:string
+}
+
+export type ColumnSimpleOut = {
+    columnViewName:string,
+    columnType:string,
+    columnTypeDescription:string,
+}
+
+export type Group = {
+    groupId:number
+    groupName:string
+    columns:any
+    values:any
+}
+
+export type Detail = {
+    detailId:number
+    detailName:string
+    columns:any
+    values:any[]
+}
+
+export type FormOut = {
+    dataId:number
+    requestId:number
+    tableId:number
+    tableName:string
+    requestStatus:number
+    creator:number
+    createTime:Date
+    viewAuthority:string
+    creatorName:string
+    latestEditTime:Date
+    virtual:boolean
+    groups:Group[]
+    details:Detail[]
 }

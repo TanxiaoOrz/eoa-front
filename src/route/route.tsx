@@ -13,6 +13,7 @@ import BackTableConcrete from "../pages/TableModule/back_table_concrete.tsx";
 import BackContent from "../pages/ContentModule/back_content.tsx";
 import BackContentConcrete from "../pages/ContentModule/back_content_concrete.tsx";
 import FrontContentConcrete from "../pages/ContentModule/front_content.tsx";
+import FrontFormConcrete from "../pages/TableModule/front_form_concrete.tsx";
 
 const Protable = protable
 
@@ -49,6 +50,9 @@ const fronts = [
   },{
     path:"content/:contentId",
     element: <FrontContentConcrete />
+  },{
+    path:"form/:formId",
+    element: <FrontFormConcrete />
   }
 ]
 
