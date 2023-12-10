@@ -9,6 +9,7 @@ import url from '../../const/url.js';
 import { AuthorityEdit } from '../../componet/AuthorityEdit.tsx';
 import { getTree } from '../../utils/tree.tsx';
 import BackContent from './back_content.tsx';
+import PageWait from '../../componet/PageWait.tsx';
 
 const BackContentConcrete = () => {
     
@@ -30,15 +31,7 @@ const BackContentConcrete = () => {
     })
 
     if (content === undefined || content === null)
-        return (
-            <div
-                style={{
-                background: '#F5F7FA',
-                display:"flex",
-                height:"98vh"
-                }} >
-                    <Spin size='large' style={{margin:"auto"}}></Spin>
-            </div>)
+        return (<PageWait />)
     const upDateContent = async () => {
         return await UpdateData(config.backs.content+"/"+contentId,content);
     }
