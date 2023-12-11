@@ -1,15 +1,49 @@
 import React, { useEffect } from "react"
-import { FormOut } from "../../const/out.tsx"
+import { ColumnSimpleOut, FormOut, Group } from "../../const/out.tsx"
 import { useLocation, useParams } from "react-router"
 import PageWait from "../../componet/PageWait.tsx"
-import { message } from "antd"
+import { Form, message } from "antd"
 import { getDataOne } from "../../const/http.tsx"
 import config from "../../const/config.js"
+import { ProForm, ProFormDateTimePicker, ProFormDigit, ProFormGroup, ProFormText, ProFormTextArea } from "@ant-design/pro-components"
+import { columnType, transportInput } from "../../const/columnType.tsx"
 
 type FormIn = {
     tableId:number
     mains:any
     details:any[][]
+}
+
+const GroupForm = (prop:{group:Group,getEditAble:(columnName:string)=>boolean}) => {
+    const group = prop.group
+    const children:React.JSX.Element[] = []
+    let count = 0
+    let row:React.JSX.Element[] = []
+    for (let [key,value] of Object.entries(group.columns)) {
+        row.push(transportInput(key,group.values,value as ColumnSimpleOut,prop.getEditAble(key)))    
+        count++
+        if (count == 2 || (value as ColumnSimpleOut).columnType == columnType.areaText) {
+            children.push(
+                <ProFormGroup>
+                    row
+                </ProFormGroup>
+            )
+            row = []
+            count = 0
+        }
+    }
+    if (count === 1) {
+        children.push(
+            <ProFormGroup>
+                row
+            </ProFormGroup>
+        )
+    }
+    return (
+    <ProForm.Group
+        title = {group.groupName}
+        children = {children}
+    />)
 }
 
 
@@ -71,6 +105,9 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[]}) =>
     })
     if (formOut === null)
         return (<PageWait />)
+    window.sessionStorage.setItem("tableId",formOut.tableId.toString())
+    window.sessionStorage.setItem("isVirtual",formOut.virtual.toString())
+    window.sessionStorage.setItem("formId",formOut.dataId.toString())
     
 }
 

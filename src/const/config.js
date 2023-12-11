@@ -20,6 +20,7 @@ export default {
         section:"/api/v1/organization/front/section",
         content:"/api/v1/content/front/content",
         file:"/api/v1/content/front/file",
+        file_form:"/api/v1/table/front/file",
         upload:"/api/v1/content/front/upload",
         form:"/api/v1/table/front/from"
     }

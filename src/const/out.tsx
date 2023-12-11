@@ -191,4 +191,5 @@ export type FormOut = {
     virtual:boolean
     groups:Group[]
     details:Detail[]
+    title:string
 }
