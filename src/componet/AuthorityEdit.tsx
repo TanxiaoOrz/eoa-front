@@ -4,7 +4,7 @@ import { getDataList } from "../const/http.tsx";
 import url from "../const/url";
 import { Button, Form, Tabs, message } from "antd";
 import { ActionType, ModalForm, ProColumns, ProForm, ProFormDigit, ProFormSelect, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
-import {columnType} from "../const/columnType";
+import {columnType} from "../const/columnType.tsx";
 import config from "../const/config";
 import { PlusOutlined } from "@ant-design/icons";
 

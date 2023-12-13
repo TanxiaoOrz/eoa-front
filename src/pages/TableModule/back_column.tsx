@@ -6,7 +6,7 @@ import React, { useRef, useState } from "react";
 import config from "../../const/config";
 import { ColumnOut, ContentOut, DropSelect, TableOut } from "../../const/out"
 import {deleteData, getDataList, newData, UpdateData} from "../../const/http.tsx"
-import { columnType, columnTypeSelect } from "../../const/columnType";
+import { columnType, columnTypeSelect } from "../../const/columnType.tsx";
 import {getTree} from '../../utils/tree.tsx';
 import url from "../../const/url.js";
 

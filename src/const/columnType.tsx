@@ -1,12 +1,12 @@
 import { ProFormText, ProFormTextArea, ProFormDigit, ProFormDateTimePicker, ProFormUploadButton, ProFormSelect, ProFormTreeSelect, ProColumns } from "@ant-design/pro-components"
 import group from "antd/es/avatar/group"
 import React from "react"
-import { ColumnSimpleOut, FormOut } from "./out"
-import { getDataList } from "./http"
+import { ColumnSimpleOut, FormOut } from "./out.tsx"
+import { getDataList } from "./http.tsx"
 import config from "./config"
 import { Button, FormInstance, Upload } from "antd"
 import url from "./url"
-import UpLoadFile from "../componet/UpLoadFile"
+import UpLoadFile from "../componet/UpLoadFile.tsx"
 
 export const columnType = {
     singleText: "SINGLE_TEXT",
@@ -48,7 +48,7 @@ export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleO
         title:columnSimple.columnViewName,
         dataIndex:key,
         editable:(text, record, index) => {
-            return (editable && columnSimple.columnTypeDescription === columnType.file)
+            return (editable && columnSimple.columnType !== columnType.file)
         }
     }
     switch (columnSimple.columnType) {
@@ -109,16 +109,17 @@ export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleO
     }   
 }
 
-export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOut,form:FormInstance,editable:boolean):React.JSX.Element => {
+export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOut,form:FormInstance,editable:boolean) => {
     switch (columnSimple.columnType) {
         case columnType.singleText: {
             return (
                 <ProFormText
+                    key={key}
                     width='md'
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={editable}
+                    readonly={!editable}
                 />
             )
         }
@@ -126,21 +127,23 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
             return (
                 <ProFormTextArea
                     width='xl'
+                    key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={editable}
+                    readonly={!editable}
                 />
             )
         }
         case columnType.number :{
             return (
                 <ProFormDigit
+                    key={key}
                     width='md'
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={editable}
+                    readonly={!editable}
                 />
             )
         }
@@ -148,10 +151,11 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
             return (
                 <ProFormDateTimePicker
                     width='md'
+                    key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={editable}
+                    readonly={!editable}
                 />
             )
         }
@@ -159,10 +163,11 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
             return (
                 <ProFormSelect 
                     width='md'
+                    key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={editable}
+                    readonly={!editable}
                     request={async ()=>{
                         if (columnSimple.columnTypeDescription === null || columnSimple.columnTypeDescription === "")
                             return []
@@ -179,15 +184,15 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
                 tableId:undefined,
                 columnId:undefined
             } = JSON.parse(columnSimple.columnTypeDescription);
-            let dataId = values[key]
             return (
                 
                 <ProFormTreeSelect
                     width='md'
+                    key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={editable}
+                    readonly={!editable}
                     request={async () => {
                         let formOut:FormOut[] = (await getDataList(config.fronts.form,description)).data
                         return formOut.map((value,index,array)=>{return {title:value.title,value:value.dataId}})
