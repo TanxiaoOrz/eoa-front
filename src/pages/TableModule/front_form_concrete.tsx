@@ -3,7 +3,7 @@ import { ColumnSimpleOut, Detail, FormOut, Group } from "../../const/out.tsx"
 import { useLocation, useParams } from "react-router"
 import PageWait from "../../componet/PageWait.tsx"
 import { Button, Form, FormInstance, Layout, Typography, message } from "antd"
-import { UpdateData, getDataOne } from "../../const/http.tsx"
+import { UpdateData, getDataOne, newData } from "../../const/http.tsx"
 import config from "../../const/config.js"
 import { EditableProTable, ProColumns, ProForm, ProFormGroup } from "@ant-design/pro-components"
 import { columnType, transportInput, transprotColumn } from "../../const/columnType.tsx"
@@ -190,7 +190,10 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
         let param:any = {isVirtual:formOut.virtual,tableId:formOut.tableId}
         let s:string = new URLSearchParams(param).toString()
         window.location.assign(url.frontUrl.form_concrete+"/"+formOut.dataId+"&"+s)
-        return await UpdateData(config.fronts.form+"/"+formOut.dataId+"&"+s,getFormIn(formOut))
+        if (formOut.dataId === 0)
+            return await newData(config.fronts.form+"&"+s,getFormIn(formOut))
+        else
+            return await UpdateData(config.fronts.form+"/"+formOut.dataId+"&"+s,getFormIn(formOut))
     }
     const mainGroups = formOut.groups.map((value,index,array)=><GroupForm key={index} group={value} form={form} getEditAble={getEditAble} />)
     const detailLists = formOut.details.map((value,index,array)=><Detail key={index} detail={value} getEditAble={getEditAble} addable={type===0||prop.getDetailAuthority(value.detailId,"add")} minusable={type===0||prop.getDetailAuthority(value.detailId,"remove")} editable={type===0||prop.getDetailAuthority(value.detailId,"edit")}/>)
