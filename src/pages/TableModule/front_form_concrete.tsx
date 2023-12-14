@@ -1,15 +1,16 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 import { ColumnSimpleOut, Detail, FormOut, Group } from "../../const/out.tsx"
 import { useLocation, useParams } from "react-router"
 import PageWait from "../../componet/PageWait.tsx"
 import { Button, Flex, Form, FormInstance, Layout, Typography, message } from "antd"
-import { UpdateData, getDataOne, newData } from "../../const/http.tsx"
+import { UpdateData, deleteData, getDataOne, newData } from "../../const/http.tsx"
 import config from "../../const/config.js"
-import { EditableProTable, ProColumns, ProForm, ProFormGroup, ProFormText } from "@ant-design/pro-components"
+import { EditableFormInstance, EditableProTable, ProColumns, ProForm, ProFormGroup, ProFormText } from "@ant-design/pro-components"
 import { columnType, transportInput, transprotColumn } from "../../const/columnType.tsx"
 import { FolderOpenTwoTone } from "@ant-design/icons"
 import { Header, Content } from "antd/es/layout/layout"
 import url from "../../const/url.js"
+
 
 
 const {Title} = Typography
@@ -17,7 +18,7 @@ const {Title} = Typography
 type FormIn = {
     tableId:number
     mains:any
-    details:any[][]
+    detailValueMapLists:any[][]
 }
 
 const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolean,addable:boolean,minusable:boolean,editable:boolean}) => {
@@ -25,9 +26,15 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
     const position = prop.addable?'bottom':'hidden'
     const deleteable = prop.minusable
     const detailColumn:ProColumns[] = []
+    const editorFormRef = useRef<EditableFormInstance>();
     const setValues = (values:any) => { detail.values = values}
-    for (let [key,column] of Object.entries(detail.columns))
-        detailColumn.push(transprotColumn(key,detail.values,column as ColumnSimpleOut,prop.getEditAble(key)))
+    let entries =  Object.entries(detail.columns)
+    if (entries.length === 0)
+        return (<></>)
+    for (let [key,column] of entries)
+        detailColumn.push(transprotColumn(key,detail.values,column as ColumnSimpleOut,prop.getEditAble(key),editorFormRef))
+    
+    
     detailColumn.push(
         {
             title: '操作',
@@ -55,6 +62,7 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
     )
     return (
         <EditableProTable
+            editableFormRef={editorFormRef}
             rowKey="detailDataId"
             headerTitle={detail.detailName}
             maxLength={5}
@@ -82,8 +90,9 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
             editable={{
             type: 'multiple',
             onSave: async (rowKey, data, row) => {
+                console.log("detail", detail)
                 console.log(rowKey, data, row);
-                // detail.values[row] = data
+                detail.values[data.index] = data
             },
             }}
       />
@@ -93,21 +102,36 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
 
 const GroupForm = (prop:{group:Group,getEditAble:(columnName:string)=>boolean,form:FormInstance}) => {
     const group = prop.group
+    
     let count = 0
     let row:React.JSX.Element[] = []
-    for (let [key,value] of Object.entries(group.columns)) {
+    let children:React.JSX.Element[] = []
+    let entries = Object.entries(group.columns)
+    if (entries.length === 0)
+        return (<></>)
+
+    for (let [key,value] of entries) {
         row.push(transportInput(key,group.values,value as ColumnSimpleOut,prop.form,prop.getEditAble(key)))    
         count++
         if (count == 2 || (value as ColumnSimpleOut).columnType == columnType.areaText) {
-            row.push(<br/>)
+            children.push(
+                <ProFormGroup style={{width:"100%"}} key={children.length} >{row}</ProFormGroup>
+            )
+            children.push(
+                <br/>
+            )
+            row = []
             count = 0
         }
     }
+    if (count === 1)
+        children.push(<ProForm.Group key={children.length}>{row}</ProForm.Group>)
     return (
     <ProForm.Group
         title = {group.groupName}
+        key={group.groupId}
     >
-        {row}
+        {children}
     </ProForm.Group>
     )
 }
@@ -115,6 +139,8 @@ const GroupForm = (prop:{group:Group,getEditAble:(columnName:string)=>boolean,fo
 
 
 const getFormIn = (formOut:FormOut):FormIn => {
+    console.log("formOut")
+    console.log(formOut)
     let mains = {};
     formOut.groups.forEach((group,index,array)=>{
         for (let [key,value] of Object.entries(group.values))
@@ -127,8 +153,10 @@ const getFormIn = (formOut:FormOut):FormIn => {
     let formIn: FormIn = {
         tableId:formOut.tableId,
         mains:mains,
-        details:details
+        detailValueMapLists:details
     }
+    console.log("formIn")
+    console.log(formIn)
     return formIn
 }
 
@@ -152,41 +180,75 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
                     message.error("未传入formOut结构且缺少指定表单id")
                     return
                 }
-                let isVirtual = query.get("isVirtual") === "false"
+                let isVirtual = query.get("isVirtual") === "true"
                 let param:any = {
                     isVirtual:isVirtual,
                     tableId:tableId
                 }
                 let s:string = new URLSearchParams(param).toString();
                 console.log(config.fronts.form+"/"+dataId+"?"+s)
-                getDataOne(config.fronts.form+"/"+dataId+"?"+s).then((value)=>{
-                    if (value.success)
-                        setFormOut(value.data)
-                    else
-                        message.error("该数据不存在")
-                })
+                param.type = dataId === 0?0:1
+                let auParam = new URLSearchParams(param).toString();
+                if  (type === 0)
+                    getDataOne(config.fronts.form+"/"+dataId+"?"+auParam).then((value)=>{
+                        if (value.success && value.data)
+                            getDataOne(config.fronts.form+"/"+dataId+"?"+s).then((value)=>{
+                                if (value.success)
+                                    setFormOut(value.data)
+                            })
+                        else 
+                            message.warning("没有编辑权限")
+                    })
+                else
+                    getDataOne(config.fronts.form+"/"+dataId+"?"+s).then((value)=>{
+                        if (value.success)
+                            setFormOut(value.data)
+                    })
             }
     })
+    const baseStyle: React.CSSProperties = {
+        width: '25%',
+      };
     if (formOut === null)
         return (<PageWait />)
     window.sessionStorage.setItem("tableId",formOut.tableId.toString())
     window.sessionStorage.setItem("isVirtual",formOut.virtual.toString())
     window.sessionStorage.setItem("formId",formOut.dataId.toString())
     const save =async ()=>{
+        let param:any = {isVirtual:formOut.virtual,tableId:formOut.tableId,type:1}
+        let s:string = new URLSearchParams(param).toString()
+        console.log("formIn")
+        console.log(getFormIn(formOut))
+        let returns:boolean = false
+        if (formOut.dataId === -1||formOut.dataId === 0)
+            formOut.dataId = await newData(config.fronts.form+"?"+s,getFormIn(formOut))
+        else
+            returns = !(await UpdateData(config.fronts.form+"/"+formOut.dataId+"?"+s,getFormIn(formOut)))
+        if (formOut.dataId === 0||formOut.dataId === -1|| returns)
+            return
+        window.location.assign(url.frontUrl.form_concrete+formOut.dataId+"?"+s)
+
+    }
+    const edit =async ()=>{
+        let param:any = {isVirtual:formOut.virtual,tableId:formOut.tableId,type:0}
+        let s:string = new URLSearchParams(param).toString()
+        window.location.assign(url.frontUrl.form_concrete+formOut.dataId+"?"+s)
+    }
+    const deletes = async ()=>{
         let param:any = {isVirtual:formOut.virtual,tableId:formOut.tableId}
         let s:string = new URLSearchParams(param).toString()
-        window.location.assign(url.frontUrl.form_concrete+"/"+formOut.dataId+"&"+s)
-        if (formOut.dataId === 0)
-            return await newData(config.fronts.form+"&"+s,getFormIn(formOut))
-        else
-            return await UpdateData(config.fronts.form+"/"+formOut.dataId+"&"+s,getFormIn(formOut))
+        await deleteData(config.fronts.form+"/"+formOut.dataId+"?"+s,getFormIn(formOut))
+        window.close()
     }
     const mainGroups = formOut.groups.map((value,index,array)=><GroupForm key={index} group={value} form={form} getEditAble={getEditAble} />)
     const detailLists = formOut.details.map((value,index,array)=><DetailTable key={index} detail={value} getEditAble={getEditAble} addable={type===0||prop.getDetailAuthority(value.detailId,"add")} minusable={type===0||prop.getDetailAuthority(value.detailId,"remove")} editable={type===0||prop.getDetailAuthority(value.detailId,"edit")}/>)
     let subbmiter:React.JSX.Element[]
     
     if (prop.submitter.length === 0)
-        subbmiter =  [<Button key='save' type='primary' onClick={save}>保存</Button>]
+        if (type === 0)
+            subbmiter =  [<Button key='save' type='primary' onClick={save}>保存</Button>]
+        else
+            subbmiter = [<Button key={"edit"} onClick={edit}>编辑</Button>,<Button danger key={"delete"} onClick={deletes}>删除</Button>]
     else 
         subbmiter = prop.submitter
     
@@ -198,7 +260,7 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
         submitter={{
             render:(props,doms)=>(<></>)
         }}
-        layout="vertical"
+        layout="horizontal"
         onValuesChange={(changedValues,values)=>{
             console.log(changedValues)
             Object.entries(changedValues).forEach((value,index,array) =>{
@@ -212,15 +274,18 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
     >
         {mainGroups}
     </ProForm>)
+    config.globalSrollHidden = false
     return (
         <Layout style={{ minHeight: '100vh'}}>
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
                 <div style={{display:'flex'}}>
                 <Title level={2} style={{color:'GrayText', marginLeft:'10px',marginBottom:'15px'}}>{formOut.tableName}</Title>
                 </div>
-                <Flex vertical={false}><div/><div/><div/>{subbmiter}</Flex>
             </Header>
-            <Content style={{ padding: '15px 50px', minHeight:'100%'}}>
+            <Flex vertical={false} style={{background: "#ffffff",padding:"10px"}}>{Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} style={{ ...baseStyle}} />
+        ))}{subbmiter}<div style={{width:"2.5%"}}></div></Flex>
+            <Content style={{ padding: '15px 50px', minHeight:'100%',overflowY:'auto'}}>
                 {mainForm}
                 <div style={{margin:"10px"}}></div>
                 {detailLists}

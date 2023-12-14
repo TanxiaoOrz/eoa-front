@@ -22,6 +22,8 @@ export default {
         file:"/api/v1/content/front/file",
         file_form:"/api/v1/table/front/file",
         upload:"/api/v1/content/front/upload",
-        form:"/api/v1/table/front/from"
-    }
+        form:"/api/v1/table/front/form",
+        formAuthority:"/api/v1/table/front/authoriy"
+    },
+    globalSrollHidden:true
 }

@@ -1,4 +1,4 @@
-import { ProFormText, ProFormTextArea, ProFormDigit, ProFormDateTimePicker, ProFormUploadButton, ProFormSelect, ProFormTreeSelect, ProColumns } from "@ant-design/pro-components"
+import { ProFormText, ProFormTextArea, ProFormDigit, ProFormDateTimePicker, ProFormUploadButton, ProFormSelect, ProFormTreeSelect, ProColumns, EditableFormInstance } from "@ant-design/pro-components"
 import group from "antd/es/avatar/group"
 import React from "react"
 import { ColumnSimpleOut, FormOut } from "./out.tsx"
@@ -43,7 +43,7 @@ export const columnTypeSelect = [
     },
 ]
 
-export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleOut,editable:boolean):ProColumns => {
+export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleOut,editable:boolean,editorFormRef:React.MutableRefObject<EditableFormInstance | undefined>):ProColumns => {
     let column:ProColumns = {
         title:columnSimple.columnViewName,
         dataIndex:key,
@@ -70,10 +70,14 @@ export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleO
         }
         case columnType.select :{
             column.valueType = 'select'
+            
             column.request=async ()=>{
                 if (columnSimple.columnTypeDescription === null || columnSimple.columnTypeDescription === "")
                     return []
-                return columnSimple.columnTypeDescription.split(',').map((value,index,array)=>{
+                let description:{
+                    items:string
+                } = JSON.parse(columnSimple.columnTypeDescription);
+                return description.items.split(',').map((value,index,array)=>{
                     return {label:value,value,index}
                 })
             }
@@ -85,7 +89,6 @@ export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleO
                 tableId:undefined,
                 columnId:undefined
             } = JSON.parse(columnSimple.columnTypeDescription);
-            let dataId = values[key]
             column.valueType = 'treeSelect'
             column.request = async () => {
                 let formOut:FormOut[] = (await getDataList(config.fronts.form,description)).data
@@ -101,7 +104,16 @@ export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleO
         }
         case columnType.file :{
             column.render=(text,entity,index,action)=>{
-                return <UpLoadFile key={key} column={columnSimple} action={action} values={values} edit={editable}/>
+                return <UpLoadFile 
+                dataName={key} 
+                column={columnSimple} 
+                set={(key,value)=>{
+                    let change = {}
+                     change[key] = value
+                     editorFormRef.current?.setRowData?.(index,change)
+                    }} 
+                values={values} 
+                edit={editable}/>
             }
             return column
         }
@@ -126,7 +138,7 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
         case columnType.areaText :{
             return (
                 <ProFormTextArea
-                    width='xl'
+                    width='md'
                     key={key}
                     name={key}
                     label={columnSimple.columnViewName}
@@ -171,7 +183,7 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
                     request={async ()=>{
                         if (columnSimple.columnTypeDescription === null || columnSimple.columnTypeDescription === "")
                             return []
-                        return columnSimple.columnTypeDescription.split(',').map((value,index,array)=>{
+                        return JSON.parse(columnSimple.columnTypeDescription).items.split(',').map((value,index,array)=>{
                             return {label:value,value,index}
                         })
                     }}
@@ -209,7 +221,7 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
             )
         }
         case columnType.file :{
-            return (<UpLoadFile key={key} column={columnSimple} form={form} values={values} edit={editable} />)
+            return (<UpLoadFile dataName={key} column={columnSimple} set={form.setFieldValue} values={values} edit={editable} />)
         }
         default : return (<></>)
     }

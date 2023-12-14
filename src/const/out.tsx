@@ -1,3 +1,4 @@
+import { EditableFormInstance } from "@ant-design/pro-components"
 
 export type ModuleOut = {
     moduleTypeId:number
@@ -175,6 +176,7 @@ export type Detail = {
     detailName:string
     columns:any
     values:any[]
+    editorFormRef:React.MutableRefObject<EditableFormInstance | undefined>
 }
 
 export type FormOut = {
