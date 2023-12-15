@@ -162,6 +162,14 @@ const FrontContent = (prop:{leadContent:number|undefined}) => {
       dataIndex:'createTime',
       valueType:"dateTimeRange",
       hideInTable:true
+    },{
+      key:'dataId',
+      title:'操作',
+      width:48*2,
+      hideInSearch:true,
+      render:(dom,entity,index,action) => [
+        <Button type='primary' key={"href"+entity.creator} href={url.frontUrl.content_concrete+entity.dataId}>查看</Button>
+      ],
     }
   ];
 

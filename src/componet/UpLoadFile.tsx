@@ -8,27 +8,28 @@ import { Button, Dropdown, FormInstance, Upload, UploadProps, message } from "an
 import { UploadOutlined } from "@ant-design/icons"
 
 export default (prop:{dataName:string,column:ColumnSimpleOut,values:any,edit:boolean,set:(key:string,value:number)=>void}) => {
-    console.log("dataName",prop.dataName)
+    // console.log("prop.values")
+    // console.log(prop.values)
     const [file,setFile] = useState<FileOut>()
     const description:{contentId:number} = JSON.parse(prop.column.columnTypeDescription)
-    if (prop.values[prop.dataName] !== null || prop.values[prop.dataName] !== undefined)
-        useEffect(()=>{
-            if (file === undefined) {
-                let tableId = window.sessionStorage.getItem("tableId")
-                let formId = window.sessionStorage.getItem("formId")
-                let isVirtual = window.sessionStorage.getItem("isVirtual")
-                let params:any = {tableId:tableId,formId:formId,isVirtual:isVirtual}
-                let s = new URLSearchParams(params).toString()
-                let dataId = prop.values[prop.dataName]
-                if (dataId === undefined || dataId === ""){
-                    return
-                } else
-                    getDataOne(config.fronts.file_form+"/"+prop.values[prop.dataName]+"?"+s).then((ret)=>{
-                        if (ret.success)
-                            setFile(ret.data)
-                    })
-            }
-        })
+    if (prop.values?.[prop.dataName] !== null && prop.values?.[prop.dataName] !== undefined){
+        // console.log("getFile")
+        if (file === undefined) {
+            let tableId = window.sessionStorage.getItem("tableId")
+            let formId = window.sessionStorage.getItem("formId")
+            let isVirtual = window.sessionStorage.getItem("isVirtual")
+            let params:any = {tableId:tableId,formId:formId,isVirtual:isVirtual}
+            let s = new URLSearchParams(params).toString()
+            let dataId = prop.values?.[prop.dataName]
+            if (dataId === undefined || dataId === ""){
+                return
+            } else
+                getDataOne(config.fronts.file_form+"/"+prop.values?.[prop.dataName]+"?"+s).then((ret)=>{
+                    if (ret.success)
+                        setFile(ret.data)
+                })
+        }}
+
     const upLoadProos:UploadProps = {
         headers:{
             tokens:localStorage.getItem('tokens') ?? ""
@@ -47,8 +48,7 @@ export default (prop:{dataName:string,column:ColumnSimpleOut,values:any,edit:boo
                     message.success("上传成功")
                     let file:FileOut = response.entity
                     prop.set(prop.dataName,file.dataId)
-                    console.log(prop.dataName)
-                    console.log(file.dataId)
+                    console.log(file)
                     message.success("上传成功")
                     setFile(file)
                 } else {
@@ -65,7 +65,6 @@ export default (prop:{dataName:string,column:ColumnSimpleOut,values:any,edit:boo
             width={0}
             name={prop.dataName}
             label={prop.column.columnViewName}
-            initialValue={prop.values[prop.dataName]}
             readonly
             addonAfter = {<>{addonAfter}</>}
         />

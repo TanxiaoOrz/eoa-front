@@ -4,7 +4,7 @@ import React from "react"
 import { ColumnSimpleOut, FormOut } from "./out.tsx"
 import { getDataList } from "./http.tsx"
 import config from "./config"
-import { Button, FormInstance, Upload } from "antd"
+import { Button, FormInstance, Upload, message } from "antd"
 import url from "./url"
 import UpLoadFile from "../componet/UpLoadFile.tsx"
 
@@ -43,7 +43,8 @@ export const columnTypeSelect = [
     },
 ]
 
-export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleOut,editable:boolean,editorFormRef:React.MutableRefObject<EditableFormInstance | undefined>):ProColumns => {
+export const transprotColumn = (key:string,values:any[],columnSimple:ColumnSimpleOut,editable:boolean,editorFormRef:React.MutableRefObject<EditableFormInstance | undefined>):ProColumns => {
+    // console.log(values)
     let column:ProColumns = {
         title:columnSimple.columnViewName,
         dataIndex:key,
@@ -98,12 +99,13 @@ export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleO
                 let title = text?.valueOf().toString()
                 let param:any = {isVirtual:description.isVirtual,tableId:description.tableId} 
                 let s = new URLSearchParams(param).toString()
-                return <a href={url.frontUrl.form_concrete+"/"+values[key]+"&"+s}>{title??""}</a>
+                return <a href={url.frontUrl.form_concrete+"/"+values[index][key]+"&"+s}>{title??""}</a>
             }
             return column
         }
         case columnType.file :{
             column.render=(text,entity,index,action)=>{
+                // console.log(entity)
                 return <UpLoadFile 
                 dataName={key} 
                 column={columnSimple} 
@@ -112,7 +114,7 @@ export const transprotColumn = (key:string,values:any,columnSimple:ColumnSimpleO
                      change[key] = value
                      editorFormRef.current?.setRowData?.(index,change)
                     }} 
-                values={values} 
+                values={entity} 
                 edit={editable}/>
             }
             return column
@@ -127,23 +129,24 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
             return (
                 <ProFormText
                     key={key}
-                    width='md'
+                    width='lg'
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={!editable}
+                    disabled={!editable}
                 />
             )
         }
         case columnType.areaText :{
             return (
                 <ProFormTextArea
-                    width='md'
+                    style={{width:"20vh"}}
+                    width='xl'
                     key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={!editable}
+                    disabled={!editable}
                 />
             )
         }
@@ -151,41 +154,43 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
             return (
                 <ProFormDigit
                     key={key}
-                    width='md'
+                    width='lg'
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={!editable}
+                    disabled={!editable}
                 />
             )
         }
         case columnType.date :{
             return (
                 <ProFormDateTimePicker
-                    width='md'
+                    width='lg'
                     key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={!editable}
+                    disabled={!editable}
                 />
             )
         }
         case columnType.select :{
             return (
                 <ProFormSelect 
-                    width='md'
+                    width='lg'
                     key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={!editable}
+                    disabled={!editable}
                     request={async ()=>{
+                        let returns:any[]
                         if (columnSimple.columnTypeDescription === null || columnSimple.columnTypeDescription === "")
-                            return []
-                        return JSON.parse(columnSimple.columnTypeDescription).items.split(',').map((value,index,array)=>{
+                            returns = []
+                        returns = JSON.parse(columnSimple.columnTypeDescription).items.split(',').map((value,index,array)=>{
                             return {label:value,value,index}
                         })
+                        return returns
                     }}
                 />
             )
@@ -199,12 +204,12 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
             return (
                 
                 <ProFormTreeSelect
-                    width='md'
+                    width='lg'
                     key={key}
                     name={key}
                     label={columnSimple.columnViewName}
                     initialValue={values[key]}
-                    readonly={!editable}
+                    disabled={!editable}
                     request={async () => {
                         let formOut:FormOut[] = (await getDataList(config.fronts.form,description)).data
                         return formOut.map((value,index,array)=>{return {title:value.title,value:value.dataId}})
@@ -212,9 +217,13 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
                     addonAfter={
                         <Button 
                             onClick={()=>{
+                                if (values[key]===null||values[key]===undefined) {
+                                    message.warning(columnSimple.columnViewName+"没有值")
+                                    return
+                                }
                                 let param:any = {isVirtual:description.isVirtual,tableId:description.tableId} 
                                 let s = new URLSearchParams(param).toString()
-                                window.open(url.frontUrl.form_concrete+"/"+values[key]+"&"+s)
+                                window.open(url.frontUrl.form_concrete+values[key]+"?"+s)
                             }}
                         >查看</Button>
                     }/>

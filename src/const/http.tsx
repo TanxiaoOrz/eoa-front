@@ -97,6 +97,7 @@ export const deleteData =async (url:string,params:any = null):Promise<boolean> =
         let s:string = new URLSearchParams(params).toString();
         urlSend += ("?"+s)
     }
+    console.log(urlSend)
     let response = await service.delete(urlSend);
     let data:Data = response.data;
     if (data.code == 0) {

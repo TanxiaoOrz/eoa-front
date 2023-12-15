@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react"
 import { ColumnSimpleOut, Detail, FormOut, Group } from "../../const/out.tsx"
 import { useLocation, useParams } from "react-router"
 import PageWait from "../../componet/PageWait.tsx"
-import { Button, Flex, Form, FormInstance, Layout, Typography, message } from "antd"
+import { Button, Card, Flex, Form, FormInstance, Layout, Typography, message } from "antd"
 import { UpdateData, deleteData, getDataOne, newData } from "../../const/http.tsx"
 import config from "../../const/config.js"
 import { EditableFormInstance, EditableProTable, ProColumns, ProForm, ProFormGroup, ProFormText } from "@ant-design/pro-components"
@@ -27,45 +27,38 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
     const deleteable = prop.minusable
     const detailColumn:ProColumns[] = []
     const editorFormRef = useRef<EditableFormInstance>();
-    const setValues = (values:any) => { detail.values = values}
+    // detail.editorFormRef = editorFormRef.current.
+    const setValues = (values:any[]) => { detail.values = values}
     let entries =  Object.entries(detail.columns)
     if (entries.length === 0)
         return (<></>)
     for (let [key,column] of entries)
         detailColumn.push(transprotColumn(key,detail.values,column as ColumnSimpleOut,prop.getEditAble(key),editorFormRef))
     
-    
-    detailColumn.push(
-        {
-            title: '操作',
-            valueType: 'option',
-            width: 200,
-            render: (text, record, _, action) => [
-              <a
-                key="editable"
-                onClick={() => {
-                  action?.startEditable?.(record.detailDataId);
-                }}
-              >
-                {prop.editable?"编辑":""}
-              </a>,
-              <a
-                key="delete"
-                onClick={() => {
-                  setValues(detail.values.filter((item) => item.detailDataId !== record.detailDataId));
-                }}
-              >
-                {deleteable?"删除":""}
-              </a>,
-            ],
-          }
-    )
+    if (prop.editable)
+        detailColumn.push(
+            {
+                title: '操作',
+                valueType: 'option',
+                width: 200,
+                render: (text, record, _, action) => [
+                <Button
+                    key="editable"
+                    onClick={() => {
+                    action?.startEditable?.(record.detailDataId);
+                    }}
+                >
+                    {prop.editable?"操作":""}
+                </Button>,
+                ],
+            }
+        )
     return (
         <EditableProTable
             editableFormRef={editorFormRef}
             rowKey="detailDataId"
             headerTitle={detail.detailName}
-            maxLength={5}
+            dataSource={detail.values}
             scroll={{
             x: 960,
             }}
@@ -73,7 +66,7 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
             position !== 'hidden'
                 ? {
                     position: position as 'top',
-                    record: () => ({ detailDataId: (Math.random() * 1000000).toFixed(0) }),
+                    record: () => ({ detailDataId: (Math.random() * -1000000) }),
                 }
                 : false
             }
@@ -90,9 +83,12 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
             editable={{
             type: 'multiple',
             onSave: async (rowKey, data, row) => {
-                console.log("detail", detail)
-                console.log(rowKey, data, row);
+                console.log(rowKey,data,row)
+                console.log(detail.values)
                 detail.values[data.index] = data
+            },
+            onDelete:async(key, row)=>{
+                detail.values = detail.values.filter((record,index,array)=>record.detailDataId !== key)  
             },
             }}
       />
@@ -115,11 +111,11 @@ const GroupForm = (prop:{group:Group,getEditAble:(columnName:string)=>boolean,fo
         count++
         if (count == 2 || (value as ColumnSimpleOut).columnType == columnType.areaText) {
             children.push(
-                <ProFormGroup style={{width:"100%"}} key={children.length} >{row}</ProFormGroup>
+                <ProForm.Group style={{width:"100vh"}} key={children.length} >{row}</ProForm.Group>
             )
-            children.push(
-                <br/>
-            )
+            // children.push(
+            //     <div style={{width:"100vh"}} />
+            // )
             row = []
             count = 0
         }
@@ -203,6 +199,7 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
                     getDataOne(config.fronts.form+"/"+dataId+"?"+s).then((value)=>{
                         if (value.success)
                             setFormOut(value.data)
+                        
                     })
             }
     })
@@ -211,6 +208,7 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
       };
     if (formOut === null)
         return (<PageWait />)
+    console.log(formOut)
     window.sessionStorage.setItem("tableId",formOut.tableId.toString())
     window.sessionStorage.setItem("isVirtual",formOut.virtual.toString())
     window.sessionStorage.setItem("formId",formOut.dataId.toString())
@@ -235,9 +233,10 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
         window.location.assign(url.frontUrl.form_concrete+formOut.dataId+"?"+s)
     }
     const deletes = async ()=>{
-        let param:any = {isVirtual:formOut.virtual,tableId:formOut.tableId}
+        let param:any = {isVirtual:formOut.virtual,tableId:formOut.tableId,formId:formOut.dataId}
         let s:string = new URLSearchParams(param).toString()
-        await deleteData(config.fronts.form+"/"+formOut.dataId+"?"+s,getFormIn(formOut))
+        console.log()
+        await deleteData(config.fronts.form+"/"+formOut.dataId,param)
         window.close()
     }
     const mainGroups = formOut.groups.map((value,index,array)=><GroupForm key={index} group={value} form={form} getEditAble={getEditAble} />)
@@ -248,7 +247,7 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
         if (type === 0)
             subbmiter =  [<Button key='save' type='primary' onClick={save}>保存</Button>]
         else
-            subbmiter = [<Button key={"edit"} onClick={edit}>编辑</Button>,<Button danger key={"delete"} onClick={deletes}>删除</Button>]
+            subbmiter = [<Button key={"edit"} type='primary' onClick={edit}>编辑</Button>,<div key="border" style={{width:'10px'}}/>,<Button danger key={"delete"} onClick={deletes}>删除</Button>]
     else 
         subbmiter = prop.submitter
     
@@ -257,9 +256,13 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
         style={{
             margin:"0 auto"
         }}
+        rowProps={{
+            gutter: [16, 16],
+          }}
         submitter={{
             render:(props,doms)=>(<></>)
         }}
+        
         layout="horizontal"
         onValuesChange={(changedValues,values)=>{
             console.log(changedValues)
@@ -286,7 +289,8 @@ const FrontFormConcrete = (prop:{formOut:FormOut|null,editAbleList:string[],subm
           <div key={i} style={{ ...baseStyle}} />
         ))}{subbmiter}<div style={{width:"2.5%"}}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight:'100%',overflowY:'auto'}}>
-                {mainForm}
+                <Card>{mainForm}</Card>
+                
                 <div style={{margin:"10px"}}></div>
                 {detailLists}
             </Content>
