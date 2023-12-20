@@ -5,11 +5,21 @@
         table_concrete:'/back_table/{id}',
         column:'/back_column',
         content:'/back_content',
-        content_concrete:'/back_content/{id}'
+        content_concrete:'/back_content/{id}',
+        character:'/back_character',
+        character_concrete:'/back_character/',
+        human:'/back_human',
+        human_concrete:'/back_human/',
+        depart:'/back_depart',
+        depart_concrete:'/back_depart/',
+        section:'/back_section',
+        section_concrete:'/back_section/',
     },
     frontUrl:{
         humanResource:"/human/",
+        depart:"/depart/",
+        section:"/section/",
         content_concrete:'/content/',
-        form_concrete:'/form/'
+        form_concrete:'/form/',
     }
 }
