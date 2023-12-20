@@ -88,7 +88,7 @@ const CreateContent = (prop:{action:React.MutableRefObject<ActionType|undefined>
           placeholder="请选择上级目录,未选择代表处于根目录下"
           initialValue={prop.leadContent}
           request={async ()=>{
-            let contents:ContentOut[] = (await getDataList(config.backs.content)).data
+            let contents:ContentOut[] = (await getDataList(config.backs.content,{toBrowser:true})).data
             let treeBase = contents.map((content,index,array) => {return {title:content.contentName,parent:content.leadContent,value:content.dataId}})
             return getTree(treeBase)
           }}

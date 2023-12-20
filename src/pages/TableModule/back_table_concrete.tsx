@@ -149,7 +149,7 @@ const BackTableConcrete = () => {
                         },
                     }}
                     request={async () => {
-                        return (await getDataList(config.backs.module)).data.map(
+                        return (await getDataList(config.backs.module,{toBrowser:true})).data.map(
                             (item:ModuleOut) => {
                               return {title:item.moduleTypeName,value:item.moduleTypeId,children:[]};
                             }

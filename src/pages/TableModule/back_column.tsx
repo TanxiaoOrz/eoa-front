@@ -69,7 +69,7 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
                             placeholder="请选择链接表单"
                             required={true}
                             request={async () => {
-                                let tables:TableOut[] = (await getDataList(config.backs.table,{isVirtual:virtual})).data
+                                let tables:TableOut[] = (await getDataList(config.backs.table,{isVirtual:virtual,toBrowser:true})).data
                                 return tables.map((value,index,array) => {return {title:value.tableViewName,value:value.tableId}})
                             }}/>
 
@@ -82,7 +82,7 @@ const ColumnDescription = (prop:{type:string,set:(description:string)=>boolean})
                                     placeholder="请选择字段显示字段"
                                     required={true}
                                     request={async () => {
-                                        let columns:ColumnOut[] = (await getDataList(config.backs.column,{isVirtual:object.isVirtual,tableNo:object.tableId,columnDetailNo:-1})).data
+                                        let columns:ColumnOut[] = (await getDataList(config.backs.column,{isVirtual:object.isVirtual,tableNo:object.tableId,columnDetailNo:-1,toBrowser:true})).data
                                         let nodes = columns.map((value,index,array) => {return {title:value.columnDataName,label:value.columnDataName,value:value.columnId,key:value.columnId}})
                                         console.log(nodes)
                                         return nodes

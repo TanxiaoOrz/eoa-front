@@ -269,7 +269,7 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
           tooltip=""
           required = {true}
           request={async () => {
-            let moduleList:ModuleOut[] = (await getDataList(config.backs.module)).data
+            let moduleList:ModuleOut[] = (await getDataList(config.backs.module,{toBrowser:true})).data
             const valueEnumModule:{title:string,value:number,children:any[]}[] = moduleList.map(
               (item) => {
                 return {title:item.moduleTypeName,value:item.moduleTypeId,children:[]};

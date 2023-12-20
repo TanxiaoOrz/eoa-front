@@ -100,7 +100,7 @@ const CreateFile= (prop:{action:React.MutableRefObject<ActionType|undefined>,lea
           placeholder="请选择上级目录"
           initialValue={prop.leadContent}
           request={async ()=>{
-            let contents:ContentOut[] = (await getDataList(config.fronts.content)).data
+            let contents:ContentOut[] = (await getDataList(config.fronts.content,{toBrowser:true})).data
             let treeBase = contents.map((content,index,array) => {return {title:content.contentName,parent:content.leadContent,value:content.dataId}})
             return getTree(treeBase)
           }}

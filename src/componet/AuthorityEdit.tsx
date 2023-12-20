@@ -121,7 +121,7 @@ const AllConstraint = (prop:{
                     name="start"
                     width="sm"
                     request={async ()=>{
-                        let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                        let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                         return columns.filter((column)=>{return column.columnType===columnType.number})
                             .map((value,index,array)=>{
                                 return {
@@ -138,7 +138,7 @@ const AllConstraint = (prop:{
                     name="end"
                     width="sm"
                     request={async ()=>{
-                        let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                        let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                         return columns.filter((column)=>{return column.columnType===columnType.number})
                             .map((value,index,array)=>{
                                 return {
@@ -310,7 +310,7 @@ const CharacterConstraint = (prop:{
             dataIndex:"characterId",
             valueType:"select",
             request:async () => {
-                let characters:CharacterOut[] =(await getDataList(config.fronts.character)).data
+                let characters:CharacterOut[] =(await getDataList(config.fronts.character,{toBrowser:true})).data
                 return characters.map((value,index,array) => { return {label:value.characterName,value:value.dataId}})
             },
         },{
@@ -365,7 +365,7 @@ const CharacterConstraint = (prop:{
             dataIndex:"characterId",
             valueType:"treeSelect",
             request:async () => {
-                let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                 return characters.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
             }
         },{
@@ -441,7 +441,7 @@ const CharacterConstraint = (prop:{
                     tooltip="角色要求"
                     label="角色"
                     request={async () => {
-                        let characters:CharacterOut[] =(await getDataList(config.fronts.character)).data
+                        let characters:CharacterOut[] =(await getDataList(config.fronts.character,{toBrowser:true})).data
                         return characters.map((value,index,array) => { return {title:value.characterName,value:value.dataId}})
                     }}
                 />
@@ -499,7 +499,7 @@ const CharacterConstraint = (prop:{
                     tooltip="角色要求"
                     label="角色"
                     request={async () => {
-                        let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                        let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                         return characters.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
                     }}
                 />
@@ -662,7 +662,7 @@ const ProposedConstraint = (prop:{
                 dataIndex:"id",
                 valueType:"treeSelect",
                 request:async () => {
-                    let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                    let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                     let con = columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
                     console.log("con")
                     console.log(con)
@@ -725,11 +725,11 @@ const ProposedConstraint = (prop:{
                 request:async () => {
                     let request:{label:string,
                         value:string}[] = []
-                    let humans:HumanOut[] = (await getDataList(config.fronts.human)).data
+                    let humans:HumanOut[] = (await getDataList(config.fronts.human,{toBrowser:true})).data
                     humans.forEach((value,index,array)=>{request.push({label:value.name,value:"0:"+value.dataId})})
-                    let departs:DepartOut[] = (await getDataList(config.fronts.human)).data
+                    let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true})).data
                     departs.forEach((value,index,array)=>{request.push({label:value.departName,value:"1:"+value.dataId})})
-                    let sections:SectionOut[] = (await getDataList(config.fronts.human)).data
+                    let sections:SectionOut[] = (await getDataList(config.fronts.section,{toBrowser:true})).data
                     sections.forEach((value,index,array)=>{request.push({label:value.sectionName,value:"2:"+value.dataId})})
                     return request
                 }
@@ -803,9 +803,9 @@ const ProposedConstraint = (prop:{
                             value:string}[] = []    
                         let humans:HumanOut[] = (await getDataList(config.fronts.human)).data
                         humans.forEach((value,index,array)=>{human.push({label:value.name,value:"0:"+value.dataId})})
-                        let departs:DepartOut[] = (await getDataList(config.fronts.human)).data
+                        let departs:DepartOut[] = (await getDataList(config.fronts.depart)).data
                         departs.forEach((value,index,array)=>{depart.push({label:value.departName,value:"1:"+value.dataId})})
-                        let sections:SectionOut[] = (await getDataList(config.fronts.human)).data
+                        let sections:SectionOut[] = (await getDataList(config.fronts.section)).data
                         sections.forEach((value,index,array)=>{section.push({label:value.sectionName,value:"2:"+value.dataId})})
                         let request = [
                             {
@@ -889,7 +889,7 @@ const ProposedConstraint = (prop:{
                     
                     tooltip="请选择取值字段"
                     request={async () => {
-                        let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId})).data
+                        let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                         return columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
                     }}
                 />
