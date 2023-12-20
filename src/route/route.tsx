@@ -14,6 +14,8 @@ import BackContent from "../pages/ContentModule/back_content.tsx";
 import BackContentConcrete from "../pages/ContentModule/back_content_concrete.tsx";
 import FrontContentConcrete from "../pages/ContentModule/front_content.tsx";
 import FrontFormConcrete from "../pages/TableModule/front_form_concrete.tsx";
+import BackCharacter from "../pages/OrganizationModule/back_character.tsx";
+import BaseCharacterConcrete from "../pages/OrganizationModule/back_character_concrete.tsx";
 
 const Protable = protable
 
@@ -33,6 +35,12 @@ const backs = [
   },{
     path:"back_content/:contentId",
     element:<BackContentConcrete />
+  },{
+    path:"back_character",
+    element:<BackCharacter />
+  },{
+    path:"back_character/:dataId",
+    element:<BaseCharacterConcrete />
   }
 ]
 

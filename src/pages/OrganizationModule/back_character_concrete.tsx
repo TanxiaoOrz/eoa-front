@@ -4,7 +4,7 @@ import { UpdateData, deleteData, getDataList, getDataOne } from "../../const/htt
 import { CharacterOut, Authority, HumanOut } from "../../const/out.tsx"
 import { useParams } from "react-router"
 import url from "../../const/url"
-import PageWait from "../../componet/PageWait"
+import PageWait from "../../componet/PageWait.tsx"
 import { ActionType, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
 import { Button, Modal } from "antd"
 import { PlusOutlined } from "@ant-design/icons"
@@ -28,7 +28,7 @@ const AuthorityList = (prop:{characterId:number})=>{
             type: "authority",
         } 
         let paramString = new URLSearchParams(param).toString()
-        return await UpdateData(config.backs.character_link+"/"+prop.characterId+paramString,{})
+        return await UpdateData(config.backs.character_link+"/"+prop.characterId+"?"+paramString,{})
     }
     const drop =async (dataId:number) => {
         let param:any = {
@@ -36,7 +36,7 @@ const AuthorityList = (prop:{characterId:number})=>{
             type: "authority",
         } 
         let paramString = new URLSearchParams(param).toString()
-        if (await UpdateData(config.backs.character_drop+"/"+prop.characterId+paramString,{}))
+        if (await UpdateData(config.backs.character_drop+"/"+prop.characterId+"?"+paramString,{}))
             actionRef.current?.reload()
     }
 
@@ -131,22 +131,14 @@ const AuthorityList = (prop:{characterId:number})=>{
                 // console.log(params)
                 // console.log(sort);
                 // console.log(filter);
-                return getDataList(config.backs.character_authority+"/"+prop.characterId,params)
+                params.characterId = prop.characterId
+                return getDataList(config.backs.character_authority,params)
             }}
             editable={{
                 type: 'multiple',
             }}
-            columnsState={{
-                persistenceKey: 'pro-table-singe-demos',
-                persistenceType: 'localStorage',
-                onChange(value) {
-                console.log('value: ', value);
-                },
-            }}
             rowKey="id"
-            search={{
-                labelWidth: 'auto',
-            }}
+            search={false}
             options={{
                 setting: {
                 listsHeight: 400,
@@ -186,7 +178,7 @@ const HumanList = (prop:{characterId:number})=>{
             grade:grade
         } 
         let paramString = new URLSearchParams(param).toString()
-        return await UpdateData(config.backs.character_link+"/"+prop.characterId+paramString,{})
+        return await UpdateData(config.backs.character_link+"/"+prop.characterId+"?"+paramString,{})
     }
     const drop =async (dataId:number) => {
         let param:any = {
@@ -194,7 +186,7 @@ const HumanList = (prop:{characterId:number})=>{
             type: "human",
         } 
         let paramString = new URLSearchParams(param).toString()
-        if (await UpdateData(config.backs.character_drop+"/"+prop.characterId+paramString,{}))
+        if (await UpdateData(config.backs.character_drop+"/"+prop.characterId+"?"+paramString,{}))
             actionRef.current?.reload()
     }
 
@@ -202,28 +194,44 @@ const HumanList = (prop:{characterId:number})=>{
         {
             key:'code',
             title:'编号',
-            dataIndex:'dataId',
             valueType:"indexBorder",
             width:48,
             align: "center"
             
           },
           {
-            key:'name',
+            key:'humanId',
             title:'人力资源',
             dataIndex:'humanId',
-            valueType:'treeSelect',
+            valueType:'select',
             request:async()=>{
-                let humans:HumanOut[] = (await getDataList(config.backs.human,{toBrowser:true})).data
-                return humans.map((value,index,array)=>{return {title:value.name,value:value.dataId}})
-            }
+                let humans:HumanOut[] =(await getDataList(config.backs.human,{toBrowser:true})).data
+                console.log(humans)
+                let tree = humans.map((value,index,array)=>{return {label:value.name,value:value.dataId}})
+                console.log(tree)
+                return tree
+            },
+            hideInSearch:true
           },
           {
             key:'grade',
             title:'角色等级',
             dataIndex:'grade',
-            ellipsis: true,
-            tip:"备注过长会自动收缩,鼠标放上去查看",
+            valueType:'select',
+            request:async () => {
+                return [
+                    {
+                        label:'总部',
+                        value:0
+                    },{
+                        label:'分部',
+                        value:1
+                    },{
+                        label:'部门',
+                        value:2
+                    },
+                ]
+            },
             hideInSearch: true,
           },{
             key:'action',
@@ -231,7 +239,8 @@ const HumanList = (prop:{characterId:number})=>{
             dataIndex:'dataId',
             render:(dom,entity,index,action) => {
                 return (<Button danger onClick={()=>{drop(entity.humanId)}}>删除</Button>)
-            }
+            },
+            hideInSearch:true
           }
     ]
     const NewLink =()=>(
@@ -264,14 +273,14 @@ const HumanList = (prop:{characterId:number})=>{
             label="人员"
             placeholder="请选择人员"
             request={async () => {
-                let authorities:HumanOut[] =(await getDataList(config.backs.human,{toBrowser:true})).data
-                return authorities.map((value,index,array)=>{return {title:value.name,value:value.dataId}})
+                let humans:HumanOut[] =(await getDataList(config.backs.human,{toBrowser:true})).data
+                return humans.map((value,index,array)=>{return {title:value.name,value:value.dataId}})
             }}
             required = {true}/>
             <ProFormSelect
             width="md"
-            name="dataId"
-            label="权限"
+            name="grade"
+            label="权限等级"
             placeholder="请选择权限"
             request={async () => {
                 return [
@@ -293,6 +302,7 @@ const HumanList = (prop:{characterId:number})=>{
 
     return (
         <ProTable<Grade>
+            
         columns={columns}
         actionRef={actionRef}
         cardBordered
@@ -308,7 +318,8 @@ const HumanList = (prop:{characterId:number})=>{
             // console.log(params)
             // console.log(sort);
             // console.log(filter);
-            return getDataList(config.backs.character_human+"/"+prop.characterId,params)
+            params.characterId = prop.characterId
+            return getDataList(config.backs.character_human,params)
         }}
         editable={{
             type: 'multiple',
@@ -321,9 +332,7 @@ const HumanList = (prop:{characterId:number})=>{
             },
         }}
         rowKey="id"
-        search={{
-            labelWidth: 'auto',
-        }}
+        search={false}
         options={{
             setting: {
             listsHeight: 400,
@@ -385,6 +394,12 @@ const BaseCharacterConcrete = ()=>{
                         searchConfig:{
                             resetText:"重置",
                             submitText:"保存"
+                        },
+                        submitButtonProps:{
+                            style:{marginRight:"auto"}
+                        },
+                        resetButtonProps:{
+                            style:{marginLeft:"auto"}
                         }
                     }}
                     layout="horizontal"
@@ -473,3 +488,5 @@ const BaseCharacterConcrete = ()=>{
         </div>
     )
 }
+
+export default BaseCharacterConcrete

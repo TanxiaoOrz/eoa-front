@@ -187,7 +187,7 @@ const CharacterList = () => {
   );
 };
 
-const BackModule = () => {
+const BackCharacter = () => {
   return (
     <Layout style={{ minHeight: '100vh'}}>
       <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
@@ -207,4 +207,4 @@ const BackModule = () => {
   )
 }
 
-export default BackModule;
+export default BackCharacter;

@@ -56,7 +56,7 @@ export const getDataList = async (url:string,params:any = {current:1,pageSize:10
         message.error(data.description)
         return {
             data:[],
-            success:false,
+            success:true,
             total:0
         }
     }

@@ -62,7 +62,7 @@ const BackTableConcrete = () => {
             getDataOne(tableUrl + "/" + tableId+"?isVirtual="+isVirtual).then((values)=>{
                 if (values.success) {
                     setTable(values.data);
-                }
+                } 
             })
         console.log(table)
         if (table === null)
