@@ -10,7 +10,16 @@ export default {
         table : "api/v1/table/back/table",
         module : "api/v1/table/back/module",
         column : "api/v1/table/back/column",
-        content : "api/v1/content/back/content"
+        content : "api/v1/content/back/content",
+        character : "/api/v1/authority/back/character",
+        character_human:"/api/v1/authority/back/character/human",
+        character_authority : "/api/v1/authority/back/character/authority",
+        character_link : "/api/v1/authority/back/character/link",
+        character_drop : "/api/v1/authority/back/character/drop",
+        authority : "/api/v1/authority/back/authority",
+        human : "/api/v1/organization/back/human",
+        depart : "/api/v1/organization/back/depart",
+        section : "/api/v1/organization/back/section",
     },
     fronts:{
         character: "/api/v1/authority/front/character",
