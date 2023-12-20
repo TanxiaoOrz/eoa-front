@@ -195,3 +195,10 @@ export type FormOut = {
     details:Detail[]
     title:string
 }
+
+export type Authority = {
+    dataId:number
+    authorityName:string
+    authorityDescription:string
+    authorityRemark:string
+}
