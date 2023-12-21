@@ -34,5 +34,10 @@ export default {
         form:"/api/v1/table/front/form",
         formAuthority:"/api/v1/table/front/authoriy"
     },
-    globalSrollHidden:true
+    setScrollView:()=>{
+        window.sessionStorage.setItem("scroll","0")
+    },
+    getScrollHideStatus:()=>{
+        return window.sessionStorage.getItem("scroll") === "0"
+    }
 }

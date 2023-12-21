@@ -35,7 +35,7 @@ type HumanIn = {
 
 
 
-const BaseHumanConcrete = () => {
+const BackHumanConcrete = () => {
     const humanId = useParams().dataId
     const [form] = Form.useForm<HumanIn>()
     const [human, setHuman] = useState<HumanOut>()
@@ -53,37 +53,29 @@ const BaseHumanConcrete = () => {
     if (human === undefined)
         return (<PageWait />)
     const dropHuman = async () => {
-        return (await deleteData(config.backs.human + "/" + humanId))
+        if ((await deleteData(config.backs.human + "/" + humanId)))
+            window.location.reload() 
     }
 
     const HumanBase = () => {
         return (
-            <div style={{ height: "85vh", display: "flex", background: "#fdfdfd", paddingTop: "30px" }}>
+            <div style={{ display: "flex", background: "#fdfdfd", paddingTop: "30px", paddingLeft:"10px"}}>
                 <ProForm<HumanIn>
+                    form={form}
                     style={{
-                        margin: "0 auto"
+                        margin: "0 auto",
+                        minHeight: "90vh"
                     }}
-                    submitter={{
-                        searchConfig: {
-                            resetText: "重置",
-                            submitText: "保存"
-                        },
-                        submitButtonProps: {
-                            style: { marginRight: "auto" }
-                        },
-                        resetButtonProps: {
-                            style: { marginLeft: "auto" }
-                        }
-                    }}
+                    submitter={false}
                     layout="horizontal"
                     initialValues={human}
                     onFinish={async (human: HumanIn) => {
-                        return (await UpdateData(config.backs.human + "/" + human, human))
+                        return (await UpdateData(config.backs.human + "/" + humanId, human))
                     }}
                 >
                     <ProFormGroup size={"large"} title="登录信息">
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="loginName"
                             label="登录名"
                             tooltip="最长为33位"
@@ -91,7 +83,7 @@ const BaseHumanConcrete = () => {
                             required={true}
                         />
                         <ProFormText.Password
-                            width="xl"
+                            width="md"
                             name="password"
                             label="密码"
                             tooltip="最长为33位"
@@ -101,7 +93,7 @@ const BaseHumanConcrete = () => {
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="基本信息">
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="name"
                             label="姓名"
                             tooltip="最长为33位"
@@ -109,7 +101,7 @@ const BaseHumanConcrete = () => {
                             required={true}
                         />
                         <ProFormSelect
-                            width="xl"
+                            width="md"
                             name="sex"
                             label="性别"
                             tooltip="最长为33位"
@@ -125,7 +117,7 @@ const BaseHumanConcrete = () => {
                             required={false}
                         />
                         <ProFormDigit
-                            width="xl"
+                            width="md"
                             name="age"
                             label="年龄"
                             tooltip="最长为33位"
@@ -134,7 +126,7 @@ const BaseHumanConcrete = () => {
                             required={false}
                         />
                         <ProFormDatePicker
-                            width="xl"
+                            width="md"
                             name="birth"
                             label="出生日期"
                             required={false}
@@ -142,7 +134,7 @@ const BaseHumanConcrete = () => {
                     </ProFormGroup>
                     <ProFormGroup size="large" title="通讯信息">
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="telephone"
                             label="手机号"
                             tooltip="最长为33位"
@@ -150,7 +142,7 @@ const BaseHumanConcrete = () => {
                             required={false}
                         />
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="mail"
                             label="邮箱"
                             tooltip="最长为33位"
@@ -158,7 +150,7 @@ const BaseHumanConcrete = () => {
                             required={false}
                         />
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="phone"
                             label="电话"
                             tooltip="最长为33位"
@@ -166,7 +158,7 @@ const BaseHumanConcrete = () => {
                             required={false}
                         />
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="fax"
                             label="传真"
                             tooltip="最长为33位"
@@ -176,7 +168,7 @@ const BaseHumanConcrete = () => {
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="工作信息">
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="workCode"
                             label="工号"
                             tooltip="最长为33位"
@@ -184,7 +176,7 @@ const BaseHumanConcrete = () => {
                             required={true}
                         />
                         <ProFormText
-                            width="xl"
+                            width="md"
                             name="job"
                             label="岗位"
                             tooltip="最长为33位"
@@ -192,7 +184,7 @@ const BaseHumanConcrete = () => {
                             required={false}
                         />
                         <ProFormTreeSelect
-                            width="xl"
+                            width="md"
                             name="depart"
                             label="所属部门"
                             tooltip="仅为未废弃部门"
@@ -204,7 +196,7 @@ const BaseHumanConcrete = () => {
                             }}
                         />
                         <ProFormTreeSelect
-                            width="xl"
+                            width="md"
                             name="section"
                             label="所属分部"
                             tooltip="仅为未废弃分部"
@@ -215,10 +207,19 @@ const BaseHumanConcrete = () => {
                                 return sections.map((depart,index,array)=>{return {title:depart.sectionName,value:depart.dataId}})
                             }}
                         />
+                        <ProFormDigit
+                            width="md"
+                            name="safety"
+                            label="安全等级"
+                            tooltip="最小0最大100"
+                            disabled
+                            fieldProps={{ precision: 0,min:0,max:100 }}
+                            required={false}
+                        />
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="上下级信息">
                     <ProFormTreeSelect
-                        width="xl"
+                        width="md"
                         name="directorLeader"
                         label="上级领导"
                         placeholder="请选择领导"
@@ -228,7 +229,7 @@ const BaseHumanConcrete = () => {
                         }}
                         required = {true}/>
                     <ProFormTreeSelect
-                        width="xl"
+                        width="md"
                         name="supporter"
                         label="助理"
                         placeholder="请选择助理"
@@ -240,21 +241,21 @@ const BaseHumanConcrete = () => {
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="展示资料" >
                         <UploadFileProposed label="展示照片" name="photo" form={form} content={2}/>
-                        <ProFormTextArea label="个性签名" name="signature" width="xl" placeholder={"请输入签名"}/>
+                        <ProFormTextArea label="个性签名" name="signature" width="md" placeholder={"请输入签名"}/>
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="上下级信息"> 
                         <ProFormDatePicker
                             name={"lastLogin"}
                             label={"上次登录时间"}
                             readonly
-                            width={'xl'}
+                            width={'md'}
                         />
                     </ProFormGroup>
                 </ProForm>
             </div>
         )
     }
-
+    let title = ((human.isDeprecated===0)?"":"  (已离职)")
     return (
         <div
             style={{ background: '#F5F7FA' }}
@@ -263,12 +264,12 @@ const BaseHumanConcrete = () => {
 
                 fixedHeader
                 header={{
-                    title: human.name,
+                    title: human.name + title,
                     breadcrumb: {
                         items: [
                             {
                                 path: url.backUrl.human,
-                                title: '角色列表',
+                                title: '人员列表',
                             },
                             {
                                 path: url.backUrl.character_concrete + '/' + humanId,
@@ -277,24 +278,18 @@ const BaseHumanConcrete = () => {
                         ],
                     },
                     extra: [
-                        <Button key='save' type="primary" onClick={form.submit}>{human.isDeprecated===1?"编辑":"编辑并复职"}</Button>,
+                        <Button key='save' type="primary" onClick={()=>{form.submit()}}>{human.isDeprecated===0?"保存":"保存并复职"}</Button>,
                         <Button key='reset' onClick={()=>{form.resetFields()}}>重置</Button>,
                         <Button key='drop' type='default' danger onClick={dropHuman} disabled={human.isDeprecated===1} >离职</Button>
                     ]
                 }}
-                tabList={[
-                    {
-                        tab: '基本信息',
-                        key: '1',
-                        children: (<HumanBase />)
-                    }
-                ]}
             >
+                <HumanBase />
             </PageContainer>
         </div>
     )
 }
 
-export default BaseHumanConcrete
+export default BackHumanConcrete
 
 

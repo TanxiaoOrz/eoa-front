@@ -7,10 +7,6 @@ import {
 
 import router from "./route/route.tsx"
 import config from "./const/config.js";
-if (config.globalSrollHidden)
-  document.body.parentNode.style.overflowY = "hidden";
-
-document.body.parentNode.style.overflowX = "hidden"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
