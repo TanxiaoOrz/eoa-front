@@ -139,6 +139,8 @@ const ContentList = (prop:{leadContent:number|undefined}) => {
       dataIndex:"deprecated",
       valueType:'select',
       width:48*2,
+      filtered:true,
+      hideInSearch:true,
       request:async () => {
         return [{
           value:true,
