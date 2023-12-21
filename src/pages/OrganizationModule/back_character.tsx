@@ -17,6 +17,7 @@ type CharacterIn = {
 
 const CreateCharacter = (prop:{action:React.MutableRefObject<ActionType|undefined>}) => {
   const [form] = Form.useForm<CharacterIn>();
+  let jump:boolean = false 
   return (
     <ModalForm<CharacterIn>
       title="新建角色"
@@ -29,10 +30,30 @@ const CreateCharacter = (prop:{action:React.MutableRefObject<ActionType|undefine
       width={400}
       form={form}
       submitTimeout={2000}
+      submitter={{
+        searchConfig: {
+          submitText: '新建',
+          resetText: '取消',
+        },
+        render:(prop,defaultDoms)=>{
+          return [
+            ...defaultDoms,
+            <Button
+              key="jump"
+              type='primary'
+              onClick={()=>{
+                jump = true
+                prop.submit()
+              }}>新建并跳转</Button>
+          ]
+        }
+      }}
       autoFocusFirstInput
       onFinish={async (values:CharacterIn)=>{
         let dataId = await newData(config.backs.character,values)
         if (dataId!=-1) {
+          if (jump)
+            window.location.assign(url.backUrl.character_concrete+dataId)
           if (prop.action.current!==undefined)
             prop.action.current.reload();
         }
