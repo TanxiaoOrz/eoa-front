@@ -45,7 +45,6 @@ export default (prop:{dataName:string,column:ColumnSimpleOut,values:any,edit:boo
             let {status, response, name} = info.file
             if (status === 'done')
                 if (response.code === 0) {
-                    message.success("上传成功")
                     let file:FileOut = response.entity
                     prop.set(prop.dataName,file.dataId)
                     console.log(file)
@@ -69,4 +68,56 @@ export default (prop:{dataName:string,column:ColumnSimpleOut,values:any,edit:boo
             addonAfter = {<>{addonAfter}</>}
         />
     )
+}
+
+export const UploadFileProposed = (prop:{label:string,name:string,form:FormInstance,content:number}) => {
+    const [file,setFile] = useState<FileOut>()
+    const contentId = prop.content
+    let fileId = prop.form.getFieldValue(prop.name)
+    if (fileId !== null && fileId !== undefined){
+        // console.log("getFile")
+        if (file === undefined) {
+            if (fileId === undefined || fileId === ""){
+                return
+            } else
+                getDataOne(config.fronts.file+"/"+fileId).then((ret)=>{
+                    if (ret.success)
+                        setFile(ret.data)
+                })
+        }}
+
+    const upLoadProos:UploadProps = {
+        headers:{
+            tokens:localStorage.getItem('tokens') ?? ""
+        },
+        method:"POST",
+        action:config.backUrl+config.fronts.upload+"/form",
+        data:{
+            leadContent:contentId
+        },
+        showUploadList:false,
+        maxCount:1,
+        onChange:(info) => {
+            let {status, response, name} = info.file
+            if (status === 'done')
+                if (response.code === 0) {
+                    let file:FileOut = response.entity
+                    message.success("上传成功")
+                    prop.form.setFieldValue(prop.name,file.dataId)
+                    setFile(file)
+                } else {
+                    message.error(response.description)
+                }
+        },
+        itemRender:()=>{return (<></>)}
+        }
+    const addonAfter = [<a href={file?.fileRoute}>{file?.fileName}</a>,<Upload {...upLoadProos} ><Button icon={<UploadOutlined />}/></Upload>]
+    
+    return <ProFormText
+                width={0}
+                name={prop.name}
+                label={prop.label}
+                readonly
+                addonAfter = {addonAfter}
+            />
 }
