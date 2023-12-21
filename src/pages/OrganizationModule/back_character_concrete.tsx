@@ -205,7 +205,7 @@ const HumanList = (prop:{characterId:number})=>{
             dataIndex:'humanId',
             valueType:'select',
             request:async()=>{
-                let humans:HumanOut[] =(await getDataList(config.backs.human,{toBrowser:true})).data
+                let humans:HumanOut[] =(await getDataList(config.fronts.human,{toBrowser:true})).data
                 console.log(humans)
                 let tree = humans.map((value,index,array)=>{return {label:value.name,value:value.dataId}})
                 console.log(tree)
@@ -273,7 +273,7 @@ const HumanList = (prop:{characterId:number})=>{
             label="人员"
             placeholder="请选择人员"
             request={async () => {
-                let humans:HumanOut[] =(await getDataList(config.backs.human,{toBrowser:true})).data
+                let humans:HumanOut[] =(await getDataList(config.fronts.human,{toBrowser:true})).data
                 return humans.map((value,index,array)=>{return {title:value.name,value:value.dataId}})
             }}
             required = {true}/>
