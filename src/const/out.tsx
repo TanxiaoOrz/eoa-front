@@ -90,7 +90,7 @@ export type HumanOut = {
     signature:string
     lastLogin:Date
     safety:number
-
+    isDeprecated:number
     departName:string
     sectionName:string
     leaderName:string
@@ -107,7 +107,7 @@ export type DepartOut = {
     departIntroduction:string
     createTime:string
     photo:number
-
+    isDeprecated:number
     belongDepartName:string
     belongSectionName:string
     managerName:string
@@ -123,6 +123,7 @@ export type SectionOut = {
     sectionIntroduction:string
     createTime:string
     photo:number
+    isDeprecated:number
     belongSectionName:string
     managerName:string
 }
