@@ -101,7 +101,7 @@ export type DepartOut = {
     departName:string
     departCode:string
     fullName:string
-    benumberDepart:number
+    belongDepart:number
     belongSection:number
     departManager:number
     departIntroduction:string
