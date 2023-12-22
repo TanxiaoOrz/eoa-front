@@ -25,6 +25,7 @@ export default {
         character: "/api/v1/authority/front/character",
         authority: "/api/v1/authority/front/authority",
         human:"/api/v1/organization/front/human",
+        human_self:"/api/v1/organization/front/humanSelf",
         depart:"/api/v1/organization/front/depart",
         section:"/api/v1/organization/front/section",
         content:"/api/v1/content/front/content",
