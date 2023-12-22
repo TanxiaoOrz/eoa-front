@@ -77,7 +77,7 @@ export const UploadFileProposed = (prop:{label:string,name:string,form:FormInsta
     if (fileId !== null && fileId !== undefined){
         // console.log("getFile")
         if (file === undefined) {
-            if (fileId === undefined || fileId === ""){
+            if (fileId === undefined || fileId === "" || fileId === "0" || fileId === 0){
                 return
             } else
                 getDataOne(config.fronts.file+"/"+fileId).then((ret)=>{

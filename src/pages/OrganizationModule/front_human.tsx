@@ -94,6 +94,7 @@ const HumanList = (prop:{depart:number,section:number}) => {
         },{
             key:'isDeprecated',
             dataIndex:'isDeprecated',
+            title:"在职情况",
             valueType:'select',
             request:async ()=>{
                 return [
@@ -106,7 +107,15 @@ const HumanList = (prop:{depart:number,section:number}) => {
                     },
                 ]
             }
-        }
+        },{
+            key: 'action',
+            title: '操作',
+            dataIndex: "moduleTypeId",
+            width: 48 * 3,
+            hideInSearch: true,
+            render: (dom, entity, index, action) =>
+                <Button href={url.frontUrl.humanResource + entity.dataId}>编辑</Button>
+        },
     ];
 
     return (

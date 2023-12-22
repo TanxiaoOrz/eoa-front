@@ -18,6 +18,8 @@ import BackCharacter from "../pages/OrganizationModule/back_character.tsx";
 import BaseCharacterConcrete from "../pages/OrganizationModule/back_character_concrete.tsx";
 import BackHuman from "../pages/OrganizationModule/back_human.tsx";
 import BackHumanConcrete from "../pages/OrganizationModule/back_human_concrete.tsx";
+import FrontHuman from "../pages/OrganizationModule/front_human.tsx";
+import FrontHumanConcrete from "../pages/OrganizationModule/front_human_concrete.tsx";
 
 const Protable = protable
 
@@ -69,6 +71,12 @@ const fronts = [
   },{
     path:"form/:formId",
     element: <FrontFormConcrete />
+  },{
+    path:"human_resouce",
+    element:<FrontHuman />
+  },{
+    path:"human_resouce/:dataId",
+    element:<FrontHumanConcrete />
   }
 ]
 

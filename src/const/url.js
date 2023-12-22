@@ -16,9 +16,12 @@
         section_concrete:'/back_section/',
     },
     frontUrl:{
-        humanResource:"/human/",
-        depart:"/depart/",
-        section:"/section/",
+        human:"/human_resouce",
+        humanResource:"/human_resouce/",
+        depart:"/depart",
+        depart_concrete:"/depart/",
+        section:"/section",
+        section_concrete:"/section/",
         content_concrete:'/content/',
         form_concrete:'/form/',
     }

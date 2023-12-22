@@ -189,6 +189,7 @@ const HumanList = (prop:{depart:number,section:number}) => {
         },{
             key:'isDeprecated',
             dataIndex:'isDeprecated',
+            title:"在职情况",
             valueType:'select',
             request:async ()=>{
                 return [

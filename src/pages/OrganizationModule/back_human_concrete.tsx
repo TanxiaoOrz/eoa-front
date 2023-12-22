@@ -210,7 +210,7 @@ const BackHumanConcrete = () => {
                             placeholder="请选择分部"
                             readonly
                             request={async ()=>{
-                                let sections:SectionOut[] = (await getDataList(config.fronts.depart,{toBrowser:true,isDeperacted:0})).data
+                                let sections:SectionOut[] = (await getDataList(config.fronts.section,{toBrowser:true,isDeperacted:0})).data
                                 return sections.map((depart,index,array)=>{return {title:depart.sectionName,value:depart.dataId}})
                             }}
                         />
