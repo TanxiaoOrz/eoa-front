@@ -72,6 +72,7 @@ const BackHumanConcrete = () => {
                     onFinish={async (human: HumanIn) => {
                         return (await UpdateData(config.backs.human + "/" + humanId, human))
                     }}
+                    
                 >
                     <ProFormGroup size={"large"} title="登录信息">
                         <ProFormText
@@ -89,6 +90,12 @@ const BackHumanConcrete = () => {
                             tooltip="最长为33位"
                             placeholder="不填写即为不修改"
                             required={false}
+                        />
+                        <ProFormDatePicker
+                            name={"lastLogin"}
+                            label={"上次登录时间"}
+                            readonly
+                            width={'md'}
                         />
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="基本信息">
@@ -242,14 +249,6 @@ const BackHumanConcrete = () => {
                     <ProFormGroup size={"large"} title="展示资料" >
                         <UploadFileProposed label="展示照片" name="photo" form={form} content={2}/>
                         <ProFormTextArea label="个性签名" name="signature" width="md" placeholder={"请输入签名"}/>
-                    </ProFormGroup>
-                    <ProFormGroup size={"large"} title="上下级信息"> 
-                        <ProFormDatePicker
-                            name={"lastLogin"}
-                            label={"上次登录时间"}
-                            readonly
-                            width={'md'}
-                        />
                     </ProFormGroup>
                 </ProForm>
             </div>
