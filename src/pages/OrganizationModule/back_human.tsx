@@ -32,9 +32,11 @@ type HumanIn = {
     safety: number
 }
 
-const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefined> }) => {
+const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefined>,depart:number,section:number}) => {
     const [form] = Form.useForm<HumanIn>();
     let jump = false
+    if (prop.depart !== 0)
+    form.setFieldValue("depart",prop.depart)
     return (
         <ModalForm<HumanIn>
             title="新建人员"
@@ -116,7 +118,10 @@ const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefi
                 placeholder="请选择部门"
                 required={true} 
                 request={async ()=>{
-                    let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true,isDeperacted:0})).data
+                    let params:any = {toBrowser:true,isDeperacted:0}
+                    if (prop.section !== 0)
+                        params.section = prop.section
+                    let departs:DepartOut[] = (await getDataList(config.fronts.depart,params)).data
                     return departs.map((depart,index,array)=>{return {title:depart.departName,value:depart.dataId}})
                 }}/>
         </ModalForm>
@@ -266,9 +271,9 @@ const HumanList = (prop:{depart:number,section:number}) => {
                 onChange: (page) => console.log(page),
             }}
             dateFormatter="string"
-            headerTitle="应用列表"
+            headerTitle="人员列表"
             toolBarRender={() => [
-                <CreaterHuman key="create" action={actionRef} />,
+                <CreaterHuman key="create" action={actionRef} section={prop.section} depart={prop.depart}/>,
             ]}
         />
     );
