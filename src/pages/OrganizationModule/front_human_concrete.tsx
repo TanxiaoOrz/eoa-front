@@ -1,19 +1,15 @@
-﻿import { useEffect, useState } from "react"
+﻿import React, { useEffect, useState } from "react"
 import { DepartOut, FileOut, HumanOut, SectionOut } from "../../const/out.tsx"
 import { UpdateData, getDataList, getDataOne } from "../../const/http.tsx"
 import { useParams } from "react-router"
-import { Avatar, Button, DatePicker, Flex, Form, Layout, Space, Upload, message } from "antd"
+import { Avatar, Button, Flex, Form, Layout, Typography, Upload, UploadProps, message } from "antd"
 import config from "../../const/config.js"
-import React from "react"
 import Sider from "antd/es/layout/Sider"
 import { Header, Content } from "antd/es/layout/layout"
 import PageWait from "../../componet/PageWait.tsx"
 import { UploadOutlined, UserOutlined } from "@ant-design/icons"
-import UpLoadFile, { UploadFileProposed } from "../../componet/UpLoadFile.tsx"
-import dayjs from "dayjs"
-import { Typography } from 'antd';
-import { ProForm, ProFormGroup, ProFormText, ProFormSelect, ProFormDigit, ProFormDatePicker, ProFormTreeSelect, ProFormTextArea } from "@ant-design/pro-components"
-import form, { FormInstance } from "antd/es/form/index"
+import { ProForm, ProFormGroup, ProFormText, ProFormSelect, ProFormDigit, ProFormDatePicker, ProFormTreeSelect } from "@ant-design/pro-components"
+import { FormInstance } from "antd/es/form/index"
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -309,7 +305,7 @@ const FrontHumanConcrete = () => {
     }
 
     let buttons = [<Upload {...upLoadProos} ><Button icon={<UploadOutlined />}>修改头像</Button></Upload>, <Button style={{ marginLeft: "5px" }} type="primary" key={"save"} onClick={() => { form.submit() }} disabled={!editable}>编辑并保存</Button>]
-    console.log(avaterGroup)
+    let title = ((human.isDeprecated===0)?"":"  (已离职)")
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider style={{ padding: '15px 50px', minHeight: '100%', background: "#f1ffff", marginRight: "5px" }} width={210}>
@@ -319,7 +315,7 @@ const FrontHumanConcrete = () => {
 
             <Layout>
                 <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
-                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{human.name}</Title>
+                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{human.name + title}</Title>
                 </Header>
                 <Flex vertical={false} style={{ background: "#ffffff", padding: "10px" }}>
                     {Array.from({ length: 4 }).map((_, i) => (<div key={i} style={{ ...baseStyle }} />))}

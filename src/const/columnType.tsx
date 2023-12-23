@@ -1,10 +1,9 @@
-import { ProFormText, ProFormTextArea, ProFormDigit, ProFormDateTimePicker, ProFormUploadButton, ProFormSelect, ProFormTreeSelect, ProColumns, EditableFormInstance } from "@ant-design/pro-components"
-import group from "antd/es/avatar/group"
+import { ProFormText, ProFormTextArea, ProFormDigit, ProFormDateTimePicker, ProFormSelect, ProFormTreeSelect, ProColumns, EditableFormInstance } from "@ant-design/pro-components"
 import React from "react"
 import { ColumnSimpleOut, FormOut } from "./out.tsx"
 import { getDataList } from "./http.tsx"
 import config from "./config"
-import { Button, FormInstance, Upload, message } from "antd"
+import { Button, FormInstance, message } from "antd"
 import url from "./url"
 import UpLoadFile from "../componet/UpLoadFile.tsx"
 

@@ -1,14 +1,13 @@
-﻿import React, { useEffect, useRef, useState } from "react"
+﻿import React, { useEffect, useState } from "react"
 import config from "../../const/config.js"
 import { UpdateData, deleteData, getDataList, getDataOne } from "../../const/http.tsx"
-import { CharacterOut, Authority, HumanOut, DepartOut, SectionOut } from "../../const/out.tsx"
+import { HumanOut, DepartOut, SectionOut } from "../../const/out.tsx"
 import { useParams } from "react-router"
 import url from "../../const/url"
 import PageWait from "../../componet/PageWait.tsx"
-import { ActionType, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
-import { Button, Form, Modal } from "antd"
-import { PlusOutlined } from "@ant-design/icons"
-import UpLoadFile, { UploadFileProposed } from "../../componet/UpLoadFile.tsx"
+import { PageContainer, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from "@ant-design/pro-components"
+import { Button, Form } from "antd"
+import { UploadFileProposed } from "../../componet/UpLoadFile.tsx"
 
 
 type HumanIn = {
@@ -271,7 +270,7 @@ const BackHumanConcrete = () => {
                                 title: '人员列表',
                             },
                             {
-                                path: url.backUrl.character_concrete + '/' + humanId,
+                                path: url.backUrl.human_concrete + '/' + humanId,
                                 title: human.name,
                             },
                         ],

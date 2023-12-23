@@ -206,7 +206,6 @@ const HumanList = (prop:{depart:number,section:number}) => {
             key: 'action',
             title: '操作',
             dataIndex: "moduleTypeId",
-            width: 48 * 3,
             hideInSearch: true,
             render: (dom, entity, index, action) =>
                 <Button href={url.backUrl.human_concrete + entity.dataId}>编辑</Button>
@@ -281,14 +280,20 @@ const HumanList = (prop:{depart:number,section:number}) => {
 };
 
 const BackHuman = (prop:{depart:number,section:number}) => {
+    let header =  (
+        <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
+            <div style={{ display: 'flex' }}>
+                <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
+                <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>人员列表</Title>
+            </div>
+        </Header>)
+    if (prop.depart !== 0 || prop.section !== 0) 
+        header = <></>
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
-                <div style={{ display: 'flex' }}>
-                    <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
-                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>人员列表</Title>
-                </div>
-            </Header>
+            
+                {header}
+            
             <Content style={{ padding: '15px 50px', minHeight: '100%' }}>
                 <HumanList depart={prop.depart} section={prop.section}/>
             </Content>

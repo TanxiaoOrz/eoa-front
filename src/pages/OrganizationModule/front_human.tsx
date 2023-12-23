@@ -35,7 +35,7 @@ type HumanIn = {
 
 
 
-const HumanList = (prop:{depart:number,section:number}) => {
+const HumanList = (prop: { depart: number, section: number }) => {
     const actionRef = useRef<ActionType>();
 
     const columns: ProColumns<HumanOut>[] = [
@@ -58,16 +58,16 @@ const HumanList = (prop:{depart:number,section:number}) => {
             title: '人员性别',
             dataIndex: 'sex',
             ellipsis: true,
-            valueType:'select',
+            valueType: 'select',
             tip: "不显示代表未录入",
-            request:async ()=>{
+            request: async () => {
                 return [
                     {
-                        label:"男",
-                        value:0,
-                    },{
-                        label:"女",
-                        value:1,
+                        label: "男",
+                        value: 0,
+                    }, {
+                        label: "女",
+                        value: 1,
                     },
                 ]
             }
@@ -87,31 +87,30 @@ const HumanList = (prop:{depart:number,section:number}) => {
             title: '所属部门',
             dataIndex: 'depart',
             valueType: "select",
-            request: async ()=>{
-                let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true,isDeperacted:0})).data
-                return departs.map((depart,index,array)=>{return {label:depart.departName,value:depart.dataId}})
+            request: async () => {
+                let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
+                return departs.map((depart, index, array) => { return { label: depart.departName, value: depart.dataId } })
             }
-        },{
-            key:'isDeprecated',
-            dataIndex:'isDeprecated',
-            title:"在职情况",
-            valueType:'select',
-            request:async ()=>{
+        }, {
+            key: 'isDeprecated',
+            dataIndex: 'isDeprecated',
+            title: "在职情况",
+            valueType: 'select',
+            request: async () => {
                 return [
                     {
-                        label:'在职',
-                        value:0
-                    },{
-                        label:'离职',
-                        value:1
+                        label: '在职',
+                        value: 0
+                    }, {
+                        label: '离职',
+                        value: 1
                     },
                 ]
             }
-        },{
+        }, {
             key: 'action',
             title: '操作',
             dataIndex: "moduleTypeId",
-            width: 48 * 3,
             hideInSearch: true,
             render: (dom, entity, index, action) =>
                 <Button href={url.frontUrl.humanResource + entity.dataId}>编辑</Button>
@@ -182,29 +181,30 @@ const HumanList = (prop:{depart:number,section:number}) => {
     );
 };
 
-const FrontHuman = (prop:{depart:number,section:number}) => {
+const FrontHuman = (prop: { depart: number, section: number }) => {
+    let header = (
+        <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
+            <div style={{ display: 'flex' }}>
+                <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
+                <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>人员列表</Title>
+            </div>
+        </Header>
+    )
+    if (prop.depart !== 0 || prop.section !== 0)
+        header = <></>
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
-                <div style={{ display: 'flex' }}>
-                    <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
-                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>人员列表</Title>
-                </div>
-            </Header>
+            {header}
             <Content style={{ padding: '15px 50px', minHeight: '100%' }}>
-                <HumanList depart={prop.depart} section={prop.section}/>
+                <HumanList depart={prop.depart} section={prop.section} />
             </Content>
-
         </Layout>
-
-
-
     )
 }
 
 FrontHuman.defaultProps = {
-    depart:0,
-    section:0
+    depart: 0,
+    section: 0
 }
 
 export default FrontHuman;

@@ -1,10 +1,10 @@
 import {
-    createBrowserRouter,
+  createBrowserRouter,
 } from "react-router-dom";
 import Root from "./root.tsx";
 import ErrorPage from "./error-page.tsx";
 import BackModule from "../pages/TableModule/back_module.tsx";
-import protable from "../example/protable.tsx"; 
+import protable from "../example/protable.tsx";
 import Login from "./login.tsx";
 import React from "react";
 import { FrontPage } from "./fornt.tsx";
@@ -20,37 +20,47 @@ import BackHuman from "../pages/OrganizationModule/back_human.tsx";
 import BackHumanConcrete from "../pages/OrganizationModule/back_human_concrete.tsx";
 import FrontHuman from "../pages/OrganizationModule/front_human.tsx";
 import FrontHumanConcrete from "../pages/OrganizationModule/front_human_concrete.tsx";
+import BackDepart from "../pages/OrganizationModule/back_depart.tsx";
+import BackDepartConcrete from "../pages/OrganizationModule/back_depart_concrete.tsx";
+import FrontDepart from "../pages/OrganizationModule/front_depart.tsx";
+import FrontDepartConcrete from "../pages/OrganizationModule/front_depart_concrete.tsx";
 
 const Protable = protable
 
 const backs = [
   {
     path: "back_module",
-    element: <BackModule />,  
-  },{
-    path:"back_table",
+    element: <BackModule />,
+  }, {
+    path: "back_table",
     element: <BackTable />,
-  },{
-    path:"back_table/:tableId",
+  }, {
+    path: "back_table/:tableId",
     element: <BackTableConcrete />,
-  },{
-    path:"back_content",
+  }, {
+    path: "back_content",
     element: <BackContent />
-  },{
-    path:"back_content/:contentId",
-    element:<BackContentConcrete />
-  },{
-    path:"back_character",
-    element:<BackCharacter />
-  },{
-    path:"back_character/:dataId",
-    element:<BaseCharacterConcrete />
-  },{
-    path:"back_human",
-    element:<BackHuman />
-  },{
-    path:"back_human/:dataId",
-    element:<BackHumanConcrete />
+  }, {
+    path: "back_content/:contentId",
+    element: <BackContentConcrete />
+  }, {
+    path: "back_character",
+    element: <BackCharacter />
+  }, {
+    path: "back_character/:dataId",
+    element: <BaseCharacterConcrete />
+  }, {
+    path: "back_human",
+    element: <BackHuman />
+  }, {
+    path: "back_human/:dataId",
+    element: <BackHumanConcrete />
+  }, {
+    path: "back_depart",
+    element: <BackDepart />
+  }, {
+    path: "back_depart/:dataId",
+    element: <BackDepartConcrete />
   }
 ]
 
@@ -59,24 +69,30 @@ const fronts = [
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
-  },{
+  }, {
     path: "login",
     element: <Login />
-  },{
+  }, {
     path: "front",
     element: <FrontPage />
-  },{
-    path:"content/:contentId",
+  }, {
+    path: "content/:contentId",
     element: <FrontContentConcrete />
-  },{
-    path:"form/:formId",
+  }, {
+    path: "form/:formId",
     element: <FrontFormConcrete />
-  },{
-    path:"human_resouce",
-    element:<FrontHuman />
-  },{
-    path:"human_resouce/:dataId",
-    element:<FrontHumanConcrete />
+  }, {
+    path: "human_resouce",
+    element: <FrontHuman />
+  }, {
+    path: "human_resouce/:dataId",
+    element: <FrontHumanConcrete />
+  }, {
+    path: "depart",
+    element: <FrontDepart />
+  }, {
+    path: "depart/:dataId",
+    element: <FrontDepartConcrete />
   }
 ]
 

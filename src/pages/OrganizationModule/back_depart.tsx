@@ -1,11 +1,11 @@
 ﻿import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
-import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown, Form, Layout, MenuProps, Typography } from 'antd';
+import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
+import { Button, Form, Layout, Typography } from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
-import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
+import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
-import { CharacterOut, DepartOut, HumanOut, ModuleOut, SectionOut } from '../../const/out.tsx';
+import { DepartOut, SectionOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
 
 const { Title } = Typography
@@ -101,7 +101,7 @@ const CreaterDepart = (prop: { action: React.MutableRefObject<ActionType | undef
                 label="所属分部"
                 tooltip="必须为非废弃分部"
                 placeholder="请选择所属分部"
-                required={true} 
+                required={true}
                 request={async () => {
                     let params: any = { toBrowser: true, isDeperacted: 0 }
                     let departs: SectionOut[] = (await getDataList(config.fronts.section, params)).data
@@ -179,14 +179,15 @@ const DepartList = (prop: { depart: number, section: number }) => {
         {
             key: 'isDeprecated',
             dataIndex: 'isDeprecated',
+            title:'封存情况',
             valueType: 'select',
             request: async () => {
                 return [
                     {
-                        label: '在职',
+                        label: '正常',
                         value: 0
                     }, {
-                        label: '离职',
+                        label: '封存',
                         value: 1
                     },
                 ]
@@ -195,10 +196,9 @@ const DepartList = (prop: { depart: number, section: number }) => {
             key: 'action',
             title: '操作',
             dataIndex: "moduleTypeId",
-            width: 48 * 3,
             hideInSearch: true,
             render: (dom, entity, index, action) =>
-                <Button href={url.backUrl.human_concrete + entity.dataId}>编辑</Button>
+                <Button href={url.backUrl.depart_concrete + entity.dataId}>编辑</Button>
         },
     ];
 
@@ -261,7 +261,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
                 onChange: (page) => console.log(page),
             }}
             dateFormatter="string"
-            headerTitle="人员列表"
+            headerTitle="部门列表"
             toolBarRender={() => [
                 <CreaterDepart key="create" action={actionRef} section={prop.section} depart={prop.depart} />,
             ]}
@@ -270,14 +270,19 @@ const DepartList = (prop: { depart: number, section: number }) => {
 };
 
 const BackDepart = (prop: { depart: number, section: number }) => {
+    let header = (
+        <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
+            <div style={{ display: 'flex' }}>
+                <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
+                <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>部门列表</Title>
+            </div>
+        </Header>
+    )
+    if (prop.depart !== 0 || prop.section !== 0) 
+        header = <></>
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
-                <div style={{ display: 'flex' }}>
-                    <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
-                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>人员列表</Title>
-                </div>
-            </Header>
+            {header}
             <Content style={{ padding: '15px 50px', minHeight: '100%' }}>
                 <DepartList depart={prop.depart} section={prop.section} />
             </Content>
