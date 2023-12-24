@@ -1,9 +1,9 @@
-﻿import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
-import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
-import { Button, Form, Layout, Typography } from 'antd';
+﻿import { FolderOpenTwoTone } from '@ant-design/icons';
+import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { Button, Layout, Typography } from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
-import { getDataList, newData } from '../../const/http.tsx';
+import { getDataList } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
 import { DepartOut, SectionOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
