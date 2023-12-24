@@ -85,12 +85,17 @@ const HumanList = (prop: { depart: number, section: number }) => {
         {
             key: 'depart',
             title: '所属部门',
-            dataIndex: 'depart',
-            valueType: "select",
-            request: async () => {
-                let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
-                return departs.map((depart, index, array) => { return { label: depart.departName, value: depart.dataId } })
-            }
+            dataIndex: 'departName',
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.depart_concrete + entity.depart}>{entity.departName}</a>)
+            },
+        }, {
+            key: 'section',
+            title: '所属分部',
+            dataIndex: 'sectionName',
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.depart_concrete + entity.section}>{entity.sectionName}</a>)
+            },
         }, {
             key: 'isDeprecated',
             dataIndex: 'isDeprecated',
@@ -113,7 +118,7 @@ const HumanList = (prop: { depart: number, section: number }) => {
             dataIndex: "moduleTypeId",
             hideInSearch: true,
             render: (dom, entity, index, action) =>
-                <Button href={url.frontUrl.humanResource + entity.dataId}>编辑</Button>
+                <Button onClick={() => { window.open(url.frontUrl.humanResource + entity.dataId) }}>查看</Button>
         },
     ];
 
@@ -138,6 +143,7 @@ const HumanList = (prop: { depart: number, section: number }) => {
                     params.depart = prop.depart
                 if (prop.section !== 0)
                     params.section = prop.section
+                params.isDeprecated = 0
                 return getDataList(config.fronts.human, params)
             }}
             editable={{

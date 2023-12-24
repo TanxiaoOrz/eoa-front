@@ -114,6 +114,7 @@ const BackDepartConcrete = () => {
                                 let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
                                 return departs.map((depart, index, array) => { return { title: depart.departName, value: depart.dataId } })
                             }}
+                            addonAfter={<Button onClick={()=>{window.open(url.frontUrl.depart_concrete+form.getFieldValue("belongDepart"))}}>查看</Button>}
                         />
                         <ProFormTreeSelect
                             width="md"
@@ -127,6 +128,8 @@ const BackDepartConcrete = () => {
                                 return sections.map((depart, index, array) => { return { title: depart.sectionName, value: depart.dataId } })
                             }}
                             required={true}
+                            addonAfter={<Button onClick={()=>{window.open(url.frontUrl.section_concrete+form.getFieldValue("belongSection"))}}>查看</Button>}
+
                         />
                        <ProFormTreeSelect
                             width="md"
@@ -139,6 +142,8 @@ const BackDepartConcrete = () => {
                                 return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
                             }}
                             required={true} 
+                            addonAfter={<Button onClick={()=>{window.open(url.frontUrl.humanResource+form.getFieldValue("departManager"))}}>查看</Button>}
+
                         />
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="展示资料" >

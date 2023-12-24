@@ -43,31 +43,33 @@ const DepartList = (prop: { depart: number, section: number }) => {
             key: 'departManager',
             title: '部门负责人',
             dataIndex: 'departManager',
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.humanResource + entity.managerName}>{entity.managerName}</a>)
+            },
         },
         {
             key: 'belongSection',
             title: '所属分部',
-            dataIndex: 'belongSection',
+            dataIndex: 'belongSectionName',
             valueType: "select",
-            request: async () => {
-                let section: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
-                return section.map((section, index, array) => { return { label: section.sectionName, value: section.dataId } })
-            }
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.section_concrete + entity.belongSection}>{entity.belongSectionName}</a>)
+            },
+
         },
         {
             key: 'belongDepart',
             title: '上级部门',
-            dataIndex: 'belongDepart',
+            dataIndex: 'belongDepartName',
             valueType: "select",
-            request: async () => {
-                let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
-                return departs.map((depart, index, array) => { return { label: depart.departName, value: depart.dataId } })
-            }
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.depart_concrete + entity.managerName}>{entity.belongDepartName}</a>)
+            },
         },
         {
             key: 'isDeprecated',
             dataIndex: 'isDeprecated',
-            title:'封存情况',
+            title: '封存情况',
             valueType: 'select',
             request: async () => {
                 return [
@@ -86,7 +88,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             dataIndex: "moduleTypeId",
             hideInSearch: true,
             render: (dom, entity, index, action) =>
-                <Button href={url.frontUrl.depart_concrete + entity.dataId}>查看</Button>
+                <Button onClick={() => { window.open(url.frontUrl.depart_concrete + entity.dataId) }}>编辑</Button>
         },
     ];
 
@@ -111,6 +113,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
                     params.belongDepart = prop.depart
                 if (prop.section !== 0)
                     params.belongSection = prop.section
+                params.isDeprecated = 0
                 return getDataList(config.fronts.depart, params)
             }}
             editable={{
@@ -150,7 +153,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             }}
             dateFormatter="string"
             headerTitle="部门列表"
-            
+
         />
     );
 };
@@ -164,7 +167,7 @@ const FrontDepart = (prop: { depart: number, section: number }) => {
             </div>
         </Header>
     )
-    if (prop.depart !== 0 || prop.section !== 0) 
+    if (prop.depart !== 0 || prop.section !== 0)
         header = <></>
     return (
         <Layout style={{ minHeight: '100vh' }}>

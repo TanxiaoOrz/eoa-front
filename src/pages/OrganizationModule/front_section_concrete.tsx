@@ -90,7 +90,7 @@ const BaseInformation = (prop: { section: SectionOut, editable: boolean, form: F
                             return sections.map((depart, index, array) => { return { title: depart.sectionName, value: depart.dataId } })
                         }}
                         required={true}
-                        addonAfter={<Button onClick={() => (window.open(url.frontUrl.humanResource + form.getFieldValue("belongSection")))}>查看</Button>}
+                        addonAfter={<Button onClick={() => (window.open(url.frontUrl.humanResource + prop.form.getFieldValue("belongSection")))}>查看</Button>}
                     />
                     <ProFormTreeSelect
                         width="md"
@@ -103,7 +103,7 @@ const BaseInformation = (prop: { section: SectionOut, editable: boolean, form: F
                             return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
                         }}
                         required={true}
-                        addonAfter={<Button onClick={() => (window.open(url.frontUrl.humanResource + form.getFieldValue("sectionManager")))}>查看</Button>}
+                        addonAfter={<Button onClick={() => (window.open(url.frontUrl.humanResource + prop.form.getFieldValue("sectionManager")))}>查看</Button>}
                     />
                 </ProFormGroup>
             </ProForm>

@@ -10,6 +10,7 @@ import PageWait from "../../componet/PageWait.tsx"
 import { UploadOutlined, UserOutlined } from "@ant-design/icons"
 import { ProForm, ProFormGroup, ProFormText, ProFormSelect, ProFormDigit, ProFormDatePicker, ProFormTreeSelect } from "@ant-design/pro-components"
 import { FormInstance } from "antd/es/form/index"
+import url from "../../const/url.js"
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -165,61 +166,70 @@ const BaseInformation = (prop: { human: HumanOut, editable: boolean, form: FormI
                         required={false}
                     />
                     <ProFormTreeSelect
-                        width="md"
-                        name="depart"
-                        label="所属部门"
-                        tooltip="仅为未废弃部门"
-                        placeholder="请选择部门"
-                        required={true}
-                        request={async () => {
-                            let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
-                            return departs.map((depart, index, array) => { return { title: depart.departName, value: depart.dataId } })
-                        }}
-                    />
-                    <ProFormTreeSelect
-                        width="md"
-                        name="section"
-                        label="所属分部"
-                        tooltip="仅为未废弃分部"
-                        placeholder="请选择分部"
-                        disabled
-                        request={async () => {
-                            let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
-                            return sections.map((depart, index, array) => { return { title: depart.sectionName, value: depart.dataId } })
-                        }}
-                    />
-                    <ProFormDigit
-                        width="md"
-                        name="safety"
-                        label="安全等级"
-                        tooltip="最小0最大100"
-                        disabled
-                        fieldProps={{ precision: 0, min: 0, max: 100 }}
-                        required={false}
-                    />
-                </ProFormGroup>
-                <ProFormGroup size={"large"} title="上下级信息">
-                    <ProFormTreeSelect
-                        width="md"
-                        name="directorLeader"
-                        label="上级领导"
-                        placeholder="请选择领导"
-                        request={async () => {
-                            let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
-                            return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
-                        }}
-                        required={true} />
-                    <ProFormTreeSelect
-                        width="md"
-                        name="supporter"
-                        label="助理"
-                        placeholder="请选择助理"
-                        request={async () => {
-                            let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
-                            return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
-                        }}
-                        required={true} />
-                </ProFormGroup>
+                            width="md"
+                            name="depart"
+                            label="所属部门"
+                            tooltip="仅为未废弃部门"
+                            placeholder="请选择部门"
+                            required={true}
+                            request={async () => {
+                                let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
+                                return departs.map((depart, index, array) => { return { title: depart.departName, value: depart.dataId } })
+                            }}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.depart_concrete + prop.form.getFieldValue("depart")) }}>查看</Button>}
+
+                        />
+                        <ProFormTreeSelect
+                            width="md"
+                            name="section"
+                            label="所属分部"
+                            tooltip="仅为未废弃分部"
+                            placeholder="请选择分部"
+                            readonly
+                            request={async () => {
+                                let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
+                                return sections.map((section, index, array) => { return { title: section.sectionName, value: section.dataId } })
+                            }}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.section_concrete + prop.form.getFieldValue("section")) }}>查看</Button>}
+
+                        />
+                        <ProFormDigit
+                            width="md"
+                            name="safety"
+                            label="安全等级"
+                            tooltip="最小0最大100"
+                            disabled
+                            fieldProps={{ precision: 0, min: 0, max: 100 }}
+                            required={false}
+                        />
+                    </ProFormGroup>
+                    <ProFormGroup size={"large"} title="上下级信息">
+                        <ProFormTreeSelect
+                            width="md"
+                            name="directorLeader"
+                            label="上级领导"
+                            placeholder="请选择领导"
+                            request={async () => {
+                                let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
+                                return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
+                            }}
+                            required={true}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + prop.form.getFieldValue("belodirectorLeaderngDepart")) }}>查看</Button>}
+
+                        />
+                        <ProFormTreeSelect
+                            width="md"
+                            name="supporter"
+                            label="助理"
+                            placeholder="请选择助理"
+                            request={async () => {
+                                let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
+                                return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
+                            }}
+                            required={true}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + prop.form.getFieldValue("supporter")) }}>查看</Button>}
+                        />
+                    </ProFormGroup>
 
             </ProForm>
         </div>

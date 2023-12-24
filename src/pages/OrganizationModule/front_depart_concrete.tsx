@@ -12,6 +12,7 @@ import { ProForm, ProFormGroup, ProFormText, ProFormDatePicker, ProFormTreeSelec
 import { FormInstance } from "antd/es/form/index"
 import FrontDepart from "./front_depart.tsx"
 import FrontHuman from "./front_human.tsx"
+import url from "../../const/url.js"
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -47,75 +48,80 @@ const BaseInformation = (prop: { depart: DepartOut, editable: boolean, form: For
 
             >
                 <ProFormGroup size={"large"} title="基本信息">
-                        <ProFormText
-                            width="md"
-                            name="departName"
-                            label="部门名称"
-                            tooltip="最长为33位"
-                            placeholder="请输入部门名称"
-                            required={true}
-                        />
-                        <ProFormText
-                            width="md"
-                            name="departCode"
-                            label="部门编号"
-                            tooltip="最长为33位"
-                            placeholder="请输入部门编号"
-                            required={true}
-                        />
-                        <ProFormText
-                            name="fullName"
-                            label="部门全称"
-                            tooltip="最长为33位"
-                            placeholder="请输入部门全称"
-                            width='md'
-                        />
-                        <ProFormDatePicker
-                            name="createTime"
-                            label="创建时间"
-                            placeholder="请选择创建时间"
-                            width='md'
-                        />
-                    </ProFormGroup>
-                    <ProFormGroup size={"large"} title="组织信息">
-                        <ProFormTreeSelect
-                            width="md"
-                            name="belongDepart"
-                            label="上级部门"
-                            tooltip="仅为未废弃部门"
-                            placeholder="请选择上级部门"
-                            required={true}
-                            request={async () => {
-                                let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
-                                return departs.map((depart, index, array) => { return { title: depart.departName, value: depart.dataId } })
-                            }}
-                        />
-                        <ProFormTreeSelect
-                            width="md"
-                            name="belongSection"
-                            label="所属分部"
-                            tooltip="仅为未废弃分部"
-                            placeholder="请选择分部"
-                            disabled
-                            request={async () => {
-                                let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
-                                return sections.map((depart, index, array) => { return { title: depart.sectionName, value: depart.dataId } })
-                            }}
-                            required={true}
-                        />
-                       <ProFormTreeSelect
-                            width="md"
-                            name="departManager"
-                            label="部门经理"
-                            tooltip="仅显示未离职人员"
-                            placeholder="请选择领导"
-                            request={async () => {
-                                let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
-                                return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
-                            }}
-                            required={true} 
-                        />
-                    </ProFormGroup>
+                    <ProFormText
+                        width="md"
+                        name="departName"
+                        label="部门名称"
+                        tooltip="最长为33位"
+                        placeholder="请输入部门名称"
+                        required={true}
+                    />
+                    <ProFormText
+                        width="md"
+                        name="departCode"
+                        label="部门编号"
+                        tooltip="最长为33位"
+                        placeholder="请输入部门编号"
+                        required={true}
+                    />
+                    <ProFormText
+                        name="fullName"
+                        label="部门全称"
+                        tooltip="最长为33位"
+                        placeholder="请输入部门全称"
+                        width='md'
+                    />
+                    <ProFormDatePicker
+                        name="createTime"
+                        label="创建时间"
+                        placeholder="请选择创建时间"
+                        width='md'
+                    />
+                </ProFormGroup>
+                <ProFormGroup size={"large"} title="组织信息">
+                    <ProFormTreeSelect
+                        width="md"
+                        name="belongDepart"
+                        label="上级部门"
+                        tooltip="仅为未废弃部门"
+                        placeholder="请选择上级部门"
+                        required={true}
+                        request={async () => {
+                            let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
+                            return departs.map((depart, index, array) => { return { title: depart.departName, value: depart.dataId } })
+                        }}
+                        addonAfter={<Button onClick={() => { window.open(url.frontUrl.depart_concrete + prop.form.getFieldValue("belongDepart")) }}>查看</Button>}
+                    />
+                    <ProFormTreeSelect
+                        width="md"
+                        name="belongSection"
+                        label="所属分部"
+                        tooltip="仅为未废弃分部"
+                        placeholder="请选择分部"
+                        disabled
+                        request={async () => {
+                            let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
+                            return sections.map((depart, index, array) => { return { title: depart.sectionName, value: depart.dataId } })
+                        }}
+                        required={true}
+                        addonAfter={<Button onClick={() => { window.open(url.frontUrl.section_concrete + prop.form.getFieldValue("belongSection")) }}>查看</Button>}
+
+                    />
+                    <ProFormTreeSelect
+                        width="md"
+                        name="departManager"
+                        label="部门经理"
+                        tooltip="仅显示未离职人员"
+                        placeholder="请选择领导"
+                        request={async () => {
+                            let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
+                            return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
+                        }}
+                        required={true}
+                        addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + prop.form.getFieldValue("departManager")) }}>查看</Button>}
+
+                    />
+                </ProFormGroup>
             </ProForm>
         </div>
     )
@@ -194,29 +200,29 @@ const FrontDepartConcrete = () => {
                     message.error(response.description)
                 }
         },
-        itemRender: () => (<></>) 
+        itemRender: () => (<></>)
     }
 
     let buttons = [<Upload {...upLoadProos} ><Button icon={<UploadOutlined />}>修改展示照片</Button></Upload>, <Button style={{ marginLeft: "5px" }} type="primary" key={"save"} onClick={() => { form.submit() }} disabled={!editable}>编辑并保存</Button>]
-    let title = ((depart.isDeprecated===0)?"":"  (已封存)")
+    let title = ((depart.isDeprecated === 0) ? "" : "  (已封存)")
 
     const items: TabsProps['items'] = [
         {
-          key: 'base',
-          label: '基本信息',
-          children: <BaseInformation depart={depart} editable={editable} form={form} />,
+            key: 'base',
+            label: '基本信息',
+            children: <BaseInformation depart={depart} editable={editable} form={form} />,
         },
         {
-          key: 'departs',
-          label: '下级部门',
-          children: <FrontDepart depart={depart.dataId} />,
+            key: 'departs',
+            label: '下级部门',
+            children: <FrontDepart depart={depart.dataId} />,
         },
         {
-          key: 'humans',
-          label: '成员信息',
-          children: <FrontHuman depart={depart.dataId} />,
+            key: 'humans',
+            label: '成员信息',
+            children: <FrontHuman depart={depart.dataId} />,
         },
-      ];
+    ];
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider style={{ padding: '15px 50px', minHeight: '100%', background: "#f1ffff", marginRight: "5px" }} width={210}>

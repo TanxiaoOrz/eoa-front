@@ -53,12 +53,12 @@ const BackHumanConcrete = () => {
         return (<PageWait />)
     const dropHuman = async () => {
         if ((await deleteData(config.backs.human + "/" + humanId)))
-            window.location.reload() 
+            window.location.reload()
     }
 
     const HumanBase = () => {
         return (
-            <div style={{ display: "flex", background: "#fdfdfd", paddingTop: "30px", paddingLeft:"10px"}}>
+            <div style={{ display: "flex", background: "#fdfdfd", paddingTop: "30px", paddingLeft: "10px" }}>
                 <ProForm<HumanIn>
                     form={form}
                     style={{
@@ -71,7 +71,7 @@ const BackHumanConcrete = () => {
                     onFinish={async (human: HumanIn) => {
                         return (await UpdateData(config.backs.human + "/" + humanId, human))
                     }}
-                    
+
                 >
                     <ProFormGroup size={"large"} title="登录信息">
                         <ProFormText
@@ -111,13 +111,13 @@ const BackHumanConcrete = () => {
                             name="sex"
                             label="性别"
                             tooltip="最长为33位"
-                            request={async()=>[
+                            request={async () => [
                                 {
-                                    label:"男",
-                                    value:0,
-                                },{
-                                    label:"女",
-                                    value:1,
+                                    label: "男",
+                                    value: 0,
+                                }, {
+                                    label: "女",
+                                    value: 1,
                                 },
                             ]}
                             required={false}
@@ -196,10 +196,12 @@ const BackHumanConcrete = () => {
                             tooltip="仅为未废弃部门"
                             placeholder="请选择部门"
                             required={true}
-                            request={async ()=>{
-                                let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true,isDeperacted:0})).data
-                                return departs.map((depart,index,array)=>{return {title:depart.departName,value:depart.dataId}})
+                            request={async () => {
+                                let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true, isDeperacted: 0 })).data
+                                return departs.map((depart, index, array) => { return { title: depart.departName, value: depart.dataId } })
                             }}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.depart_concrete + form.getFieldValue("depart")) }}>查看</Button>}
+
                         />
                         <ProFormTreeSelect
                             width="md"
@@ -208,10 +210,12 @@ const BackHumanConcrete = () => {
                             tooltip="仅为未废弃分部"
                             placeholder="请选择分部"
                             readonly
-                            request={async ()=>{
-                                let sections:SectionOut[] = (await getDataList(config.fronts.section,{toBrowser:true,isDeperacted:0})).data
-                                return sections.map((depart,index,array)=>{return {title:depart.sectionName,value:depart.dataId}})
+                            request={async () => {
+                                let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
+                                return sections.map((section, index, array) => { return { title: section.sectionName, value: section.dataId } })
                             }}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.section_concrete + form.getFieldValue("section")) }}>查看</Button>}
+
                         />
                         <ProFormDigit
                             width="md"
@@ -219,41 +223,46 @@ const BackHumanConcrete = () => {
                             label="安全等级"
                             tooltip="最小0最大100"
                             disabled
-                            fieldProps={{ precision: 0,min:0,max:100 }}
+                            fieldProps={{ precision: 0, min: 0, max: 100 }}
                             required={false}
                         />
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="上下级信息">
-                    <ProFormTreeSelect
-                        width="md"
-                        name="directorLeader"
-                        label="上级领导"
-                        placeholder="请选择领导"
-                        request={async () => {
-                            let humans:HumanOut[] =(await getDataList(config.fronts.human,{toBrowser:true,isDeprecated:0})).data
-                            return humans.map((value,index,array)=>{return {title:value.name,value:value.dataId}})
-                        }}
-                        required = {true}/>
-                    <ProFormTreeSelect
-                        width="md"
-                        name="supporter"
-                        label="助理"
-                        placeholder="请选择助理"
-                        request={async () => {
-                            let humans:HumanOut[] =(await getDataList(config.fronts.human,{toBrowser:true,isDeprecated:0})).data
-                            return humans.map((value,index,array)=>{return {title:value.name,value:value.dataId}})
-                        }}
-                        required = {true}/>
+                        <ProFormTreeSelect
+                            width="md"
+                            name="directorLeader"
+                            label="上级领导"
+                            placeholder="请选择领导"
+                            request={async () => {
+                                let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
+                                return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
+                            }}
+                            required={true}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + form.getFieldValue("belodirectorLeaderngDepart")) }}>查看</Button>}
+
+                        />
+                        <ProFormTreeSelect
+                            width="md"
+                            name="supporter"
+                            label="助理"
+                            placeholder="请选择助理"
+                            request={async () => {
+                                let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
+                                return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
+                            }}
+                            required={true}
+                            addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + form.getFieldValue("supporter")) }}>查看</Button>}
+                        />
                     </ProFormGroup>
                     <ProFormGroup size={"large"} title="展示资料" >
-                        <UploadFileProposed label="展示照片" name="photo" form={form} content={2}/>
-                        <ProFormTextArea label="个性签名" name="signature" width="md" placeholder={"请输入签名"}/>
+                        <UploadFileProposed label="展示照片" name="photo" form={form} content={2} />
+                        <ProFormTextArea label="个性签名" name="signature" width="md" placeholder={"请输入签名"} />
                     </ProFormGroup>
                 </ProForm>
             </div>
         )
     }
-    let title = ((human.isDeprecated===0)?"":"  (已离职)")
+    let title = ((human.isDeprecated === 0) ? "" : "  (已离职)")
     return (
         <div
             style={{ background: '#F5F7FA' }}
@@ -276,9 +285,9 @@ const BackHumanConcrete = () => {
                         ],
                     },
                     extra: [
-                        <Button key='save' type="primary" onClick={()=>{form.submit()}}>{human.isDeprecated===0?"保存":"保存并复职"}</Button>,
-                        <Button key='reset' onClick={()=>{form.resetFields()}}>重置</Button>,
-                        <Button key='drop' type='default' danger onClick={dropHuman} disabled={human.isDeprecated===1} >离职</Button>
+                        <Button key='save' type="primary" onClick={() => { form.submit() }}>{human.isDeprecated === 0 ? "保存" : "保存并复职"}</Button>,
+                        <Button key='reset' onClick={() => { form.resetFields() }}>重置</Button>,
+                        <Button key='drop' type='default' danger onClick={dropHuman} disabled={human.isDeprecated === 1} >离职</Button>
                     ]
                 }}
             >

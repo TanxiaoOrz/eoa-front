@@ -32,11 +32,11 @@ type HumanIn = {
     safety: number
 }
 
-const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefined>,depart:number,section:number}) => {
+const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefined>, depart: number, section: number }) => {
     const [form] = Form.useForm<HumanIn>();
     let jump = false
     if (prop.depart !== 0)
-    form.setFieldValue("depart",prop.depart)
+        form.setFieldValue("depart", prop.depart)
     return (
         <ModalForm<HumanIn>
             title="新建人员"
@@ -72,9 +72,9 @@ const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefi
                 let dataId = await newData(config.backs.human, values)
                 if (dataId != -1) {
                     if (jump)
-                        window.location.assign(url.backUrl.human_concrete+dataId)
+                        window.location.assign(url.backUrl.human_concrete + dataId)
                     if (prop.action.current !== undefined)
-                                prop.action.current.reload();
+                        prop.action.current.reload();
                 }
                 return dataId != -1
             }}
@@ -116,21 +116,21 @@ const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefi
                 label="所属部门"
                 tooltip="必须为非废弃部门"
                 placeholder="请选择部门"
-                required={true} 
-                request={async ()=>{
-                    let params:any = {toBrowser:true,isDeperacted:0}
+                required={true}
+                request={async () => {
+                    let params: any = { toBrowser: true, isDeperacted: 0 }
                     if (prop.section !== 0)
                         params.section = prop.section
-                    let departs:DepartOut[] = (await getDataList(config.fronts.depart,params)).data
-                    return departs.map((depart,index,array)=>{return {title:depart.departName,value:depart.dataId}})
-                }}/>
+                    let departs: DepartOut[] = (await getDataList(config.fronts.depart, params)).data
+                    return departs.map((depart, index, array) => { return { title: depart.departName, value: depart.dataId } })
+                }} />
         </ModalForm>
 
     )
 }
 
 
-const HumanList = (prop:{depart:number,section:number}) => {
+const HumanList = (prop: { depart: number, section: number }) => {
     const actionRef = useRef<ActionType>();
 
     const columns: ProColumns<HumanOut>[] = [
@@ -153,16 +153,16 @@ const HumanList = (prop:{depart:number,section:number}) => {
             title: '人员性别',
             dataIndex: 'sex',
             ellipsis: true,
-            valueType:'select',
+            valueType: 'select',
             tip: "不显示代表未录入",
-            request:async ()=>{
+            request: async () => {
                 return [
                     {
-                        label:"男",
-                        value:0,
-                    },{
-                        label:"女",
-                        value:1,
+                        label: "男",
+                        value: 0,
+                    }, {
+                        label: "女",
+                        value: 1,
                     },
                 ]
             }
@@ -180,35 +180,40 @@ const HumanList = (prop:{depart:number,section:number}) => {
         {
             key: 'depart',
             title: '所属部门',
-            dataIndex: 'depart',
-            valueType: "select",
-            request: async ()=>{
-                let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true,isDeperacted:0})).data
-                return departs.map((depart,index,array)=>{return {label:depart.departName,value:depart.dataId}})
-            }
-        },{
-            key:'isDeprecated',
-            dataIndex:'isDeprecated',
-            title:"在职情况",
-            valueType:'select',
-            request:async ()=>{
+            dataIndex: 'departName',
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.depart_concrete + entity.depart}>{entity.departName}</a>)
+            },
+        }, {
+            key: 'section',
+            title: '所属分部',
+            dataIndex: 'sectionName',
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.depart_concrete + entity.section}>{entity.sectionName}</a>)
+            },
+        }, {
+            key: 'isDeprecated',
+            dataIndex: 'isDeprecated',
+            title: "在职情况",
+            valueType: 'select',
+            request: async () => {
                 return [
                     {
-                        label:'在职',
-                        value:0
-                    },{
-                        label:'离职',
-                        value:1
+                        label: '在职',
+                        value: 0
+                    }, {
+                        label: '离职',
+                        value: 1
                     },
                 ]
             }
-        },{
+        }, {
             key: 'action',
             title: '操作',
             dataIndex: "moduleTypeId",
             hideInSearch: true,
             render: (dom, entity, index, action) =>
-                <Button href={url.backUrl.human_concrete + entity.dataId}>编辑</Button>
+                <Button onClick={() => { window.open(url.backUrl.human_concrete + entity.dataId) }}>编辑</Button>
         },
     ];
 
@@ -273,29 +278,29 @@ const HumanList = (prop:{depart:number,section:number}) => {
             dateFormatter="string"
             headerTitle="人员列表"
             toolBarRender={() => [
-                <CreaterHuman key="create" action={actionRef} section={prop.section} depart={prop.depart}/>,
+                <CreaterHuman key="create" action={actionRef} section={prop.section} depart={prop.depart} />,
             ]}
         />
     );
 };
 
-const BackHuman = (prop:{depart:number,section:number}) => {
-    let header =  (
+const BackHuman = (prop: { depart: number, section: number }) => {
+    let header = (
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
             <div style={{ display: 'flex' }}>
                 <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
                 <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>人员列表</Title>
             </div>
         </Header>)
-    if (prop.depart !== 0 || prop.section !== 0) 
+    if (prop.depart !== 0 || prop.section !== 0)
         header = <></>
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            
-                {header}
-            
+
+            {header}
+
             <Content style={{ padding: '15px 50px', minHeight: '100%' }}>
-                <HumanList depart={prop.depart} section={prop.section}/>
+                <HumanList depart={prop.depart} section={prop.section} />
             </Content>
 
         </Layout>
@@ -306,8 +311,8 @@ const BackHuman = (prop:{depart:number,section:number}) => {
 }
 
 BackHuman.defaultProps = {
-    depart:0,
-    section:0
+    depart: 0,
+    section: 0
 }
 
 export default BackHuman;
