@@ -24,6 +24,10 @@ import BackDepart from "../pages/OrganizationModule/back_depart.tsx";
 import BackDepartConcrete from "../pages/OrganizationModule/back_depart_concrete.tsx";
 import FrontDepart from "../pages/OrganizationModule/front_depart.tsx";
 import FrontDepartConcrete from "../pages/OrganizationModule/front_depart_concrete.tsx";
+import BackSectionConcrete from "../pages/OrganizationModule/back_section_concrete.tsx";
+import FrontSection from "../pages/OrganizationModule/front_section.tsx";
+import FrontSectionConcrete from "../pages/OrganizationModule/front_section_concrete.tsx";
+import BackSection from "../pages/OrganizationModule/back_section.tsx";
 
 const Protable = protable
 
@@ -61,6 +65,12 @@ const backs = [
   }, {
     path: "back_depart/:dataId",
     element: <BackDepartConcrete />
+  }, {
+    path: "back_section",
+    element: <BackSection />
+  }, {
+    path: "back_section/:dataId",
+    element: <BackSectionConcrete />
   }
 ]
 
@@ -93,6 +103,12 @@ const fronts = [
   }, {
     path: "depart/:dataId",
     element: <FrontDepartConcrete />
+  }, {
+    path: "section",
+    element: <FrontSection />
+  }, {
+    path: "section/:dataId",
+    element: <FrontSectionConcrete />
   }
 ]
 
