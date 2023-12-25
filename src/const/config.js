@@ -20,6 +20,7 @@ export default {
         human : "/api/v1/organization/back/human",
         depart : "/api/v1/organization/back/depart",
         section : "/api/v1/organization/back/section",
+        organization_tree : "/api/v1/organization/back/tree"
     },
     fronts:{
         character: "/api/v1/authority/front/character",
@@ -33,7 +34,8 @@ export default {
         file_form:"/api/v1/table/front/file",
         upload:"/api/v1/content/front/upload",
         form:"/api/v1/table/front/form",
-        formAuthority:"/api/v1/table/front/authoriy"
+        formAuthority:"/api/v1/table/front/authoriy",
+        organization_tree : "/api/v1/organization/front/tree"
     },
     setScrollView:()=>{
         window.sessionStorage.setItem("scroll","0")

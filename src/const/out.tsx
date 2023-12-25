@@ -203,3 +203,16 @@ export type Authority = {
     authorityDescription:string
     authorityRemark:string
 }
+
+export type GraphNode = {
+    id:string
+    value:{
+        title:string
+        name:string
+        id:string
+        type:string
+        icon:string
+        isDeprecated:string
+    }
+    children:GraphNode[]
+}

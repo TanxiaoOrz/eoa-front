@@ -14,6 +14,7 @@
         depart_concrete:'/back_depart/',
         section:'/back_section',
         section_concrete:'/back_section/',
+        organization_tree : '/back_organization',
     },
     frontUrl:{
         human:"/human_resouce",
@@ -24,5 +25,6 @@
         section_concrete:"/section/",
         content_concrete:'/content/',
         form_concrete:'/form/',
+        organization_tree : '/organization',
     }
 }
