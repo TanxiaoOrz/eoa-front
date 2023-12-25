@@ -52,7 +52,13 @@ const OrganizationTree = (prop: { showDeprecated: boolean }) => {
         };
     };
 
-    const getRootNodeStyle = () => {
+    const getRootNodeStyle = (isDeprecated:string) => {
+        if (isDeprecated === '1')
+            return {
+                fill:'#EE6363',
+                stroke:'#CD5555',
+                radius:'5'
+            }
         return {
             fill: '#1E88E5',
             stroke: '#1E88E5',
@@ -60,7 +66,13 @@ const OrganizationTree = (prop: { showDeprecated: boolean }) => {
         };
     };
 
-    const getSecondNodeStyle = () => {
+    const getSecondNodeStyle = (isDeprecated:string) => {
+        if (isDeprecated === '1')
+            return {
+                fill:'#FFC1C1',
+                stroke:'#8B6969',
+                radius:'5'
+            }
         return {
             fill: '#e8e8e8',
             stroke: '#e8e8e8',
@@ -68,7 +80,7 @@ const OrganizationTree = (prop: { showDeprecated: boolean }) => {
         };
     };
 
-    const calcStrLen = function calcStrLen(str) {
+    const calcStrLen = function calcStrLen(str:string) {
         var len = 0;
         for (var i = 0; i < str.length; i++) {
             if (str.charCodeAt(i) > 0 && str.charCodeAt(i) < 128) {
@@ -82,18 +94,18 @@ const OrganizationTree = (prop: { showDeprecated: boolean }) => {
 
     const graphConfig = {
         nodeCfg: {
-            size: [40, 40],
+            size: [40, 50],
             autoWidth: true,
             padding: 10,
             style: (item:GraphNode) => {
-                const { type } = item.value;
+                const { type, isDeprecated } = item.value;
                 return {
                     fill: 'transparent',
                     stroke: 'transparent',
                     radius: 4,
                     cursor: 'pointer',
-                    ...(type === "section" || type === "sum" ? getRootNodeStyle() : {}),
-                    ...(type === "depart" ? getSecondNodeStyle() : {}),
+                    ...(type === "section" || type === "sum" ? getRootNodeStyle(isDeprecated) : {}),
+                    ...(type === "depart" ? getSecondNodeStyle(isDeprecated) : {}),
                 };
             },
             nodeStateStyles: {
@@ -142,13 +154,18 @@ const OrganizationTree = (prop: { showDeprecated: boolean }) => {
             type: 'mindmap',
             direction: 'H',
             getWidth: (cfg) => {
-                const { name, level } = cfg.value;
-                const fontSize = getTextStyle(level);
-                const width = (fontSize * calcStrLen(name)) / 2;
-                return width;
+                const { name, type , title} = cfg.value;
+                const fontSize = getTextStyle(type);
+                const width1 = (fontSize * calcStrLen(name)) / 2;
+                const width2 = (fontSize * calcStrLen(title)) / 2;
+                return width1>width2?width1:width2;
             },
-            getHeight: () => {
-                return 25;
+            getHeight: (cfg) => {
+                const { type } = cfg.value
+                if (type === 'departs')
+                    return 25;
+                else
+                    return 30
             },
             getVGap: () => {
                 return 20;
@@ -166,15 +183,17 @@ const OrganizationTree = (prop: { showDeprecated: boolean }) => {
         behaviors: ['drag-canvas', 'zoom-canvas'],
         onReady: (graph) => {
             graph.on('node:click', (evt) => {
-                const { item, target } = evt;
+                const { item } = evt;
+                //console.log(item, target)
                 const { value } = item.get('model');
+                //console.log(value)
                 if (value.type !== "sum") {
-                    let href
+                    let href:string
                     if (prop.showDeprecated)
                         href = value.type === 'section' ? url.backUrl.section_concrete : url.backUrl.depart_concrete
                     else
                     href = value.type === 'section' ? url.frontUrl.section_concrete : url.frontUrl.depart_concrete
-                    window.open(value.href+value.dataId);
+                    window.open(href+value.id);
                 }
             });
         },
