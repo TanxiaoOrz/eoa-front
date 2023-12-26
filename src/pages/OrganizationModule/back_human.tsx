@@ -5,7 +5,7 @@ import React, { useRef } from 'react';
 import url from '../../const/url.js';
 import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
-import { DepartOut, HumanOut } from '../../const/out.tsx';
+import { DepartOut, HumanOut, SectionOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
 
 const { Title } = Typography
@@ -176,11 +176,20 @@ const HumanList = (prop: { depart: number, section: number }) => {
             key: 'workCode',
             title: '工号',
             dataIndex: 'workCode',
-        },
-        {
+        }, {
+            key:'departSearch',
+            hideInTable:true,
+            dataIndex:'depart',
+            valueType:'select',
+            request:async ()=>{
+                let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true})).data
+                return departs.map((depart,index,array)=>{return {label:depart.departName, value:depart.dataId}})
+            }
+        }, {
             key: 'depart',
             title: '所属部门',
             dataIndex: 'departName',
+            hideInSearch:true,
             render: (dom, entity, index, action, schema) => {
                 return (<a href={url.frontUrl.depart_concrete + entity.depart}>{entity.departName}</a>)
             },
@@ -188,9 +197,19 @@ const HumanList = (prop: { depart: number, section: number }) => {
             key: 'section',
             title: '所属分部',
             dataIndex: 'sectionName',
+            hideInSearch:true,
             render: (dom, entity, index, action, schema) => {
                 return (<a href={url.frontUrl.depart_concrete + entity.section}>{entity.sectionName}</a>)
             },
+        },{
+            key:'sectionSearch',
+            hideInTable:true,
+            dataIndex:'section',
+            valueType:'select',
+            request:async ()=>{
+                let sections:SectionOut[] = (await getDataList(config.fronts.section,{toBrowser:true})).data
+                return sections.map((section,index,array)=>{return {label:section.sectionName, value:section.dataId}})
+            }
         }, {
             key: 'isDeprecated',
             dataIndex: 'isDeprecated',

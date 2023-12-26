@@ -5,7 +5,7 @@ import React, { useRef } from 'react';
 import url from '../../const/url.js';
 import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
-import { DepartOut, SectionOut } from '../../const/out.tsx';
+import { DepartOut, HumanOut, SectionOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
 
 const { Title } = Typography
@@ -150,24 +150,49 @@ const DepartList = (prop: { depart: number, section: number }) => {
             title: '部门名称',
             dataIndex: 'departName',
             ellipsis: true,
-        },
-        {
+        }, {
+            key:'departManagerSearch',
+            hideInTable:true,
+            dataIndex:'departManager',
+            valueType:'select',
+            request:async ()=>{
+                let humans:HumanOut[] = (await getDataList(config.fronts.human,{toBrowser:true})).data
+                return humans.map((human,index,array)=>{return {label:human.name, value:human.dataId}})
+            }
+        }, {
             key: 'departManager',
             title: '部门负责人',
-            dataIndex: 'departManager',
-            render: (dom, entity, index, action, schema)=>{
-                return (<a href={url.frontUrl.humanResource+entity.managerName}>{entity.managerName}</a>)
+            dataIndex: 'managerName',
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.humanResource + entity.departManager}>{entity.managerName}</a>)
             },
-        },
-        {
+            search: false
+        },{
+            key:'belongSectionSearch',
+            hideInTable:true,
+            dataIndex:'belongSection',
+            valueType:'select',
+            request:async ()=>{
+                let sections:SectionOut[] = (await getDataList(config.fronts.section,{toBrowser:true})).data
+                return sections.map((section,index,array)=>{return {label:section.sectionName, value:section.dataId}})
+            }
+        }, {
             key: 'belongSection',
             title: '所属分部',
             dataIndex: 'belongSectionName',
-            valueType: "select",
-            render: (dom, entity, index, action, schema)=>{
-                return (<a href={url.frontUrl.section_concrete+entity.belongSection}>{entity.belongSectionName}</a>)
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.section_concrete + entity.belongSection}>{entity.belongSectionName}</a>)
             },
-            
+            hideInSearch:true
+        },{
+            key:'belongDepartSearch',
+            hideInTable:true,
+            dataIndex:'belongDepart',
+            valueType:'select',
+            request:async ()=>{
+                let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true})).data
+                return departs.map((depart,index,array)=>{return {label:depart.departName, value:depart.dataId}})
+            }
         },
         {
             key: 'belongDepart',

@@ -5,23 +5,23 @@ import React, { useRef } from 'react';
 import url from '../../const/url.js';
 import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
-import { SectionOut } from '../../const/out.tsx';
+import { HumanOut, SectionOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
 
 const { Title } = Typography
 
 type SectionIn = {
-    sectionName:string
-    sectionCode:string
-    fullName:string
-    belongSection:number
-    sectionManager:number
-    sectionIntroduction:string
-    createTime:string
-    photo:number
+    sectionName: string
+    sectionCode: string
+    fullName: string
+    belongSection: number
+    sectionManager: number
+    sectionIntroduction: string
+    createTime: string
+    photo: number
 }
 
-const CreaterSection= (prop: { action: React.MutableRefObject<ActionType | undefined>, section: number }) => {
+const CreaterSection = (prop: { action: React.MutableRefObject<ActionType | undefined>, section: number }) => {
     const [form] = Form.useForm<SectionIn>();
     let jump = false
     if (prop.section !== 0)
@@ -120,39 +120,53 @@ const SectionList = (prop: { section: number }) => {
             valueType: "indexBorder",
             width: 48,
             align: "center"
-
-        },
-        {
+        }, {
             key: 'sectionCode',
             title: '分部编号',
             dataIndex: 'sectionCode',
-        },
-        {
+        }, {
             key: 'sectionName',
             title: '分部名称',
             dataIndex: 'sectionName',
             ellipsis: true,
-        },
-        {
-            key: 'managerName',
+        }, {
+            key:'sectionManagerSearch',
+            hideInTable:true,
+            dataIndex:'sectionManager',
+            valueType:'select',
+            request:async ()=>{
+                let humans:HumanOut[] = (await getDataList(config.fronts.human,{toBrowser:true})).data
+                return humans.map((human,index,array)=>{return {label:human.name, value:human.dataId}})
+            }
+        }, {
+            key: 'sectionManager',
             title: '部门负责人',
-            dataIndex: 'sectionManager',
-            render: (dom, entity, index, action, schema)=>{
-                return (<a href={url.frontUrl.humanResource+entity.sectionManager}>{entity.managerName}</a>)
+            dataIndex: 'managerName',
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.humanResource + entity.sectionManager}>{entity.managerName}</a>)
             },
-        },
-        {
-            key: 'belongSectionName',
-            title: '上级分部',
+            search: false
+        }, {
+            key: 'belongSectionSearch',
+            hideInTable: true,
+            dataIndex: 'belongSection',
+            valueType: 'select',
+            request: async () => {
+                let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true })).data
+                return sections.map((section, index, array) => { return { label: section.sectionName, value: section.dataId } })
+            }
+        }, {
+            key: 'belongSection',
+            title: '所属分部',
             dataIndex: 'belongSectionName',
-            render: (dom, entity, index, action, schema)=>{
-                return (<a href={url.frontUrl.section_concrete+entity.belongSection}>{entity.belongSectionName}</a>)
+            render: (dom, entity, index, action, schema) => {
+                return (<a href={url.frontUrl.section_concrete + entity.belongSection}>{entity.belongSectionName}</a>)
             },
-        },
-        {
+            hideInSearch: true
+        }, {
             key: 'isDeprecated',
             dataIndex: 'isDeprecated',
-            title:'封存情况',
+            title: '封存情况',
             valueType: 'select',
             request: async () => {
                 return [
@@ -192,7 +206,7 @@ const SectionList = (prop: { section: number }) => {
                 // console.log(params)
                 // console.log(sort);
                 // console.log(filter);
-    
+
                 if (prop.section !== 0)
                     params.belongSection = prop.section
                 return getDataList(config.backs.section, params)
@@ -250,7 +264,7 @@ const BackSection = (prop: { section: number }) => {
             </div>
         </Header>
     )
-    if (prop.section !== 0) 
+    if (prop.section !== 0)
         header = <></>
     return (
         <Layout style={{ minHeight: '100vh' }}>
