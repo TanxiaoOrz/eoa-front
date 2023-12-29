@@ -134,7 +134,7 @@ const GroupForm = (prop:{group:Group,getEditAble:(columnName:string)=>boolean,fo
 
 
 
-const getFormIn = (formOut:FormOut):FormIn => {
+export const getFormIn = (formOut:FormOut):FormIn => {
     console.log("formOut")
     console.log(formOut)
     let mains = {};
