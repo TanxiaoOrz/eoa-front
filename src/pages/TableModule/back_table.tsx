@@ -307,7 +307,7 @@ const BackTable = () => {
   const [moduleList,setModuleList] = useState<ModuleOut[]>([])
   useEffect(()=>{
     if (moduleList.length==0)
-      (getDataList("/api/v1/table/back/module")).then((value)=>{
+      (getDataList("/api/v1/table/back/module",{toBrowser:true})).then((value)=>{
         setModuleList(value.data)
       })
   })
