@@ -29,6 +29,8 @@ import FrontSection from "../pages/OrganizationModule/front_section.tsx";
 import FrontSectionConcrete from "../pages/OrganizationModule/front_section_concrete.tsx";
 import BackSection from "../pages/OrganizationModule/back_section.tsx";
 import OrganizationTree from "../pages/OrganizationModule/organization_tree.tsx";
+import BackWorkflow from "../pages/WorkflowModule/back_workflow.tsx";
+import BackWorkflowConcrete from "../pages/WorkflowModule/back_workflow_concrete.tsx";
 
 const Protable = protable
 
@@ -75,6 +77,12 @@ const backs = [
   },{
     path:"/back_organization",
     element:<OrganizationTree showDeprecated={true}/>
+  }, {
+    path: "/back_workflow",
+    element:<BackWorkflow />
+  }, {
+    path: "/back_workflow/:dataId",
+    element: <BackWorkflowConcrete />
   }
 ]
 
