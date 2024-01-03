@@ -7,7 +7,7 @@ import { Button, Form, Layout, List, Modal, Tabs, Typography } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { Header, Content } from "antd/es/layout/layout"
 import React from "react"
-import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
+import { ActionType, ModalForm, ProColumns, ProFormGroup, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
 import { useLocation } from "react-router"
 import url from "../../const/url"
 
@@ -92,8 +92,8 @@ const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: React.Mu
               return { title: item.moduleTypeName, value: item.moduleTypeId, children: [] };
             })
           return valueEnumModule
-        }}
-        initialValue={moduleTypeId} />
+        }} 
+        initialValue={moduleTypeId}/>
       <ProFormTreeSelect
         width="md"
         name="tableId"
@@ -107,8 +107,7 @@ const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: React.Mu
               return { title: item.tableViewName, value: item.tableId, children: [] };
             })
           return valueEnumModule
-        }}
-        initialValue={moduleTypeId} />
+        }} />
       <ProFormText
         width="md"
         name="workflowBaseTitle"
@@ -116,6 +115,7 @@ const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: React.Mu
         tooltip="请输入请求名称"
         placeholder="不输入自动替换为流程标题"
         required={false} />
+
     </ModalForm>
   )
 }
@@ -195,6 +195,22 @@ const WorkflowList = () => {
       dataIndex: 'createTime',
       valueType: "dateTimeRange",
       hideInTable: true
+    }, {
+      key: 'isDeprecated',
+      dataIndex: 'isDeprecated',
+      title: "流程状态",
+      valueType: 'select',
+      request: async () => {
+        return [
+          {
+            label: '正常',
+            value: 0
+          }, {
+            label: '废弃',
+            value: 1
+          },
+        ]
+      }
     }, {
       key: 'action',
       title: '操作',
