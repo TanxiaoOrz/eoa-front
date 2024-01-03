@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect, useRef } from "react"
-import { getDataList, newData } from "../../const/http"
-import { ModuleOut, TableOut, WorkflowOut } from "../../const/out"
-import config from "../../const/config"
+import { getDataList, newData } from "../../const/http.tsx"
+import { ModuleOut, TableOut, WorkflowOut } from "../../const/out.tsx"
+import config from "../../const/config.js"
 import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
 import { Button, Form, Layout, List, Modal, Tabs, Typography } from "antd"
 import Sider from "antd/es/layout/Sider"
@@ -9,7 +9,7 @@ import { Header, Content } from "antd/es/layout/layout"
 import React from "react"
 import { ActionType, ModalForm, ProColumns, ProFormGroup, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
 import { useLocation } from "react-router"
-import url from "../../const/url"
+import url from "../../const/url.js"
 
 const { Title } = Typography;
 
@@ -20,8 +20,8 @@ type WorkflowIn = {
   workFlowDescription: string
 }
 
-const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: React.MutableRefObject<ActionType | undefined> }) => {
-  const moduleTypeId = prop.moduleTypeId
+const CreateWorkflow = (prop: { moduleTypeId: string | null, actionRef: React.MutableRefObject<ActionType | undefined> }) => {
+  const moduleTypeId = prop.moduleTypeId ? parseInt(prop.moduleTypeId) : null
   const [form] = Form.useForm<WorkflowIn>();
   let jump: boolean = false;
   return (
@@ -56,6 +56,7 @@ const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: React.Mu
         }
       }}
       onFinish={async (values: WorkflowIn) => {
+        console.log(values)
         let dataId: number = await newData(config.backs.workflow, values)
         if (dataId != -1) {
           if (jump)
@@ -101,7 +102,7 @@ const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: React.Mu
         tooltip="请选择所属模块"
         required={true}
         request={async () => {
-          let tableList: TableOut[] = (await getDataList(config.backs.module, { toBrowser: true })).data
+          let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual:false })).data
           const valueEnumModule: { title: string, value: number, children: any[] }[] = tableList.map(
             (item) => {
               return { title: item.tableViewName, value: item.tableId, children: [] };
@@ -161,6 +162,7 @@ const WorkflowList = () => {
     }, {
       key: 'moduleTypeId',
       title: '所属模块',
+      hideInSearch:true,
       render: (dom, entity, index, action, schema) => (
         <Button
           type="link"

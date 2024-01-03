@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect, useRef, Children } from "react"
-import { UpdateData, deleteData, getDataList, getDataOne, newData } from "../../const/http"
-import { ColumnOut, ModuleOut, TableOut, WorkflowOut } from "../../const/out"
+import { UpdateData, deleteData, getDataList, getDataOne, newData } from "../../const/http.tsx"
+import { ColumnOut, ModuleOut, TableOut, WorkflowOut } from "../../const/out.tsx"
 import config from "../../const/config"
 import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
 import { Button, Form, Layout, List, Modal, Tabs, Typography } from "antd"
@@ -10,9 +10,9 @@ import React from "react"
 import { ActionType, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormGroup, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
 import { useLocation, useParams } from "react-router"
 import url from "../../const/url"
-import PageWait from "../../componet/PageWait"
-import BackNode from "./back_node"
-import BackRoute from "./back_route"
+import PageWait from "../../componet/PageWait.tsx"
+import BackNode from "./back_node.tsx"
+import BackRoute from "./back_route.tsx"
 import { tab } from "@testing-library/user-event/dist/tab"
 
 type WorkflowIn = {
@@ -34,7 +34,7 @@ const BackWorkflowConcrete = () => {
                 console.log(value.data)
                 if (value.success) {
                     setWorkflow(value.data)
-
+                    setTableId(value.data.tableId ?? 0)
                 }
             })
     })
@@ -47,7 +47,7 @@ const BackWorkflowConcrete = () => {
     if (workflow === undefined)
         return (<PageWait />)
 
-    setTableId(workflow?.tableId ?? 0)
+    
     const dropDepart = async () => {
         if ((await deleteData(config.backs.workflow + "/" + workflowId)))
             window.location.reload()
@@ -111,7 +111,7 @@ const BackWorkflowConcrete = () => {
                         required={true}
                         disabled={true}
                         request={async () => {
-                            let tableList: TableOut[] = (await getDataList(config.backs.module, { toBrowser: true })).data
+                            let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual:false })).data
                             const valueEnumModule: { title: string, value: number, children: any[] }[] = tableList.map(
                                 (item) => {
                                     return { title: item.tableViewName, value: item.tableId, children: [] };
@@ -137,15 +137,16 @@ const BackWorkflowConcrete = () => {
                         label="流程标题字段"
                         placeholder="请选择流程标题字段"
                         request={async()=>{
-                            let columnList:ColumnOut[] =(await getDataList(config.backs.column,{...config.toBrowser, tableId:tableId})).data
+                            let columnList:ColumnOut[] =(await getDataList(config.backs.column,{...config.toBrowser, tableId:tableId, isVirtual:false})).data
                             return columnList.map((item)=>{return {title:item.columnViewName, value:item.columnId}})
                         }}
                     />
                     <ProFormText
                         width="md"
                         name="createNodeName"
-                        label="流程标题字段"
-                        placeholder="请选择流程标题字段"
+                        label="创建节点"
+                        placeholder="当前未有创建节点"
+                        disabled
                         addonAfter={
                             <Button
                                 onClick={() => { window.open(url.backUrl.workflow_node_concrete + workflow.createNode) }}
@@ -171,7 +172,7 @@ const BackWorkflowConcrete = () => {
         </div>
     )
 
-    let title = (workflow.isDeprecated) ? "" : " (废弃中)"
+    let title = (!workflow.isDeprecated) ? "" : " (废弃中)"
     return (
         <div
             style={{ background: '#F5F7FA' }}
