@@ -249,9 +249,9 @@ const WorkflowList = () => {
       }}
       dateFormatter="string"
       headerTitle="工作流列表"
-      toolBarRender={() => (
-        <CreateWorkflow moduleTypeId={moduleNo} />,
-      )}
+      toolBarRender={() => [
+        <CreateWorkflow key="create" moduleTypeId={moduleNo} actionRef={actionRef}/>
+      ]}
     />
   )
 }
