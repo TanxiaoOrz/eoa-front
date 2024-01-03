@@ -27,6 +27,7 @@ export default {
         workflowRoute:"/api/v1/workflow/back/workflowRoute"
     },
     fronts:{
+        module:'/api/v1/table/front/module',
         character: "/api/v1/authority/front/character",
         authority: "/api/v1/authority/front/authority",
         human:"/api/v1/organization/front/human",
@@ -48,5 +49,8 @@ export default {
     },
     getScrollHideStatus:()=>{
         return window.sessionStorage.getItem("scroll") === "0"
+    },
+    toBrowser:{
+        toBrowser:true
     }
 }
