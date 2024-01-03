@@ -20,7 +20,7 @@ type WorkflowIn = {
   workFlowDescription: string
 }
 
-const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: }) => {
+const CreateWorkflow = (prop: { moduleTypeId: String | null, actionRef: React.MutableRefObject<ActionType | undefined> }) => {
   const moduleTypeId = prop.moduleTypeId
   const [form] = Form.useForm<WorkflowIn>();
   let jump: boolean = false;
@@ -230,7 +230,7 @@ const WorkflowList = () => {
         setting: {
           listsHeight: 400,
         },
-      }},
+      }}
       form={{
         // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
         syncToUrl: (values, type) => {
@@ -250,7 +250,7 @@ const WorkflowList = () => {
       dateFormatter="string"
       headerTitle="工作流列表"
       toolBarRender={() => [
-        <CreateWorkflow key="create" moduleTypeId={moduleNo} actionRef={actionRef}/>
+        <CreateWorkflow key="create" moduleTypeId={moduleNo} actionRef={actionRef} />
       ]}
     />
   )
