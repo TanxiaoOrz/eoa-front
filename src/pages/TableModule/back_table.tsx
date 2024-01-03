@@ -180,7 +180,7 @@ const TableList = (prop:{isvirtual:boolean}) => {
       dateFormatter="string"
       headerTitle="表单列表"
       toolBarRender={() => [
-        <CreateTable key="create" isVirtual={isVirtual} />,
+        <CreateTable key="create" isVirtual={isVirtual} actionRef={actionRef}/>,
       ]}
     />
   )
@@ -188,7 +188,7 @@ const TableList = (prop:{isvirtual:boolean}) => {
 
 
 
-const CreateTable = (prop:{isVirtual:boolean}) => {
+const CreateTable = (prop:{isVirtual:boolean, actionRef:React.MutableRefObject<ActionType | undefined>}) => {
   const [form] = Form.useForm<TableInSimple>();
   const query = new URLSearchParams(useLocation().search);
   let moduleNo = query.get("moduleNo");
@@ -239,7 +239,8 @@ const CreateTable = (prop:{isVirtual:boolean}) => {
         if (dataId!= -1){
           if (jump)
             window.location.assign(url.backUrl.table+"/"+dataId+"?isVirtual="+Number(values.virtual));
-          return true
+          prop.actionRef.current?.reload()
+            return true
         }
           return false
       }}
