@@ -14,18 +14,18 @@ import config from '../../const/config.js';
 
 const baseURL = "/api/v1/table/back/table"
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 type TableInSimple = {
-  tableViewName:string
-  tableDataName:string
-  moduleNo:number
-  virtual:boolean
+  tableViewName: string
+  tableDataName: string
+  moduleNo: number
+  virtual: boolean
 }
 
 
 
-const UpdateTable = (prop:{dataId:number,action:React.MutableRefObject<ActionType|undefined>,isVirtual:boolean}) => {
+const UpdateTable = (prop: { dataId: number, action: React.MutableRefObject<ActionType | undefined>, isVirtual: boolean }) => {
   const items = [
     {
       key: '1',
@@ -33,88 +33,88 @@ const UpdateTable = (prop:{dataId:number,action:React.MutableRefObject<ActionTyp
       danger: true
     }
   ];
-  const deleteMethod: MenuProps['onClick'] = ()=>{
-    deleteData(baseURL+"/"+prop.dataId,{isVirtual:prop.isVirtual})
-    if (prop.action.current!==undefined)
+  const deleteMethod: MenuProps['onClick'] = () => {
+    deleteData(baseURL + "/" + prop.dataId, { isVirtual: prop.isVirtual })
+    if (prop.action.current !== undefined)
       prop.action.current.reload();
   }
   return (
-      <Dropdown.Button 
-        type="primary"
-        menu={{items,onClick:deleteMethod}}
-        onClick={()=>{
-          window.location.assign(url.backUrl.table+"/"+prop.dataId+"?isVirtual="+Number(prop.isVirtual))
-        }}
-      >
-        编辑
-      </Dropdown.Button>
+    <Dropdown.Button
+      type="primary"
+      menu={{ items, onClick: deleteMethod }}
+      onClick={() => {
+        window.location.assign(url.backUrl.table + "/" + prop.dataId + "?isVirtual=" + Number(prop.isVirtual))
+      }}
+    >
+      编辑
+    </Dropdown.Button>
   )
 }
 
 
 
-const TableList = (prop:{isvirtual:boolean}) => {
+const TableList = (prop: { isvirtual: boolean }) => {
   const isVirtual = prop.isvirtual;
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableOut>[] = [
     {
-      key:'code',
-      title:'编号',
-      dataIndex:'tableId',
-      valueType:"indexBorder",
-      width:48,
+      key: 'code',
+      title: '编号',
+      dataIndex: 'tableId',
+      valueType: "indexBorder",
+      width: 48,
       align: "center"
-      
+
     },
     {
-      key:'name',
-      title:'表单名称',
-      dataIndex:'tableViewName',
+      key: 'name',
+      title: '表单名称',
+      dataIndex: 'tableViewName',
     },
     {
-      key:'remark',
-      title:'表单备注',
-      dataIndex:'remark',
+      key: 'remark',
+      title: '表单备注',
+      dataIndex: 'remark',
       ellipsis: true,
-      tip:"备注过长会自动收缩,鼠标放上去查看",
+      tip: "备注过长会自动收缩,鼠标放上去查看",
       hideInSearch: true,
     },
     {
-      key:'creator',
-      title:'创建者',
-      dataIndex:'creatorId',
-      width:48*2,
-      render:(dom,entity,index,action) => [
-        <a href={url.frontUrl.humanResource+entity.creator} key={"href"+entity.creator}>{entity.createName}</a>
+      key: 'creator',
+      title: '创建者',
+      dataIndex: 'creatorId',
+      width: 48 * 2,
+      render: (dom, entity, index, action) => [
+        <a href={url.frontUrl.humanResource + entity.creator} key={"href" + entity.creator}>{entity.createName}</a>
       ],
-      hideInSearch:true
+      hideInSearch: true
     },
     {
-      key:'createTimeShow',
-      title:'创建时间',
-      dataIndex:'createTime',
+      key: 'createTimeShow',
+      title: '创建时间',
+      dataIndex: 'createTime',
       valueType: "dateTime",
-      width:48*4,
-      hideInSearch:true
+      width: 48 * 4,
+      hideInSearch: true
     },
     {
-      key:'createTime',
-      title:'创建时间',
-      dataIndex:'createTime',
-      valueType:"dateTimeRange",
-      hideInTable:true
+      key: 'createTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
+      valueType: "dateTimeRange",
+      hideInTable: true
     },
     {
-      key:'action',
-      title:'操作',
-      dataIndex:"moduleTypeId",
-      width:48*3,
-      hideInSearch:true,
-      render:(dom,entity,index,action)=>
-        <UpdateTable 
-          dataId ={entity.tableId} 
+      key: 'action',
+      title: '操作',
+      dataIndex: "moduleTypeId",
+      width: 48 * 3,
+      hideInSearch: true,
+      render: (dom, entity, index, action) =>
+        <UpdateTable
+          dataId={entity.tableId}
           action={actionRef}
-          isVirtual = {isVirtual}
+          isVirtual={isVirtual}
         />
     }
   ]
@@ -138,9 +138,9 @@ const TableList = (prop:{isvirtual:boolean}) => {
         // console.log(filter);
         let moduleNo = query.get("moduleNo");
         params.isVirtual = isVirtual
-        if (moduleNo!==null)
+        if (moduleNo !== null)
           params.moduleNo = moduleNo
-        return getDataList(baseURL,params)
+        return getDataList(baseURL, params)
       }}
       editable={{
         type: 'multiple',
@@ -180,7 +180,7 @@ const TableList = (prop:{isvirtual:boolean}) => {
       dateFormatter="string"
       headerTitle="表单列表"
       toolBarRender={() => [
-        <CreateTable key="create" isVirtual={isVirtual} actionRef={actionRef}/>,
+        <CreateTable key="create" isVirtual={isVirtual} actionRef={actionRef} />,
       ]}
     />
   )
@@ -188,19 +188,19 @@ const TableList = (prop:{isvirtual:boolean}) => {
 
 
 
-const CreateTable = (prop:{isVirtual:boolean, actionRef:React.MutableRefObject<ActionType | undefined>}) => {
+const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObject<ActionType | undefined> }) => {
   const [form] = Form.useForm<TableInSimple>();
   const query = new URLSearchParams(useLocation().search);
   let moduleNo = query.get("moduleNo");
-  let title:string;
-  let jump:boolean;
+  let title: string;
+  let jump: boolean;
   if (prop.isVirtual)
     title = "虚拟视图"
   else
     title = "实体表单"
   // console.log(moduleNo);
   if (moduleNo == "")
-    moduleNo =null;
+    moduleNo = null;
   // console.log(valueEnumModule);
   return (
     <ModalForm<TableInSimple>
@@ -220,82 +220,82 @@ const CreateTable = (prop:{isVirtual:boolean, actionRef:React.MutableRefObject<A
           submitText: '新建',
           resetText: '取消',
         },
-        render:(prop,defaultDoms)=>{
+        render: (prop, defaultDoms) => {
           return [
             ...defaultDoms,
             <Button
               key="jump"
               type='primary'
-              onClick={()=>{
+              onClick={() => {
                 jump = true
                 prop.submit()
               }}>新建并跳转</Button>
           ]
         }
       }}
-      onFinish={async (values:TableInSimple)=>{
+      onFinish={async (values: TableInSimple) => {
         console.log(values)
-        let dataId:number =await newData(baseURL,values)
-        if (dataId!= -1){
+        let dataId: number = await newData(baseURL, values)
+        if (dataId != -1) {
           if (jump)
-            window.location.assign(url.backUrl.table+"/"+dataId+"?isVirtual="+Number(values.virtual));
+            window.location.assign(url.backUrl.table + "/" + dataId + "?isVirtual=" + Number(values.virtual));
           prop.actionRef.current?.reload()
-            return true
+          return true
         }
-          return false
+        return false
       }}
       modalProps={{
         destroyOnClose: true,
         onCancel: () => console.log('run'),
       }}>
-        <ProFormText
-          width="md"
-          name="tableViewName"
-          label="表单名称"
-          tooltip="最长为33位"
-          placeholder="请输入表单显示名称"
-          required = {true}/>
-        <ProFormText
-          width="md"
-          name="tableDataName"
-          label="数据库表名"
-          tooltip="最长为33位"
-          placeholder="请输入数据库表名"
-          required = {!prop.isVirtual}
-          hidden = {!prop.isVirtual}/>
-        <ProFormTreeSelect 
-          width="md"
-          name="moduleNo"
-          label="所属模块"
-          tooltip=""
-          required = {true}
-          request={async () => {
-            let moduleList:ModuleOut[] = (await getDataList(config.backs.module,{toBrowser:true})).data
-            const valueEnumModule:{title:string,value:number,children:any[]}[] = moduleList.map(
-              (item) => {
-                return {title:item.moduleTypeName,value:item.moduleTypeId,children:[]};
-              })
-            return valueEnumModule  
-          }}
-          initialValue={moduleNo}/>  
-        <ProFormTextArea
-          width="md"
-          name="remark"  
-          label="表单备注"
-          tooltip="最长333位"
-          placeholder="请输入表单备注"
-          required={false}/>
-        <ProFormSelect
-          readonly = {true}
-          width="md"
-          name="virtual"  
-          label="虚拟视图"
-          tooltip="最长333位"
-          required={true}
-          
-          options={[{label:'是',value:true},{label:'否',value:false}]}
-          initialValue={prop.isVirtual}/>
-      </ModalForm>
+      <ProFormText
+        width="md"
+        name="tableViewName"
+        label="表单名称"
+        tooltip="最长为33位"
+        placeholder="请输入表单显示名称"
+        required={true} />
+      <ProFormText
+        width="md"
+        name="tableDataName"
+        label="数据库表名"
+        tooltip="最长为33位"
+        placeholder="请输入数据库表名"
+        required={!prop.isVirtual}
+        hidden={!prop.isVirtual} />
+      <ProFormTreeSelect
+        width="md"
+        name="moduleNo"
+        label="所属模块"
+        tooltip=""
+        required={true}
+        request={async () => {
+          let moduleList: ModuleOut[] = (await getDataList(config.backs.module, { toBrowser: true })).data
+          const valueEnumModule: { title: string, value: number, children: any[] }[] = moduleList.map(
+            (item) => {
+              return { title: item.moduleTypeName, value: item.moduleTypeId, children: [] };
+            })
+          return valueEnumModule
+        }}
+        initialValue={moduleNo} />
+      <ProFormTextArea
+        width="md"
+        name="remark"
+        label="表单备注"
+        tooltip="最长333位"
+        placeholder="请输入表单备注"
+        required={false} />
+      <ProFormSelect
+        readonly={true}
+        width="md"
+        name="virtual"
+        label="虚拟视图"
+        tooltip="最长333位"
+        required={true}
+
+        options={[{ label: '是', value: true }, { label: '否', value: false }]}
+        initialValue={prop.isVirtual} />
+    </ModalForm>
   )
 }
 
@@ -305,53 +305,53 @@ const CreateTable = (prop:{isVirtual:boolean, actionRef:React.MutableRefObject<A
 const BackTable = () => {
   const [position, setPosition] = useState<PaginationPosition>('top');
   const [align, setAlign] = useState<PaginationAlign>('center');
-  const [moduleList,setModuleList] = useState<ModuleOut[]>([])
-  useEffect(()=>{
-    if (moduleList.length==0)
-      (getDataList("/api/v1/table/back/module",{toBrowser:true})).then((value)=>{
+  const [moduleList, setModuleList] = useState<ModuleOut[]>([])
+  useEffect(() => {
+    if (moduleList.length == 0)
+      (getDataList("/api/v1/table/back/module", { toBrowser: true })).then((value) => {
         setModuleList(value.data)
       })
   })
   const tabs = [
     {
-      key:"Entity",
+      key: "Entity",
       label: (<span>实体表单</span>),
-      children: (<TableList isvirtual = {false} />)
-    },{
-      key:"Virtual",
+      children: (<TableList isvirtual={false} />)
+    }, {
+      key: "Virtual",
       label: (<span>虚拟视图</span>),
-      children: (<TableList isvirtual = {true} />)
+      children: (<TableList isvirtual={true} />)
     }
   ]
   return (
-    <Layout style={{ minHeight: '98.5vh'}}>
-      <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
-        <SnippetsFilled  style={{fontSize:"36px",marginTop:"30px",marginLeft:"5px",marginBottom:'30px'}} />
-        <Title level = {2} style={{color:'GrayText', marginLeft:'10px',marginBottom:'30px'}}>表单列表</Title>
+    <Layout style={{ minHeight: '98.5vh' }}>
+      <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
+        <SnippetsFilled style={{ fontSize: "36px", marginTop: "30px", marginLeft: "5px", marginBottom: '30px' }} />
+        <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '30px' }}>表单列表</Title>
       </Header>
       <Layout hasSider>
-        <Sider style={{ padding: '10px 10px',backgroundColor:"#f7f7f7"}}>
-        <List 
-          style={{ minHeight: '100%'}}
-          pagination={{position,align}}
-          bordered = {true}
-          itemLayout="horizontal"
-          dataSource={moduleList}
-          renderItem={(item, index) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={<FolderOpenTwoTone/>}
-                title={<a href={window.location.pathname+"?moduleNo="+item.moduleTypeId}>{item.moduleTypeName}</a>}
-              />
-            </List.Item>
-          )}
-        />
+        <Sider style={{ padding: '10px 10px', backgroundColor: "#f7f7f7" }}>
+          <List
+            style={{ minHeight: '100%' }}
+            pagination={{ position, align }}
+            bordered={true}
+            itemLayout="horizontal"
+            dataSource={moduleList}
+            renderItem={(item, index) => (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={<FolderOpenTwoTone />}
+                  title={<a href={window.location.pathname + "?moduleNo=" + item.moduleTypeId}>{item.moduleTypeName}</a>}
+                />
+              </List.Item>
+            )}
+          />
         </Sider>
-        <Content style={{ padding: '15px 50px'}}>
-            <Tabs
-              defaultActiveKey='Entity'
-              items={tabs}
-            />
+        <Content style={{ padding: '15px 50px' }}>
+          <Tabs
+            defaultActiveKey='Entity'
+            items={tabs}
+          />
         </Content>
       </Layout>
     </Layout>
