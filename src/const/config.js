@@ -20,7 +20,11 @@ export default {
         human : "/api/v1/organization/back/human",
         depart : "/api/v1/organization/back/depart",
         section : "/api/v1/organization/back/section",
-        organization_tree : "/api/v1/organization/back/tree"
+        organization_tree : "/api/v1/organization/back/tree",
+        request:"/api/v1/workflow/back/request",
+        workflow:"/api/v1/workflow/back/workflow",
+        workflowNode:"/api/v1/workflow/back/workflowNode",
+        workflowRoute:"/api/v1/workflow/back/workflowRoute"
     },
     fronts:{
         character: "/api/v1/authority/front/character",
@@ -35,7 +39,9 @@ export default {
         upload:"/api/v1/content/front/upload",
         form:"/api/v1/table/front/form",
         formAuthority:"/api/v1/table/front/authoriy",
-        organization_tree : "/api/v1/organization/front/tree"
+        organization_tree : "/api/v1/organization/front/tree",
+        request:"/api/v1/workflow/front/request",
+        workflow:"/api/v1/workflow/front/workflow"
     },
     setScrollView:()=>{
         window.sessionStorage.setItem("scroll","0")
