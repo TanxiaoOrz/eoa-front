@@ -274,6 +274,9 @@ export type WorkflowRouteOut = {
     createTime: string
     creatorName: string
     workflowName: string
+    startNodeName: string
+    endNodeName: string
+    tableId: number
 }
 
 export type WorkflowNodeOut = {
@@ -291,4 +294,5 @@ export type WorkflowNodeOut = {
     createTime: string
     creatorName: string
     workflowName: string
+    tableId: number
 }
