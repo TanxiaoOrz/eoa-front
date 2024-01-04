@@ -129,7 +129,7 @@ const WorkflowList = () => {
     {
       key: 'code',
       title: '编号',
-      dataIndex: 'tableId',
+      dataIndex: 'dataId',
       valueType: "indexBorder",
       width: 48,
       align: "center"
