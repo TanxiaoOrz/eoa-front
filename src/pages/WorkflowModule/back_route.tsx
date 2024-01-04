@@ -32,7 +32,7 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
                 trigger={
                     <Button type="primary">
                         <PlusOutlined />
-                        创建节点
+                        创建路径
                     </Button>
                 }
                 width={400}
@@ -64,6 +64,7 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
                         if (jump)
                             window.location.assign(url.backUrl.workflow_route_concrete + dataId);
                         prop.actionRef.current?.reload()
+                        form.resetFields()
                         return true
                     }
                     return false
@@ -79,13 +80,13 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
                 <ProFormTreeSelect
                     width="md"
                     name="startNodeId"
-                    label="路径七点"
+                    label="路径起点"
                     placeholder="请选择起始节点"
                     required
-                    disabled={workflowId !== null}
+                    disabled={!workflowId}
                     request={async () => {
                         let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId })).data
-                        return nodeList.map((value, index, array) => { return { title: value.nodeName, value: value.dataId } })
+                        return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
                     }} />
                 <ProFormTreeSelect
                     width="md"
@@ -93,10 +94,10 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
                     label="路径终点"
                     placeholder="请选择到达节点"
                     required
-                    disabled={workflowId !== null}
+                    disabled={!workflowId}
                     request={async () => {
                         let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId })).data
-                        return nodeList.map((value, index, array) => { return { title: value.nodeName, value: value.dataId } })
+                        return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
                     }} />
 
                 <ProFormDigit
@@ -107,6 +108,18 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
                     placeholder="默认排列在最后"
                     required={false}
                     fieldProps={{ precision: 0 }} />
+                <ProFormTreeSelect
+                    width="md"
+                    name="workflowId"
+                    label="所属流程"
+                    placeholder="请选择所属流程"
+                    required
+                    disabled={workflowId !== null}
+                    request={async () => {
+                        let workflowList: WorkflowOut[] = (await getDataList(config.backs.workflow, { toBrowser: true })).data
+                        return workflowList.map((value, index, array) => { return { title: value.workFlowName, value: value.dataId } })
+                    }}
+                    initialValue={workflowId} />
 
             </ModalForm>
         )
@@ -125,7 +138,6 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
 
 const BackRouteList = (prop: { workflowId: number }) => {
     const actionRef = useRef<ActionType>();
-    const query = new URLSearchParams(useLocation().search);
     const columns: ProColumns<WorkflowRouteOut>[] = [
         {
             key: 'code',
@@ -152,6 +164,7 @@ const BackRouteList = (prop: { workflowId: number }) => {
                     {entity.startNodeName}
                 </Button>
             ),
+            hideInSearch: true
         }, {
             key: 'endNodeId',
             title: '路径终点',
@@ -166,6 +179,7 @@ const BackRouteList = (prop: { workflowId: number }) => {
                     {entity.endNodeName}
                 </Button>
             ),
+            hideInSearch: true
         }, {
             key: 'viewNo',
             title: '显示顺序',
@@ -192,6 +206,24 @@ const BackRouteList = (prop: { workflowId: number }) => {
             }
         )
     }
+    columns.push(
+        {
+            key: 'action',
+            title: '操作',
+            dataIndex: "dataId",
+            width: 48 * 3,
+            hideInSearch: true,
+            render: (dom, entity, index, action) =>
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        window.location.assign(url.backUrl.workflow_node_concrete + entity.dataId)
+                    }}
+                >
+                    编辑
+                </Button>
+        }
+    )
     return (
         <ProTable<WorkflowRouteOut>
             columns={columns}
@@ -200,7 +232,7 @@ const BackRouteList = (prop: { workflowId: number }) => {
             request={async (params, sort, filter) => {
                 if (prop.workflowId !== null)
                     params.workflowId = prop.workflowId
-                return getDataList(config.backs.r, params)
+                return getDataList(config.backs.workflowRoute, params)
             }}
             rowKey='dataId'
             search={{

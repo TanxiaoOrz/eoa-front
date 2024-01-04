@@ -281,7 +281,7 @@ export type WorkflowRouteOut = {
 
 export type WorkflowNodeOut = {
     dataId: number
-    nodeName: string
+    workflowNodeName: string
     isCounterSign: number
     nodeType: number
     workflowId: number

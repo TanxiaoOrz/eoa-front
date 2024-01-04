@@ -14,7 +14,7 @@ import url from "../../const/url.js"
 const { Title } = Typography
 
 type WorkflowNodeInSimple = {
-    nodeName: string
+    workflowNodeName: string
     isCounterSign: number
     nodeType: number
     workflowId: number
@@ -63,6 +63,7 @@ const CreateNode = (prop: { workflowId: number , actionRef: React.MutableRefObje
                     if (jump)
                         window.location.assign(url.backUrl.workflow_node_concrete + dataId);
                     prop.actionRef.current?.reload()
+                    form.resetFields()
                     return true
                 }
                 return false
@@ -70,7 +71,7 @@ const CreateNode = (prop: { workflowId: number , actionRef: React.MutableRefObje
         >
             <ProFormText
                 width="md"
-                name="nodeName"
+                name="workflowNodeName"
                 label="节点名称"
                 tooltip="最长为33位"
                 placeholder="请输入节点名称"
@@ -155,9 +156,9 @@ const BackNodeList = (prop: { workflowId: number }) => {
             width: 48,
             align: "center"
         }, {
-            key: 'nodeName',
+            key: 'workflowNodeName',
             title: '节点名称',
-            dataIndex: 'nodeName'
+            dataIndex: 'workflowNodeName'
         }, {
             key: 'nodeType',
             title: '节点类型',
@@ -222,6 +223,24 @@ const BackNodeList = (prop: { workflowId: number }) => {
             }
         )
     }
+    columns.push(
+        {
+            key: 'action',
+            title: '操作',
+            dataIndex: "dataId",
+            width: 48 * 3,
+            hideInSearch: true,
+            render: (dom, entity, index, action) =>
+              <Button
+                type="primary"
+                onClick={() => {
+                  window.location.assign(url.backUrl.workflow_node_concrete+entity.dataId)
+                }}
+              >
+                编辑
+              </Button>
+          }
+    )
     return (
         <ProTable<WorkflowNodeOut>
             columns={columns}

@@ -216,14 +216,14 @@ const WorkflowList = () => {
     }, {
       key: 'action',
       title: '操作',
-      dataIndex: "moduleTypeId",
+      dataIndex: "dataId",
       width: 48 * 3,
       hideInSearch: true,
       render: (dom, entity, index, action) =>
         <Button
           type="primary"
           onClick={() => {
-
+            window.location.assign(url.backUrl.workflow_concrete+entity.dataId)
           }}
         >
           编辑
