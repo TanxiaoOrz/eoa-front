@@ -33,6 +33,7 @@ import BackWorkflow from "../pages/WorkflowModule/back_workflow.tsx";
 import BackWorkflowConcrete from "../pages/WorkflowModule/back_workflow_concrete.tsx";
 import BackNode from "../pages/WorkflowModule/back_node.tsx";
 import BackRoute from "../pages/WorkflowModule/back_route.tsx";
+import BackWorkflowNodeConcrete from "../pages/WorkflowModule/back_node_concrete.tsx";
 
 const Protable = protable
 
@@ -86,12 +87,15 @@ const backs = [
     path: "/back_workflow/:dataId",
     element: <BackWorkflowConcrete />
   },{
+    path: "/back_workflow_node/:dataId",
+    element: <BackWorkflowNodeConcrete />
+  },{
     path: "/back_workflow_node",
     element: <BackNode />
   },{
     path: "/back_workflow_route",
     element: <BackRoute />
-  }
+  },
 ]
 
 const fronts = [

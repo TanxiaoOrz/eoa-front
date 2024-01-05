@@ -180,8 +180,8 @@ const CreatorConstraint = (prop:{
         }
     ]
     let value:Create
-    console.log("create")
-    console.log(prop.default)
+    // console.log("create")
+    // console.log(prop.default)
     if (prop.default === undefined) {
         value = {
             self:false,
@@ -201,7 +201,7 @@ const CreatorConstraint = (prop:{
             sectionRecursive:prop.default.sectionRecursive
         }
     }
-    console.log(value)
+    // console.log(value)
     const alls = [{
         key:"default",
         label:"默认",
@@ -351,7 +351,7 @@ const CharacterConstraint = (prop:{
                         prop.default.pop()
                     news.forEach((value,index,array)=>{prop.default?.push(value)})
                     actionRef.current?.reload()
-                    console.log(prop.default)
+                    // console.log(prop.default)
                     return prop.update(JSON.stringify(prop.default))
                 }}
               >删除</Button>
@@ -406,7 +406,7 @@ const CharacterConstraint = (prop:{
                         prop.form.pop()
                     news.forEach((value,index,array)=>{prop.form?.push(value)})
                     actionRef.current?.reload()
-                    console.log(prop.form)
+                    // console.log(prop.form)
                     return prop.update(JSON.stringify(prop.form))
                 }}
               >删除</Button>
@@ -500,6 +500,8 @@ const CharacterConstraint = (prop:{
                     label="角色"
                     request={async () => {
                         let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
+                        // console.log("tableId",prop.tableId)
+                        // console.log("columnsGet",characters)
                         return characters.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
                     }}
                 />
@@ -529,8 +531,8 @@ const CharacterConstraint = (prop:{
             </ModalForm>
         )
     }
-    console.log("createDefault")
-    console.log(prop.default)
+    // console.log("createDefault")
+    // console.log(prop.default)
     const alls = [{
         key:"default",
         label:"默认",
@@ -664,8 +666,8 @@ const ProposedConstraint = (prop:{
                 request:async () => {
                     let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                     let con = columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
-                    console.log("con")
-                    console.log(con)
+                    // console.log("con")
+                    // console.log(con)
                     return con
                 }
             },{
@@ -690,7 +692,7 @@ const ProposedConstraint = (prop:{
                                 forms.section = forms.section.filter((value,index,array)=>value!==entity.id)
                         }
                     prop.updateForm(JSON.stringify(forms))
-                    console.log(forms)
+                    // console.log(forms)
                     actionForm.current?.reload()
                     }}
                   >删除</Button>
@@ -755,7 +757,7 @@ const ProposedConstraint = (prop:{
                                 defaults.section = defaults.section.filter((value,index,array)=>value!==entity.id)
                         }
                     prop.update(JSON.stringify(defaults))
-                    console.log(defaults)
+                    // console.log(defaults)
                     actionRef.current?.reload()
                     }}
                   >删除</Button>
@@ -782,7 +784,7 @@ const ProposedConstraint = (prop:{
                 values.type = parseInt(s[0])
                 addConstraintFormRows([values],defaults)
                 prop.update(JSON.stringify(defaults))
-                console.log(defaults)
+                // console.log(defaults)
                 actionRef.current?.reload()
                 return true
             }}
@@ -825,7 +827,7 @@ const ProposedConstraint = (prop:{
                                 children:section
                             },
                         ]
-                        console.log(request)
+                        // console.log(request)
                         return request
                     }}
                     tooltip="指定拥有该权限的人员"
@@ -849,9 +851,9 @@ const ProposedConstraint = (prop:{
             autoFocusFirstInput
             onFinish={async (values:Row)=>{
                 addConstraintFormRows([values],forms)
-                console.log("form")
+                // console.log("form")
                 prop.updateForm(JSON.stringify(forms))
-                console.log(forms)
+                // console.log(forms)
                 await actionForm.current?.reload()
                 return true
             }}
@@ -967,9 +969,9 @@ ProposedConstraint.defaultProps = {
 function replacer(key:string, value:any) {
     if(value instanceof Map) {
         let object = {};
-        console.log(value)
+        // console.log(value)
         for (let i of value.entries()) {
-            console.log(i)
+            // console.log(i)
             object[i[0]] = i[1]
         };
       return object;
@@ -1001,7 +1003,7 @@ export const AuthorityEdit = (prop:{
 
     const tableId = prop.tableId;
     const useForm = tableId !== 0
-    
+    // console.log("tableId",tableId)
     let authority:Authority =JSON.parse(prop.entity[prop.authorityName],receiver) 
     
 
@@ -1016,10 +1018,10 @@ export const AuthorityEdit = (prop:{
                 authority.bodyType += (key+",")
             })
         }
-        console.log(authority)
-        console.log(JSON.stringify(authority,replacer))
+        // console.log(authority)
+        // console.log(JSON.stringify(authority,replacer))
         prop.entity[prop.authorityName] = JSON.stringify(authority,replacer)
-        console.log(prop.entity)
+        // console.log(prop.entity)
         message.info("修改成功,请保存后刷新页面查看或继续修改")
     }
 
@@ -1071,6 +1073,7 @@ export const AuthorityEdit = (prop:{
                     useForm={useForm}
                     update={(character)=>{authority.body.set("characterConstraint",character);saveAuthority();return true}}
                     updateForm={(character)=>{authority.table.set("characterConstraint",character);saveAuthority();return true}}
+                    tableId={tableId}
                 />
             </div>)
         },{
@@ -1083,6 +1086,7 @@ export const AuthorityEdit = (prop:{
                     useForm={useForm}
                     update={(character)=>{authority.body.set("proposedConstraint",character);saveAuthority();return true}}
                     updateForm={(character)=>{authority.table.set("proposedConstraint",character);saveAuthority();return true}}
+                    tableId={tableId}
                 />
             </div>)
         }

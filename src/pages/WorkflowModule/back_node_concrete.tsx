@@ -72,6 +72,12 @@ const BackWorkflowNodeConcrete = () => {
                 layout="horizontal"
                 initialValues={node}
                 onFinish={async (workflowIn: WorkflowNodeIn) => {
+                    workflowIn.userAuthorityLimit = node.userAuthorityLimit
+                    workflowIn.beforeAction = node.beforeAction
+                    workflowIn.afterAction = node.afterAction
+                    workflowIn.checkAction = node.checkAction
+                    workflowIn.workflowId = node.workflowId
+                    console.log(workflowIn)
                     return (await UpdateData(config.backs.workflowNode + "/" + nodeId, workflowIn))
                 }} >
                 <ProFormGroup size={"large"} title="基本信息">
@@ -188,7 +194,7 @@ const BackWorkflowNodeConcrete = () => {
         <div style={{ background: '#F5F7FA' }} >
             <PageContainer
                 header={{
-                    title: node.workflowNodeName ,
+                    title: node.workflowNodeName,
                     breadcrumb: {
                         items: [
                             {
@@ -214,24 +220,43 @@ const BackWorkflowNodeConcrete = () => {
                     }, {
                         key: "authority",
                         tab: "操作人员",
-                        children: <AuthorityEdit entity={node} tableId={node.tableId} isVirtual={false} authorityName='userAuthorityLimit'/>
+                        children: <AuthorityEdit entity={node} tableId={node.tableId} isVirtual={false} authorityName='userAuthorityLimit' />
                     }, {
                         key: "beforeAction",
                         tab: "节点前操作",
-                        children: <ActionEdit 
-                            initialValue={node.beforeAction} 
-                            type="action" 
-                            setValue={()=>{
-
+                        children: <ActionEdit
+                            initialValue={node.beforeAction}
+                            type="action"
+                            tableId={node.tableId}
+                            setValue={(value: string) => {
+                                node.beforeAction = value
+                                form.setFieldValue("beforeAction", value)
+                                return true
                             }} />
                     }, {
-                        key:"checkAction",
-                        tab:"提交校验",
-                        children: 
+                        key: "checkAction",
+                        tab: "提交校验",
+                        children: <ActionEdit
+                            initialValue={node.checkAction}
+                            type='check'
+                            tableId={node.tableId}
+                            setValue={(value: string) => {
+                                node.checkAction = value
+                                form.setFieldValue("checkAction", value)
+                                return true
+                            }} />
                     }, {
                         key: 'afterAction',
                         tab: '节点后操作',
-                        children: <></>
+                        children: <ActionEdit
+                            initialValue={node.afterAction}
+                            type='action'
+                            tableId={node.tableId}
+                            setValue={(value: string) => {
+                                node.afterAction = value
+                                form.setFieldValue("afterAction", value)
+                                return true
+                            }} />
                     }
                 ]}
             />
