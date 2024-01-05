@@ -74,10 +74,13 @@ const SQLList = (prop: { values: Task[], tableId: number, save: () => boolean, t
                 values.type = 0
                 prop.values.push(values)
                 if (prop.save()) {
-                    message.success("新建成功")
+                    message.success("新建成功,请保存后刷新页面查看或继续修改")
                     actionRef.current?.reload()
-                } else
+                    return true
+                } else {
                     message.error("新建失败")
+                    return false
+                }
             }}
         >
             <ProFormSelect
@@ -191,10 +194,13 @@ const InputList = (prop: { values: Task[], tableId: number, save: () => boolean,
                 values.type = 1
                 prop.values.push(values)
                 if (prop.save()) {
-                    message.success("新建成功")
+                    message.success("新建成功,请保存后刷新页面查看或继续修改")
                     actionRef.current?.reload()
-                } else
+                    return true
+                } else {
                     message.error("新建失败")
+                    return false
+                }
             }}
         >
             <ProFormSelect
@@ -272,10 +278,13 @@ const JAVAList = (prop: { javas: string[], save: () => boolean }) => {
                 <Button danger onClick={() => {
                     prop.javas.splice(index, 1)
                     if (prop.save()) {
-                        message.success("删除成功")
-                        action?.reload()
-                    } else
-                        message.error("删除失败")
+                        message.success("新建成功,请保存后刷新页面查看或继续修改")
+                        actionRef.current?.reload()
+                        return true
+                    } else {
+                        message.error("新建失败")
+                        return false
+                    }
                 }}>删除</Button>
             ),
         }
@@ -301,7 +310,7 @@ const JAVAList = (prop: { javas: string[], save: () => boolean }) => {
             onFinish={async (values: javaLie) => {
                 prop.javas.push(values.java)
                 if (prop.save()) {
-                    message.success("新建成功")
+                    message.success("新建成功,请保存后刷新页面查看或继续修改")
                     actionRef.current?.reload()
                 }
                 else
