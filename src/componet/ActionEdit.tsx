@@ -422,3 +422,5 @@ const ActionEdit = (prop: { initialValue: string | null, tableId: number, setVal
         </Tabs>
     )
 }
+
+export default ActionEdit
