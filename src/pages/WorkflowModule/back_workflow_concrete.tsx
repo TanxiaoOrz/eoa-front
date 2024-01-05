@@ -120,7 +120,7 @@ const BackWorkflowConcrete = () => {
                         }}
                         addonAfter={
                             <Button
-                                onClick={() => { window.open(url.backUrl.table + workflow.createNode + "?isVirtual=0") }}
+                                onClick={() => { window.open(url.backUrl.table + workflow.tableId + "?isVirtual=0") }}
                             >查看</Button>
                         } />
                     <ProFormText
