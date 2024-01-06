@@ -58,10 +58,6 @@ const DetailTable = (prop:{detail:Detail,getEditAble:(columnName:string)=>boolea
             editableFormRef={editorFormRef}
             rowKey="detailDataId"
             headerTitle={detail.detailName}
-            dataSource={detail.values}
-            scroll={{
-            x: 960,
-            }}
             recordCreatorProps={
             position !== 'hidden'
                 ? {
