@@ -105,6 +105,7 @@ const SQLList = (prop: { values: Task[], tableId: number, save: () => boolean, t
         <ProTable<Task>
             columns={columns}
             cardBordered
+            actionRef={actionRef}
             request={async (params, sort, filter) => {
                 return { data: prop.values, success: true, total: prop.values.length }
             }}
@@ -223,6 +224,7 @@ const InputList = (prop: { values: Task[], tableId: number, save: () => boolean,
     return (
         <ProTable<Task>
             columns={columns}
+            actionRef={actionRef}
             cardBordered
             request={async (params, sort, filter) => {
                 return { data: prop.values, success: true, total: prop.values.length }
@@ -332,6 +334,7 @@ const JAVAList = (prop: { javas: string[], save: () => boolean }) => {
                 return { data: prop.javas.map((string) => { return { java: string } }), success: true, total: prop.javas.length }
             }}
             rowKey='dataId'
+            actionRef={actionRef}
             search={false}
             options={{
                 setting: {
