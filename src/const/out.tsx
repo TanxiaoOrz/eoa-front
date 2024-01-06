@@ -287,6 +287,7 @@ export type WorkflowNodeOut = {
     workflowId: number
     viewNo: number
     userAuthorityLimit: string
+    tableModifyAuthority: string
     beforeAction: string
     checkAction: string
     afterAction: string
