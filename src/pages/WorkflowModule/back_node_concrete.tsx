@@ -3,11 +3,11 @@ import { UpdateData, deleteData, getDataList, getDataOne, newData } from "../../
 import { ColumnOut, ModuleOut, TableOut, WorkflowNodeOut, WorkflowOut } from "../../const/out.tsx"
 import config from "../../const/config"
 import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
-import { Button, Form, Layout, List, Modal, Tabs, Typography } from "antd"
+import { Button, Form, Layout, List, Modal, Tabs, Typography, message } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { Header, Content } from "antd/es/layout/layout"
 import React from "react"
-import { ActionType, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
+import { ActionType, EditableFormInstance, EditableProTable, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
 import { useLocation, useParams } from "react-router"
 import url from "../../const/url"
 import PageWait from "../../componet/PageWait.tsx"
@@ -25,16 +25,22 @@ type WorkflowNodeIn = {
     workflowId: number
     viewNo: number
     userAuthorityLimit: string
+    tableModifyAuthority: string
     beforeAction: string
     checkAction: string
     afterAction: string
+}
+
+type ModifyRow = {
+    columnId:number,
+    edit:boolean
 }
 
 const BackWorkflowNodeConcrete = () => {
     const nodeId = useParams().dataId
     const [form] = Form.useForm<WorkflowNodeIn>()
     const [node, setNode] = useState<WorkflowNodeOut>()
-
+    const editorFormRef = useRef<EditableFormInstance>();
 
     useEffect(() => {
         if (node === undefined)
@@ -54,11 +60,94 @@ const BackWorkflowNodeConcrete = () => {
     if (node === undefined)
         return (<PageWait />)
 
-
+    const modifyRows:ModifyRow[] = (
+        node.tableModifyAuthority?
+        Object.entries(JSON.parse(node.tableModifyAuthority)).map((key)=>{
+            return {columnId:parseInt(key[0]), edit:key[1] as boolean}
+        })
+        :[]
+    )
+        
     const dropDepart = async () => {
         if ((await deleteData(config.backs.workflowNode + "/" + nodeId)))
             window.location.reload()
     }
+
+    const modifyColumn: ProColumns<ModifyRow>[] = [
+        {
+            key:"columnId",
+            dataIndex:"columnId",
+            valueType:"treeSelect",
+            title:"字段名称",
+            request:async () => {
+                let columns:ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: node.tableId, isVirtual: false })).data
+                return columns.map((column)=>{return {title:column.columnViewName, value:column.columnId}})
+            }
+        }, {
+            key:"edit",
+            dataIndex:"edit",
+            valueType:"select",
+            title:"字段权限",
+            request:async () => {
+                return [
+                    {
+                        label:"编辑",
+                        value:true
+                    }, {
+                        label:"只读",
+                        value:false
+                    }
+                ]
+            }
+        }
+    ] 
+    let tooltipModify:string
+    switch (node.nodeType) {
+        case 0:
+        case 1:
+            tooltipModify = "默认权限-编辑"
+            break;
+        default:
+            tooltipModify = "默认权限-只读"
+    }
+    const tableModify = (
+        <EditableProTable
+            editableFormRef={editorFormRef}
+            rowKey="columnId"
+            headerTitle="表单编辑权限"
+            tooltip={tooltipModify}
+            scroll={{
+            x: 960,
+            }}
+            recordCreatorProps={{
+                    position: 'top',
+                    record: () => ({}),
+                }}
+            loading={false}
+            columns={modifyColumn}
+            request={async () => {
+                return {
+                    data:modifyRows,
+                    total:modifyRows.length,
+                    success:true
+                }
+            }}
+
+            editable={{
+            type: 'multiple',
+            onSave: async (rowKey, data, row) => {
+                if (modifyRows.filter((modifyRow)=>modifyRow.columnId === rowKey))
+                    message.warning("不允许针对同一个字段多次设置编辑权限")
+                else
+                    modifyRows.push(data)
+            },
+            onDelete:async(key, row)=>{
+                message.warning("不允许删除") 
+            },
+            deleteText:""
+            }}
+      />
+    )
 
     const WorkflowNodeBase = (
         <div style={{ display: "flex", background: "#fdfdfd", paddingTop: "30px", paddingLeft: "10px" }}>
@@ -77,6 +166,11 @@ const BackWorkflowNodeConcrete = () => {
                     workflowIn.afterAction = node.afterAction
                     workflowIn.checkAction = node.checkAction
                     workflowIn.workflowId = node.workflowId
+                    let tableModifyAuthority = {}
+                    modifyRows.forEach((modifyRow)=>{
+                        tableModifyAuthority[modifyRow.columnId] = modifyRow.edit
+                    })
+                    workflowIn.tableModifyAuthority = JSON.stringify(tableModifyAuthority)
                     console.log(workflowIn)
                     return (await UpdateData(config.backs.workflowNode + "/" + nodeId, workflowIn))
                 }} >
@@ -257,6 +351,10 @@ const BackWorkflowNodeConcrete = () => {
                                 form.setFieldValue("afterAction", value)
                                 return true
                             }} />
+                    }, {
+                        key: 'tableModifyAuthority',
+                        tab: '表单操作权限',
+                        children: tableModify
                     }
                 ]}
             />
