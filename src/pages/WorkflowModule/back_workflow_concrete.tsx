@@ -120,7 +120,7 @@ const BackWorkflowConcrete = () => {
                         }}
                         addonAfter={
                             <Button
-                                onClick={() => { window.open(url.backUrl.table + workflow.tableId + "?isVirtual=0") }}
+                                onClick={() => { window.open(url.backUrl.table_concrete + workflow.tableId + "?isVirtual=0") }}
                             >查看</Button>
                         } />
                     <ProFormText
@@ -163,7 +163,7 @@ const BackWorkflowConcrete = () => {
                     <ProFormText
                         disabled
                         label="创建人"
-                        name="createName"
+                        name="creatorName"
                         addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + workflow.creator) }}>查看</Button>}
                     />
                 </ProFormGroup>

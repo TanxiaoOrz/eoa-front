@@ -223,7 +223,7 @@ const WorkflowList = () => {
         <Button
           type="primary"
           onClick={() => {
-            window.location.assign(url.backUrl.workflow_concrete+entity.dataId)
+            window.open(url.backUrl.workflow_concrete+entity.dataId)
           }}
         >
           编辑

@@ -32,8 +32,9 @@ type WorkflowNodeIn = {
 }
 
 type ModifyRow = {
-    columnId:number,
-    edit:boolean
+    id: number
+    columnId: number
+    edit: boolean
 }
 
 const BackWorkflowNodeConcrete = () => {
@@ -41,13 +42,18 @@ const BackWorkflowNodeConcrete = () => {
     const [form] = Form.useForm<WorkflowNodeIn>()
     const [node, setNode] = useState<WorkflowNodeOut>()
     const editorFormRef = useRef<EditableFormInstance>();
-
+    const [modifyRows, setModifyRows] = useState<readonly ModifyRow[]>([])
     useEffect(() => {
         if (node === undefined)
             getDataOne(config.backs.workflowNode + "/" + nodeId).then((value) => {
                 console.log(value.data)
                 if (value.success) {
                     setNode(value.data)
+                    setModifyRows(value.data.tableModifyAuthority ?
+                        Object.entries(JSON.parse(value.data.tableModifyAuthority)).map((key, index) => {
+                            return { id: index, columnId: parseInt(key[0]), edit: key[1] as boolean }
+                        })
+                        : [])
                 }
             })
     })
@@ -60,14 +66,8 @@ const BackWorkflowNodeConcrete = () => {
     if (node === undefined)
         return (<PageWait />)
 
-    const modifyRows:ModifyRow[] = (
-        node.tableModifyAuthority?
-        Object.entries(JSON.parse(node.tableModifyAuthority)).map((key)=>{
-            return {columnId:parseInt(key[0]), edit:key[1] as boolean}
-        })
-        :[]
-    )
-        
+
+
     const dropDepart = async () => {
         if ((await deleteData(config.backs.workflowNode + "/" + nodeId)))
             window.location.reload()
@@ -75,33 +75,47 @@ const BackWorkflowNodeConcrete = () => {
 
     const modifyColumn: ProColumns<ModifyRow>[] = [
         {
-            key:"columnId",
-            dataIndex:"columnId",
-            valueType:"treeSelect",
-            title:"字段名称",
-            request:async () => {
-                let columns:ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: node.tableId, isVirtual: false })).data
-                return columns.map((column)=>{return {title:column.columnViewName, value:column.columnId}})
+            key: "columnId",
+            dataIndex: "columnId",
+            valueType: "select",
+            title: "字段名称",
+            request: async () => {
+                let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: node.tableId, isVirtual: false })).data
+                return columns.map((column) => { return { label: column.columnViewName, value: column.columnId } })
             }
         }, {
-            key:"edit",
-            dataIndex:"edit",
-            valueType:"select",
-            title:"字段权限",
-            request:async () => {
+            key: "edit",
+            dataIndex: "edit",
+            valueType: "select",
+            title: "字段权限",
+            request: async () => {
                 return [
                     {
-                        label:"编辑",
-                        value:true
+                        label: "编辑",
+                        value: true
                     }, {
-                        label:"只读",
-                        value:false
+                        label: "只读",
+                        value: false
                     }
                 ]
             }
+        }, {
+            title: '操作',
+            valueType: 'option',
+            width: 200,
+            render: (text, record, _, action) => (
+                <Button
+                    key="editable"
+                    onClick={() => {
+                        action?.startEditable?.(record.id);
+                    }}
+                >
+                    编辑
+                </Button>
+            )
         }
-    ] 
-    let tooltipModify:string
+    ]
+    let tooltipModify: string
     switch (node.nodeType) {
         case 0:
         case 1:
@@ -113,40 +127,41 @@ const BackWorkflowNodeConcrete = () => {
     const tableModify = (
         <EditableProTable
             editableFormRef={editorFormRef}
-            rowKey="columnId"
+            rowKey="id"
             headerTitle="表单编辑权限"
             tooltip={tooltipModify}
             scroll={{
-            x: 960,
+                x: 960,
             }}
             recordCreatorProps={{
-                    position: 'top',
-                    record: () => ({}),
-                }}
+                position: 'bottom',
+                record: () => ({ id: (Math.random() * 1000000).toFixed(0), columnId:null, edit:null }),
+            }}
             loading={false}
             columns={modifyColumn}
             request={async () => {
+                let modifyRows = node.tableModifyAuthority ?
+                Object.entries(JSON.parse(node.tableModifyAuthority)).map((key, index) => {
+                    return { id: index, columnId: parseInt(key[0]), edit: key[1] as boolean }
+                })
+                : []
                 return {
-                    data:modifyRows,
-                    total:modifyRows.length,
-                    success:true
+                    data: modifyRows,
+                    total: modifyRows.length,
+                    success: true
                 }
             }}
-
+            dataSource={modifyRows}
+            value={modifyRows}
+            onChange={setModifyRows}
             editable={{
-            type: 'multiple',
-            onSave: async (rowKey, data, row) => {
-                if (modifyRows.filter((modifyRow)=>modifyRow.columnId === rowKey))
-                    message.warning("不允许针对同一个字段多次设置编辑权限")
-                else
-                    modifyRows.push(data)
-            },
-            onDelete:async(key, row)=>{
-                message.warning("不允许删除") 
-            },
-            deleteText:""
+                type: 'multiple',
+                onSave: async (rowKey, data, row) => {
+                    console.log(modifyRows)
+                },
+                
             }}
-      />
+        />
     )
 
     const WorkflowNodeBase = (
@@ -167,9 +182,10 @@ const BackWorkflowNodeConcrete = () => {
                     workflowIn.checkAction = node.checkAction
                     workflowIn.workflowId = node.workflowId
                     let tableModifyAuthority = {}
-                    modifyRows.forEach((modifyRow)=>{
+                    modifyRows.forEach((modifyRow) => {
                         tableModifyAuthority[modifyRow.columnId] = modifyRow.edit
                     })
+                    console.log("tableModifyAuthority", tableModifyAuthority)
                     workflowIn.tableModifyAuthority = JSON.stringify(tableModifyAuthority)
                     console.log(workflowIn)
                     return (await UpdateData(config.backs.workflowNode + "/" + nodeId, workflowIn))
@@ -233,7 +249,7 @@ const BackWorkflowNodeConcrete = () => {
                         disabled
                         addonAfter={
                             <Button
-                                onClick={() => { window.open(url.backUrl.workflow + node.workflowId + "?isVirtual=0") }}
+                                onClick={() => { window.open(url.backUrl.workflow_concrete + node.workflowId) }}
                             >查看</Button>
                         } />
                     <ProFormDigit
@@ -263,7 +279,7 @@ const BackWorkflowNodeConcrete = () => {
                         }}
                         addonAfter={
                             <Button
-                                onClick={() => { window.open(url.backUrl.table + node.tableId + "?isVirtual=0") }}
+                                onClick={() => { window.open(url.backUrl.table_concrete + node.tableId + "?isVirtual=0") }}
                             >查看</Button>
                         } />
                 </ProFormGroup>
@@ -276,7 +292,7 @@ const BackWorkflowNodeConcrete = () => {
                     <ProFormText
                         disabled
                         label="创建人"
-                        name="createName"
+                        name="creatorName"
                         addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + node.creator) }}>查看</Button>}
                     />
                 </ProFormGroup>

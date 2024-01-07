@@ -234,7 +234,7 @@ const BackNodeList = (prop: { workflowId: number }) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  window.location.assign(url.backUrl.workflow_node_concrete+entity.dataId)
+                  window.open(url.backUrl.workflow_node_concrete+entity.dataId)
                 }}
               >
                 编辑

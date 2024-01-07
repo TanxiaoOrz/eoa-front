@@ -1,20 +1,13 @@
-﻿import { useState, useEffect, useRef, Children } from "react"
-import { UpdateData, deleteData, getDataList, getDataOne, newData } from "../../const/http.tsx"
-import { ColumnOut, ModuleOut, TableOut, WorkflowNodeOut, WorkflowOut, WorkflowRouteOut } from "../../const/out.tsx"
+﻿import { useState, useEffect } from "react"
+import { UpdateData, deleteData, getDataList, getDataOne } from "../../const/http.tsx"
+import { TableOut, WorkflowNodeOut, WorkflowRouteOut } from "../../const/out.tsx"
 import config from "../../const/config"
-import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
-import { Button, Form, Layout, List, Modal, Tabs, Typography, message } from "antd"
-import Sider from "antd/es/layout/Sider"
-import { Header, Content } from "antd/es/layout/layout"
+import { Button, Form } from "antd"
 import React from "react"
-import { ActionType, EditableFormInstance, EditableProTable, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
-import { useLocation, useParams } from "react-router"
+import { PageContainer, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormText, ProFormTreeSelect } from "@ant-design/pro-components"
+import { useParams } from "react-router"
 import url from "../../const/url"
 import PageWait from "../../componet/PageWait.tsx"
-import BackNode from "./back_node.tsx"
-import BackRoute from "./back_route.tsx"
-import { tab } from "@testing-library/user-event/dist/tab"
-import { AuthorityEdit } from "../../componet/AuthorityEdit.tsx"
 import ActionEdit from "../../componet/ActionEdit.tsx"
 
 type WorkflowRouteIn = {
@@ -89,7 +82,7 @@ const BackWorkflowRouteConcrete = () => {
                     placeholder="请选择起始节点"
                     required
                     request={async () => {
-                        let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId })).data
+                        let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId:route.workflowId })).data
                         return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
                     }} />
                 <ProFormTreeSelect
@@ -99,7 +92,7 @@ const BackWorkflowRouteConcrete = () => {
                     placeholder="请选择到达节点"
                     required
                     request={async () => {
-                        let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId })).data
+                        let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId:route.workflowId })).data
                         return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
                     }} />
                     <ProFormText
@@ -111,7 +104,7 @@ const BackWorkflowRouteConcrete = () => {
                         disabled
                         addonAfter={
                             <Button
-                                onClick={() => { window.open(url.backUrl.workflow + route.workflowId + "?isVirtual=0") }}
+                                onClick={() => { window.open(url.backUrl.workflow_concrete + route.workflowId) }}
                             >查看</Button>
                         } />
                     <ProFormDigit
@@ -141,7 +134,7 @@ const BackWorkflowRouteConcrete = () => {
                         }}
                         addonAfter={
                             <Button
-                                onClick={() => { window.open(url.backUrl.table + route.tableId + "?isVirtual=0") }}
+                                onClick={() => { window.open(url.backUrl.table_concrete + route.tableId + "?isVirtual=0") }}
                             >查看</Button>
                         } />
                 </ProFormGroup>
@@ -154,7 +147,7 @@ const BackWorkflowRouteConcrete = () => {
                     <ProFormText
                         disabled
                         label="创建人"
-                        name="createName"
+                        name="creatorName"
                         addonAfter={<Button onClick={() => { window.open(url.frontUrl.humanResource + route.creator) }}>查看</Button>}
                     />
                 </ProFormGroup>
@@ -171,7 +164,7 @@ const BackWorkflowRouteConcrete = () => {
                         items: [
                             {
                                 path: url.backUrl.workflow_route,
-                                title: '节点列表',
+                                title: '路径列表',
                             },
                             {
                                 path: url.backUrl.workflow_concrete + '/' + routeId,
@@ -197,12 +190,12 @@ const BackWorkflowRouteConcrete = () => {
                             type="action"
                             tableId={route.tableId}
                             setValue={(value: string) => {
-                                route.routeName = value
+                                route.routeAction = value
                                 form.setFieldValue("routeAction", value)
                                 return true
                             }} />
                     }, {
-                        key: "checkAction",
+                        key: "enterCondition",
                         tab: "进入条件",
                         children: <ActionEdit
                             initialValue={route.enterCondition}

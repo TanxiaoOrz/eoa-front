@@ -75,6 +75,7 @@ const SQLList = (prop: { values: Task[], tableId: number, save: () => boolean, t
                 prop.values.push(values)
                 if (prop.save()) {
                     message.success("新建成功,请保存后刷新页面查看或继续修改")
+                    console.log(prop.values)
                     actionRef.current?.reload()
                     return true
                 } else {
@@ -109,13 +110,13 @@ const SQLList = (prop: { values: Task[], tableId: number, save: () => boolean, t
             request={async (params, sort, filter) => {
                 return { data: prop.values, success: true, total: prop.values.length }
             }}
-            rowKey='dataId'
             search={false}
             options={{
                 setting: {
                     listsHeight: 400,
                 },
             }}
+            dataSource={prop.values}
             form={{
                 // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
                 syncToUrl: (values, type) => {
@@ -229,7 +230,7 @@ const InputList = (prop: { values: Task[], tableId: number, save: () => boolean,
             request={async (params, sort, filter) => {
                 return { data: prop.values, success: true, total: prop.values.length }
             }}
-            rowKey='dataId'
+            dataSource={prop.values}
             search={false}
             options={{
                 setting: {
@@ -265,7 +266,7 @@ type javaLie = {
     java: string
 }
 
-const JAVAList = (prop: { javas: string[], save: () => boolean }) => {
+const JAVAList = (prop: { javas: string[], save: () => boolean, javaToolitip:string }) => {
     const actionRef = useRef<ActionType>();
     const columns: ProColumns<javaLie>[] = [
         {
@@ -333,9 +334,9 @@ const JAVAList = (prop: { javas: string[], save: () => boolean }) => {
             request={async (params, sort, filter) => {
                 return { data: prop.javas.map((string) => { return { java: string } }), success: true, total: prop.javas.length }
             }}
-            rowKey='dataId'
             actionRef={actionRef}
             search={false}
+            dataSource={prop.javas.map((string) => { return { java: string } })}
             options={{
                 setting: {
                     listsHeight: 400,
@@ -357,6 +358,7 @@ const JAVAList = (prop: { javas: string[], save: () => boolean }) => {
                 pageSize: 10,
                 onChange: (page) => console.log(page),
             }}
+            tooltip={prop.javaToolitip}
             dateFormatter="string"
             headerTitle="类操作列表"
             toolBarRender={() => [
@@ -423,7 +425,7 @@ const ActionEdit = (prop: { initialValue: string | null, tableId: number, setVal
         },{
             key: 'java',
             label: 'java接口',
-            children: <JAVAList save={save} javas={javas} />
+            children: <JAVAList save={save} javas={javas} javaToolitip = {javaToolitip}/>
         }, 
     ]
     return (
