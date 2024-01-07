@@ -122,6 +122,16 @@ export const newData =async (url:string,params:any):Promise<number> => {
     }
 }
 
+export const RequestAction =async (url:string,params:any):Promise<number[]> => {
+    let response = await service.put(url,params);
+    let data:Data = response.data;
+    if (data.code == 0) {
+        return data.entity
+    } else {
+        return [];
+    }
+}
+
 export const loginPost = async (url,params) => {
     let response = await login.post(url,params);
     let data:Data = response.data;
