@@ -35,6 +35,7 @@ import BackNode from "../pages/WorkflowModule/back_node.tsx";
 import BackRoute from "../pages/WorkflowModule/back_route.tsx";
 import BackWorkflowNodeConcrete from "../pages/WorkflowModule/back_node_concrete.tsx";
 import BackWorkflowRouteConcrete from "../pages/WorkflowModule/back_route_concrete.tsx";
+import CreateWorkflow from "../pages/WorkflowModule/create_workflow.tsx";
 
 const Protable = protable
 
@@ -140,6 +141,9 @@ const fronts = [
   },{
     path:"/organization",
     element:<OrganizationTree showDeprecated={false}/>
+  },{
+    path:'/workflow',
+    element:<CreateWorkflow />
   }
 ]
 
