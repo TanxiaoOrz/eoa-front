@@ -152,7 +152,7 @@ export const getFormIn = (formOut: FormOut): FormIn => {
     return formIn
 }
 
-const FrontFormConcrete = (prop: { formOut: FormOut | null, editAbleList: string[], getDetailAuthority: (detailId: number, type: 'add' | 'remove' | 'edit') => boolean }) => {
+const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str:string)=>boolean, getDetailAuthority: (detailId: number, type: 'add' | 'remove' | 'edit') => boolean }) => {
     const query = new URLSearchParams(useLocation().search);
     const [formOut, setFormOut] = React.useState(prop.formOut);
     const params = useParams()
@@ -162,7 +162,7 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, editAbleList: string
         if (type === 0)
             return true;
         else
-            return prop.editAbleList.includes(columnName)
+            return prop.getEdit(columnName)
     }
     useEffect(() => {
         if (formOut == null) {
@@ -273,27 +273,28 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, editAbleList: string
     >
         {mainGroups}
     </ProForm>)
-    let headers = (
-        <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
-            <div style={{ display: 'flex' }}>
-                <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{formOut.tableName}</Title>
-            </div>
-        </Header>
-    )
-    if (prop.formOut !== null)
-        headers = <></>
+
     config.globalSrollHidden = false
+    if (prop.formOut !== null)
+        return (
+            <div>
+                <Card>{mainForm}</Card>
+                <div style={{ margin: "10px" }}></div>
+                {detailLists}
+            </div>
+        )
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            {headers}
+            <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
+                <div style={{ display: 'flex' }}>
+                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{formOut.tableName}</Title>
+                </div>
+            </Header>
             <Flex vertical={false} style={{ background: "#ffffff", padding: "10px" }}>{Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} style={{ ...baseStyle }} />
             ))}{subbmiter}<div style={{ width: "2.5%" }}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight: '100%', overflowY: 'auto' }}>
-                <Card>{mainForm}</Card>
 
-                <div style={{ margin: "10px" }}></div>
-                {detailLists}
             </Content>
         </Layout>
     )
@@ -302,7 +303,7 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, editAbleList: string
 
 FrontFormConcrete.defaultProps = {
     formOut: null,
-    editAbleList: [],
+    getEdit: () => false,
     getDetailAuthority: () => false
 }
 
