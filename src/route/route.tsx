@@ -36,6 +36,7 @@ import BackRoute from "../pages/WorkflowModule/back_route.tsx";
 import BackWorkflowNodeConcrete from "../pages/WorkflowModule/back_node_concrete.tsx";
 import BackWorkflowRouteConcrete from "../pages/WorkflowModule/back_route_concrete.tsx";
 import CreateWorkflow from "../pages/WorkflowModule/create_workflow.tsx";
+import RequestConcrete from "../pages/WorkflowModule/request_concrete.tsx";
 
 const Protable = protable
 
@@ -144,6 +145,9 @@ const fronts = [
   },{
     path:'/workflow',
     element:<CreateWorkflow />
+  },{
+    path:'/request/:requestId',
+    element:<RequestConcrete />
   }
 ]
 
