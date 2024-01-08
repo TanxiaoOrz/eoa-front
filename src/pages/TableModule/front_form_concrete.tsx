@@ -32,8 +32,10 @@ const DetailTable = (prop: { detail: Detail, getEditAble: (columnName: string) =
     let entries = Object.entries(detail.columns)
     if (entries.length === 0)
         return (<></>)
-    for (let [key, column] of entries)
+    for (let [key, column] of entries) {
+        // console.log(key, prop.getEditAble(key))
         detailColumn.push(transprotColumn(key, detail.values, column as ColumnSimpleOut, prop.getEditAble(key), editorFormRef))
+    }
 
     if (prop.editable)
         detailColumn.push(
@@ -103,6 +105,7 @@ const GroupForm = (prop: { group: Group, getEditAble: (columnName: string) => bo
         return (<></>)
 
     for (let [key, value] of entries) {
+        // console.log(key,prop.getEditAble(key))
         row.push(transportInput(key, group.values, value as ColumnSimpleOut, prop.form, prop.getEditAble(key)))
         count++
         if (count == 2 || (value as ColumnSimpleOut).columnType == columnType.areaText) {
@@ -152,7 +155,7 @@ export const getFormIn = (formOut: FormOut): FormIn => {
     return formIn
 }
 
-const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str:string)=>boolean, getDetailAuthority: (detailId: number, type: 'add' | 'remove' | 'edit') => boolean }) => {
+const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: string) => boolean, getDetailAuthority: (detailId: number, type: 'add' | 'remove' | 'edit') => boolean }) => {
     const query = new URLSearchParams(useLocation().search);
     const [formOut, setFormOut] = React.useState(prop.formOut);
     const params = useParams()
@@ -294,7 +297,9 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str:string
                 <div key={i} style={{ ...baseStyle }} />
             ))}{subbmiter}<div style={{ width: "2.5%" }}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight: '100%', overflowY: 'auto' }}>
-
+                <Card>{mainForm}</Card>
+                <div style={{ margin: "10px" }}></div>
+                {detailLists}
             </Content>
         </Layout>
     )
