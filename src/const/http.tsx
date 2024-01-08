@@ -1,6 +1,7 @@
 ﻿import axios from 'axios'
 import config from './config.js';
-import { message } from 'antd';
+import { Button, message, notification } from 'antd';
+import React from 'react';
 
 type Data = {
     code:number
@@ -128,6 +129,13 @@ export const RequestAction =async (url:string,params:any):Promise<number[]> => {
     if (data.code == 0) {
         return data.entity
     } else {
+        notification.warning({
+            
+            message: '操作失败',
+            duration: 0,
+            description: data.description,
+            btn: <Button type='primary' danger>确认</Button>
+        });
         return [];
     }
 }
