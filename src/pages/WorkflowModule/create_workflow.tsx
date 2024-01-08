@@ -21,7 +21,7 @@ const ModeuleCard = (prop: { workflows: WorkflowOut[], moduleName: string }) => 
         )
 
     let workflowLinks = prop.workflows.map((workflow) =>
-        <div key={workflow.dataId}><a href={url.frontUrl.request_concrete + '0?workflow=' + workflow.dataId} >{workflow.workFlowName}</a></div>
+        <div key={workflow.dataId}><a href={url.frontUrl.request_concrete + '0?workflowId=' + workflow.dataId} >{workflow.workFlowName}</a></div>
     )
 
     return (
