@@ -1,13 +1,13 @@
 ﻿import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
-import { FileOut, HumanOut, RequestDtoOut, WorkflowNodeOut } from "../../const/out";
-import { RequestAction, UpdateData, getDataList, getDataOne } from "../../const/http";
-import config from "../../const/config";
-import PageWait from "../../componet/PageWait";
+import { FileOut, HumanOut, RequestDtoOut, WorkflowNodeOut } from "../../const/out.tsx";
+import { RequestAction, UpdateData, getDataList, getDataOne } from "../../const/http.tsx";
+import config from "../../const/config.js";
+import PageWait from "../../componet/PageWait.tsx";
 import React from "react";
 import { Avatar, Button, Divider, Flex, Layout, message, notification, Typography } from "antd";
-import FrontFormConcrete, { getFormIn } from "../TableModule/front_form_concrete";
-import url from "../../const/url";
+import FrontFormConcrete, { getFormIn } from "../TableModule/front_form_concrete.tsx";
+import url from "../../const/url.js";
 import { ProCard } from "@ant-design/pro-components";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -25,11 +25,11 @@ type Commit = {
     comment: string
 }
 
-const getRequestIn = (request: RequestDtoOut, comment: string, action: number = -1) => {
+const getRequestIn = (request: RequestDtoOut, comment: string, requestId:string, action: number = -1) => {
     if (comment === "")
         comment = translateAction(action)
     return {
-        requestId: request.requestOut.requestId,
+        requestId: requestId,
         nodeId: request.currentNode.dataId,
         workflowId: request.currentNode.workflowId,
         form: getFormIn(request.formOut),
@@ -122,11 +122,12 @@ const RequestConcrete = () => {
     const params = useParams()
     const [requestDto, setRequestDto] = useState<RequestDtoOut>()
     const [api, contextHolder] = notification.useNotification();
+    const requestId = params.requestId
     const workflowId = query.get("workflowId")
     let comment: string = ''
     useEffect(() => {
         if (requestDto === undefined) {
-            let requestId = params.requestId
+
             getDataOne(config.fronts.request + "/" + requestId + "?workflowId=" + workflowId).then((value) => {
                 if (value.success)
                     setRequestDto(value.data)
@@ -135,7 +136,7 @@ const RequestConcrete = () => {
     })
 
 
-    if (requestDto === undefined)
+    if (requestDto === undefined || requestId === undefined)
         return <PageWait />
 
     let actionButtons: React.JSX.Element[]
@@ -147,7 +148,7 @@ const RequestConcrete = () => {
                     type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
-                        RequestAction(config.backs.request + "?onlySave=false&action=0", getRequestIn(requestDto, comment, 0)).then((value) => {
+                        RequestAction(config.fronts.request + "?onlySave=false&action=0", getRequestIn(requestDto, comment, requestId, 0)).then((value) => {
                             if (value)
                                 api.open({
                                     message: '流程创建成功',
@@ -162,7 +163,7 @@ const RequestConcrete = () => {
                     type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
-                        RequestAction(config.backs.request + "?onlySave=true&action=0", getRequestIn(requestDto, comment)).then((value) => {
+                        RequestAction(config.fronts.request + "?onlySave=true&action=0", getRequestIn(requestDto, comment, requestId)).then((value) => {
                             if (value)
                                 api.open({
                                     message: '保存成功',
@@ -182,7 +183,7 @@ const RequestConcrete = () => {
                     type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
-                        RequestAction(config.backs.request + "?onlySave=false&action=2", getRequestIn(requestDto, comment, 2)).then((value) => {
+                        RequestAction(config.fronts.request + "?onlySave=false&action=2", getRequestIn(requestDto, comment, requestId, 2)).then((value) => {
                             if (value)
                                 api.open({
                                     message: '流程批准成功',
@@ -198,7 +199,7 @@ const RequestConcrete = () => {
                     danger
                     style={{ margin: "3px" }}
                     onClick={() => {
-                        RequestAction(config.backs.request + "?onlySave=false&action=3", getRequestIn(requestDto, comment, 3)).then((value) => {
+                        RequestAction(config.fronts.request + "?onlySave=false&action=3", getRequestIn(requestDto, comment, requestId, 3)).then((value) => {
                             if (value)
                                 api.open({
                                     message: '流程退回成功',
@@ -213,7 +214,7 @@ const RequestConcrete = () => {
                     type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
-                        RequestAction(config.backs.request + "?onlySave=true&action=2", getRequestIn(requestDto, comment)).then((value) => {
+                        RequestAction(config.fronts.request + "?onlySave=true&action=2", getRequestIn(requestDto, comment, requestId)).then((value) => {
                             if (value)
                                 api.open({
                                     message: '保存成功',
@@ -233,7 +234,7 @@ const RequestConcrete = () => {
                     type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
-                        RequestAction(config.backs.request + "?onlySave=false&action=1", getRequestIn(requestDto, comment, 1)).then((value) => {
+                        RequestAction(config.fronts.request + "?onlySave=false&action=1", getRequestIn(requestDto, comment, requestId, 1)).then((value) => {
                             if (value)
                                 api.open({
                                     message: '流程提交成功',
@@ -248,7 +249,7 @@ const RequestConcrete = () => {
                     type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
-                        RequestAction(config.backs.request + "?onlySave=true&action=1", getRequestIn(requestDto, comment)).then((value) => {
+                        RequestAction(config.fronts.request + "?onlySave=true&action=1", getRequestIn(requestDto, comment, requestId)).then((value) => {
                             if (value)
                                 api.open({
                                     message: '保存成功',
@@ -280,36 +281,48 @@ const RequestConcrete = () => {
                 />
             </div>
         )
+    else
+        commentGroup = <div></div>
 
     const baseStyle: React.CSSProperties = {
         width: '25%',
     };
 
     const editObject = JSON.parse(requestDto.currentNode.tableModifyAuthority)
-    const defaultEdit = requestDto.currentNode.nodeType === 0 ||requestDto.currentNode.nodeType === 1
+    const defaultEdit = requestDto.currentNode.nodeType === 0 || requestDto.currentNode.nodeType === 1
 
-    const editableFun = (str:string) => {
+    console.log(editObject)
+    const editableFun = (str: string) => {
         let strEditFromObject = editObject[str]
-        if (defaultEdit !== undefined)
+        if (strEditFromObject !== undefined)
             return strEditFromObject as boolean
         else
             return defaultEdit
     }
 
+    const commitHistorys:React.JSX.Element[] = []
+    if (requestDto.requestOut?.doneHistory) {
+        let doneHistory: Commit[] = JSON.parse(requestDto.requestOut.doneHistory)
+        doneHistory.forEach((commit)=>commitHistorys.unshift(<HistroyCommit commit={commit} />))
+    }
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
                 <div style={{ display: 'flex' }}>
-                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{requestDto.requestOut.requestTitle + " - " + requestDto.currentNode.workflowName}</Title>
+                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{requestDto.requestOut?.requestTitle ?? requestDto.workflow.workflowBaseTitle+ " - " + requestDto.currentNode.workflowNodeName}</Title>
                 </div>
             </Header>
             <Flex vertical={false} style={{ background: "#ffffff", padding: "10px" }}>{Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} style={{ ...baseStyle }} />
             ))}{actionButtons}<div style={{ width: "2.5%" }}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight: '100%', overflowY: 'auto' }}>
-                <FrontFormConcrete formOut={requestDto.formOut} getEdit={editableFun} />
+                <FrontFormConcrete formOut={requestDto.formOut} getEdit={editableFun} getDetailAuthority={()=>defaultEdit}/>
+                {commentGroup}
+                {commitHistorys}
             </Content>
         </Layout>
     )
 
 }
+
+export default RequestConcrete
