@@ -121,14 +121,8 @@ const AllConstraint = (prop:{
                     name="start"
                     width="sm"
                     request={async ()=>{
-                        let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
-                        return columns.filter((column)=>{return column.columnType===columnType.number})
-                            .map((value,index,array)=>{
-                                return {
-                                    value:value.columnId,
-                                    label:value.columnDataName
-                                }
-                            })
+                        let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
+                return characters.map((value,index,array) => { return {label:value.columnViewName,value:value.columnId}})
                     }}
                     placeholder="请选择代表最小安全等级的字段"
                     required = {true}
@@ -138,14 +132,8 @@ const AllConstraint = (prop:{
                     name="end"
                     width="sm"
                     request={async ()=>{
-                        let columns:ColumnOut[] = (await getDataList(url.backUrl.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
-                        return columns.filter((column)=>{return column.columnType===columnType.number})
-                            .map((value,index,array)=>{
-                                return {
-                                    value:value.columnId,
-                                    label:value.columnDataName
-                                }
-                            })
+                        let characters:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
+                return characters.map((value,index,array) => { return {label:value.columnViewName,value:value.columnId}})
                     }}
                     placeholder="请选择代表最大安全等级的字段"
                     required = {true}
