@@ -18,23 +18,17 @@ const { Title } = Typography
 
 type Commit = {
     nodeId: number
-    nodeName: string
-    humamId: number
-    time: string
+    workflowNodeName: string
+    humanId: number
+    time: number
     operation: number
     comment: string
 }
 
-const getRequestIn = (request: RequestDtoOut, comment: string, requestId:string, action: number = -1) => {
-    if (comment === "")
-        comment = translateAction(action)
-    return {
-        requestId: requestId,
-        nodeId: request.currentNode.dataId,
-        workflowId: request.currentNode.workflowId,
-        form: getFormIn(request.formOut),
-        comment
-    }
+type FormIn = {
+    tableId: number
+    mains: any
+    detailValueMapLists: any[][]
 }
 
 const translateAction = (action: number) => {
@@ -54,15 +48,27 @@ const translateAction = (action: number) => {
     }
 }
 
+const translateTime = (stamp: number) => {
+    let date = new Date(stamp);  // 参数需要毫秒数，所以这里将秒数乘于 1000
+    let Y = date.getFullYear() + '-';
+    let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+    let D = date.getDate() + ' ';
+    let h = date.getHours() + ':';
+    let m = date.getMinutes() + ':';
+    let s = date.getSeconds();
+    return (Y + M + D + h + m + s);
+}
+
 const HistroyCommit = (prop: { commit: Commit }) => {
     const [human, setHuman] = useState<HumanOut>()
     const [avater, setAvater] = useState<string>()
+    console.log("commit", prop.commit)
     useEffect(() => {
         if (human === undefined)
-            getDataOne(config.fronts.human + "/" + prop.commit.humamId).then((value) => {
+            getDataOne(config.fronts.human + "/" + prop.commit.humanId).then((value) => {
                 if (value.success) {
                     setHuman(value.data)
-                    if ((value.data as HumanOut).phone)
+                    if ((value.data as HumanOut).phone !== null)
                         getDataOne(config.fronts.file + "/" + (value.data as HumanOut).phone).then((valueF) => {
                             if (valueF.success)
                                 setAvater((valueF.data as FileOut).fileRoute)
@@ -72,9 +78,9 @@ const HistroyCommit = (prop: { commit: Commit }) => {
     })
     let avaters: React.JSX.Element[] = []
     if (avater)
-        avaters.push(<Avatar style={{ width: "100%" }} shape="square" size={64} src={config.backUrl + avater} />)
+        avaters.push(<Avatar style={{ width: "100%", marginTop:"15px" }} shape="square" size={64} src={config.backUrl + avater} />)
     else
-        avaters.push(<Avatar style={{ width: "100%" }} shape="square" size={64} icon={<UserOutlined />} />)
+        avaters.push(<Avatar style={{ width: "100%", marginTop:"15px" }} shape="square" size={64} icon={<UserOutlined />} />)
 
     avaters.push(
         <Divider>
@@ -101,14 +107,14 @@ const HistroyCommit = (prop: { commit: Commit }) => {
     return (
         <ProCard
             title={human?.name + " :  " + translateAction(prop.commit.operation)}
-            extra={prop.commit.time}
+            extra={translateTime(prop.commit.time)}
             headerBordered>
             <Layout>
-                <Sider width={"20%"}>
+                <Sider width={"20%"} style={{ backgroundColor: "#ffffff" }}>
                     {avaters}
                 </Sider>
-                <Content>
-                    <Title level={5}>{"节点: " + prop.commit.nodeName}</Title>
+                <Content style={{backgroundColor: "#ffffff", marginLeft:"5px", paddingLeft:"20px"}}>
+                    <Title level={5}>{"节点: " + prop.commit.workflowNodeName}</Title>
                     <blockquote>{prop.commit.comment}</blockquote>
                 </Content>
             </Layout>
@@ -135,6 +141,22 @@ const RequestConcrete = () => {
         }
     })
 
+    const getFormIn: { get: () => FormIn | null } = { get: () => null }
+
+    const getRequestIn = (request: RequestDtoOut, comment: string, requestId: string, action: number = -1) => {
+        if (comment === "")
+            comment = translateAction(action)
+        let requestIn = {
+            requestId: requestId,
+            nodeId: request.currentNode.dataId,
+            workflowId: request.currentNode.workflowId,
+            form: getFormIn.get(),
+            comment
+        }
+        console.log("requestIn", requestIn)
+        return requestIn
+    }
+
 
     if (requestDto === undefined || requestId === undefined)
         return <PageWait />
@@ -149,8 +171,9 @@ const RequestConcrete = () => {
                     style={{ margin: "3px" }}
                     onClick={() => {
                         RequestAction(config.fronts.request + "?onlySave=false&action=0", getRequestIn(requestDto, comment, requestId, 0)).then((value) => {
-                            if (value)
-                                api.open({
+
+                            if (value !== false)
+                                notification.success({
                                     message: '流程创建成功',
                                     duration: 0,
                                     btn: <Button type='primary' onClick={window.close}>确认并关闭</Button>
@@ -160,15 +183,14 @@ const RequestConcrete = () => {
                 >创建</Button>,
                 <Button
                     key='create'
-                    type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
                         RequestAction(config.fronts.request + "?onlySave=true&action=0", getRequestIn(requestDto, comment, requestId)).then((value) => {
-                            if (value)
-                                api.open({
+                            if (value !== false)
+                                notification.success({
                                     message: '保存成功',
                                     duration: 0,
-                                    btn: <Button type='primary' onClick={() => { window.location.assign(url.frontUrl.request_concrete + value[0] + "?workflowId=" + query.get("workflowId")) }}>确认</Button>
+                                    btn: <Button type='primary' onClick={() => { window.location.assign(url.frontUrl.request_concrete + value + "?workflowId=" + query.get("workflowId")) }}>确认</Button>
                                 });
 
                         })
@@ -184,8 +206,8 @@ const RequestConcrete = () => {
                     style={{ margin: "3px" }}
                     onClick={() => {
                         RequestAction(config.fronts.request + "?onlySave=false&action=2", getRequestIn(requestDto, comment, requestId, 2)).then((value) => {
-                            if (value)
-                                api.open({
+                            if (value !== false)
+                                notification.success({
                                     message: '流程批准成功',
                                     duration: 0,
                                     btn: <Button type='primary' onClick={window.close}>确认并关闭</Button>
@@ -200,8 +222,8 @@ const RequestConcrete = () => {
                     style={{ margin: "3px" }}
                     onClick={() => {
                         RequestAction(config.fronts.request + "?onlySave=false&action=3", getRequestIn(requestDto, comment, requestId, 3)).then((value) => {
-                            if (value)
-                                api.open({
+                            if (value !== false)
+                                notification.success({
                                     message: '流程退回成功',
                                     duration: 0,
                                     btn: <Button type='primary' onClick={window.close}>确认并关闭</Button>
@@ -211,15 +233,14 @@ const RequestConcrete = () => {
                 >退回</Button>,
                 <Button
                     key='create'
-                    type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
                         RequestAction(config.fronts.request + "?onlySave=true&action=2", getRequestIn(requestDto, comment, requestId)).then((value) => {
-                            if (value)
-                                api.open({
+                            if (value !== false)
+                                notification.success({
                                     message: '保存成功',
                                     duration: 0,
-                                    btn: <Button type='primary' onClick={() => { window.location.assign(url.frontUrl.request_concrete + value[0] + "?workflowId=" + query.get("workflowId")) }}>确认</Button>
+                                    btn: <Button type='primary' onClick={() => { window.location.assign(url.frontUrl.request_concrete + value + "?workflowId=" + query.get("workflowId")) }}>确认</Button>
                                 });
 
                         })
@@ -235,8 +256,8 @@ const RequestConcrete = () => {
                     style={{ margin: "3px" }}
                     onClick={() => {
                         RequestAction(config.fronts.request + "?onlySave=false&action=1", getRequestIn(requestDto, comment, requestId, 1)).then((value) => {
-                            if (value)
-                                api.open({
+                            if (value !== false)
+                                notification.success({
                                     message: '流程提交成功',
                                     duration: 0,
                                     btn: <Button type='primary' onClick={window.close}>确认并关闭</Button>
@@ -246,15 +267,14 @@ const RequestConcrete = () => {
                 >提交</Button>,
                 <Button
                     key='create'
-                    type='primary'
                     style={{ margin: "3px" }}
                     onClick={() => {
                         RequestAction(config.fronts.request + "?onlySave=true&action=1", getRequestIn(requestDto, comment, requestId)).then((value) => {
                             if (value)
-                                api.open({
+                                notification.success({
                                     message: '保存成功',
                                     duration: 0,
-                                    btn: <Button type='primary' onClick={() => { window.location.assign(url.frontUrl.request_concrete + value[0] + "?workflowId=" + query.get("workflowId")) }}>确认</Button>
+                                    btn: <Button type='primary' onClick={() => { window.location.assign(url.frontUrl.request_concrete + value + "?workflowId=" + query.get("workflowId")) }}>确认</Button>
                                 });
 
                         })
@@ -300,24 +320,27 @@ const RequestConcrete = () => {
             return defaultEdit
     }
 
-    const commitHistorys:React.JSX.Element[] = []
+    const commitHistorys: React.JSX.Element[] = []
     if (requestDto.requestOut?.doneHistory) {
         let doneHistory: Commit[] = JSON.parse(requestDto.requestOut.doneHistory)
-        doneHistory.forEach((commit)=>commitHistorys.unshift(<HistroyCommit commit={commit} />))
+        doneHistory.forEach((commit) => commitHistorys.unshift(<HistroyCommit commit={commit} />))
     }
+
+
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
                 <div style={{ display: 'flex' }}>
-                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{requestDto.requestOut?.requestTitle ?? requestDto.workflow.workflowBaseTitle+ " - " + requestDto.currentNode.workflowNodeName}</Title>
+                    <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>{requestDto.requestOut?.requestTitle ?? requestDto.workflow.workflowBaseTitle + " - " + requestDto.currentNode.workflowNodeName}</Title>
                 </div>
             </Header>
             <Flex vertical={false} style={{ background: "#ffffff", padding: "10px" }}>{Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} style={{ ...baseStyle }} />
             ))}{actionButtons}<div style={{ width: "2.5%" }}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight: '100%', overflowY: 'auto' }}>
-                <FrontFormConcrete formOut={requestDto.formOut} getEdit={editableFun} getDetailAuthority={()=>defaultEdit}/>
+                <FrontFormConcrete formOut={requestDto.formOut} getEdit={editableFun} getDetailAuthority={() => defaultEdit} setGetFunction={(fun) => { getFormIn.get = fun }} />
                 {commentGroup}
+                <div style={{height:"10px"}} />
                 {commitHistorys}
             </Content>
         </Layout>
