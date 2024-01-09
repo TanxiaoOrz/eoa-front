@@ -64,7 +64,7 @@ const DetailTable = (prop: { detail: Detail, getEditAble: (columnName: string) =
                 position !== 'hidden'
                     ? {
                         position: position as 'top',
-                        record: () => ({ detailDataId: (Math.random() * -1000000) }),
+                        record: () => ({ detailDataId: (Math.random() * -1000000) | 0 }),
                     }
                     : false
             }
@@ -155,7 +155,7 @@ export const getFormIn = (formOut: FormOut): FormIn => {
     return formIn
 }
 
-const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: string) => boolean, getDetailAuthority: (detailId: number, type: 'add' | 'remove' | 'edit') => boolean }) => {
+const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: string) => boolean, getDetailAuthority: (detailId: number, type: 'add' | 'remove' | 'edit') => boolean, setGetFunction:(fun:()=>FormIn) => void | null }) => {
     const query = new URLSearchParams(useLocation().search);
     const [formOut, setFormOut] = React.useState(prop.formOut);
     const params = useParams()
@@ -278,6 +278,11 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: strin
     </ProForm>)
 
     config.globalSrollHidden = false
+    if (prop.setGetFunction !== null){
+        console.log("getNew")
+        prop.setGetFunction(()=>getFormIn(formOut))
+    
+    }
     if (prop.formOut !== null)
         return (
             <div>
@@ -286,6 +291,8 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: strin
                 {detailLists}
             </div>
         )
+    
+    
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
@@ -309,7 +316,8 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: strin
 FrontFormConcrete.defaultProps = {
     formOut: null,
     getEdit: () => false,
-    getDetailAuthority: () => false
+    getDetailAuthority: () => false,
+    setGetFunction: null
 }
 
 export default FrontFormConcrete
