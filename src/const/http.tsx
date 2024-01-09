@@ -123,20 +123,19 @@ export const newData =async (url:string,params:any):Promise<number> => {
     }
 }
 
-export const RequestAction =async (url:string,params:any):Promise<number[]> => {
+export const RequestAction =async (url:string,params:any):Promise<number|false> => {
     let response = await service.put(url,params);
     let data:Data = response.data;
+    console.log(data)
     if (data.code == 0) {
         return data.entity
     } else {
         notification.warning({
-            
             message: '操作失败',
             duration: 0,
             description: data.description,
-            btn: <Button type='primary' danger>确认</Button>
         });
-        return [];
+        return false;
     }
 }
 
