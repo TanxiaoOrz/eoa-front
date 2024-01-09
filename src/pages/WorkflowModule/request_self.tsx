@@ -58,7 +58,7 @@ const RequestList = () => {
                 return (
                     <Button
                         onClick={() => {
-                            window.open(url.frontUrl.request_concrete + entity.requestId + "?workflowId="entity.workflowId)
+                            window.open(url.frontUrl.request_concrete + entity.requestId + "?workflowId="+entity.workflowId)
                         }} >
                         查看
                     </Button>
@@ -107,3 +107,5 @@ const RequestSelf = () => {
         </Layout>
     )
 }
+
+export default RequestSelf
