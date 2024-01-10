@@ -1,12 +1,11 @@
-﻿import { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
-import { FileOut, HumanOut, RequestDtoOut, WorkflowNodeOut } from "../../const/out.tsx";
-import { RequestAction, UpdateData, getDataList, getDataOne } from "../../const/http.tsx";
+import { FileOut, HumanOut, RequestDtoOut } from "../../const/out.tsx";
+import { RequestAction, getDataOne } from "../../const/http.tsx";
 import config from "../../const/config.js";
 import PageWait from "../../componet/PageWait.tsx";
-import React from "react";
-import { Avatar, Button, Divider, Flex, Layout, message, notification, Typography } from "antd";
-import FrontFormConcrete, { getFormIn } from "../TableModule/front_form_concrete.tsx";
+import { Avatar, Button, Divider, Flex, Layout, notification, Typography } from "antd";
+import FrontFormConcrete from "../TableModule/front_form_concrete.tsx";
 import url from "../../const/url.js";
 import { ProCard } from "@ant-design/pro-components";
 import { Content, Header } from "antd/es/layout/layout";
@@ -127,7 +126,6 @@ const RequestConcrete = () => {
     const query = new URLSearchParams(useLocation().search);
     const params = useParams()
     const [requestDto, setRequestDto] = useState<RequestDtoOut>()
-    const [api, contextHolder] = notification.useNotification();
     const requestId = params.requestId
     const workflowId = query.get("workflowId")
     let comment: string = ''
@@ -282,7 +280,7 @@ const RequestConcrete = () => {
             ]
             break
         }
-        default: actionButtons = [<div></div>]
+        default: actionButtons = [<div key='empty'></div>]
     }
 
     let commentGroup: React.JSX.Element
@@ -335,7 +333,7 @@ const RequestConcrete = () => {
                 </div>
             </Header>
             <Flex vertical={false} style={{ background: "#ffffff", padding: "10px" }}>{Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} style={{ ...baseStyle }} />
+                <div key={i+"empty"} style={{ ...baseStyle }} />
             ))}{actionButtons}<div style={{ width: "2.5%" }}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight: '100%', overflowY: 'auto' }}>
                 <FrontFormConcrete formOut={requestDto.formOut} getEdit={editableFun} getDetailAuthority={() => defaultEdit} setGetFunction={(fun) => { getFormIn.get = fun }} />

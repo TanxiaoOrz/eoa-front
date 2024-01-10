@@ -1,14 +1,11 @@
-﻿import { useState, useEffect, useRef } from "react"
-import { getDataList, newData } from "../../const/http.tsx"
-import { ModuleOut, RequestOut, TableOut, WorkflowNodeOut, WorkflowOut, WorkflowRouteOut } from "../../const/out.tsx"
+﻿import React, { useRef } from "react"
+import { getDataList } from "../../const/http.tsx"
+import { RequestOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
-import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
-import { Button, Form, Layout, List, Modal, Tabs, Tooltip, Typography } from "antd"
-import Sider from "antd/es/layout/Sider"
+import { FolderOpenTwoTone } from "@ant-design/icons"
+import { Button, Layout, Typography } from "antd"
 import { Header, Content } from "antd/es/layout/layout"
-import React from "react"
-import { ActionType, ModalForm, ProColumns, ProFormDigit, ProFormGroup, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
-import { useLocation } from "react-router"
+import { ActionType, ProColumns, ProTable } from "@ant-design/pro-components"
 import url from "../../const/url.js"
 
 const { Title } = Typography
@@ -44,7 +41,7 @@ const RequestList = () => {
             hideInSearch: true,
             valueType: 'dateTime'
         }, {
-            key: 'createTime',
+            key: 'submitTimeFilter',
             title: '创建时间',
             dataIndex: 'submitTime',
             valueType: "dateTimeRange",
