@@ -38,6 +38,10 @@ import BackWorkflowRouteConcrete from "../pages/WorkflowModule/back_route_concre
 import CreateWorkflow from "../pages/WorkflowModule/create_workflow.tsx";
 import RequestConcrete from "../pages/WorkflowModule/request_concrete.tsx";
 import RequestSelf from "../pages/WorkflowModule/request_self.tsx";
+import RequestBackLog from "../pages/WorkflowModule/request_backlog.tsx";
+import RequestDone from "../pages/WorkflowModule/request_done.tsx";
+import BackRequestConcrete from "../pages/WorkflowModule/back_request_concrete.tsx";
+import BackRequest from "../pages/WorkflowModule/back_request.tsx";
 
 const Protable = protable
 
@@ -102,7 +106,13 @@ const backs = [
   },{
     path: "/back_workflow_route/:dataId",
     element: <BackWorkflowRouteConcrete />
-  },
+  },{
+    path: '/back_request' ,
+    element: <BackRequest />
+  },{
+    path: '/back_request/:requestId',
+    element: <BackRequestConcrete />
+  }
 ]
 
 const fronts = [
@@ -152,6 +162,12 @@ const fronts = [
   },{
     path: '/request/self' ,
     element: <RequestSelf />
+  },{
+    path: '/request/backlog' ,
+    element: <RequestBackLog />
+  },{
+    path: '/request/done' ,
+    element: <RequestDone />
   }
 ]
 

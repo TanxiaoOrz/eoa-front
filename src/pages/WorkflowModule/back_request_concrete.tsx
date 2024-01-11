@@ -167,7 +167,11 @@ const BackRequestConcrete = () => {
     const getFormIn: { get: () => FormIn | null } = { get: () => null }
 
     const getRequestIn = (request: RequestDtoOut, requestId: string) => {
-
+        console.log("flow",flow)
+        if (!flow.nodeId)
+            return false
+        if (!flow.comment)
+            flow.comment = '强制流传'
         let requestIn = {
             requestId: requestId,
             workflowId: request.currentNode.workflowId,
@@ -188,14 +192,21 @@ const BackRequestConcrete = () => {
             type='primary'
             onClick={() => {
                 let requestIn = getRequestIn(requestDto, requestId)
-                RequestAction(config.backs.request, requestIn).then((value) => {
-                    if (value !== false)
-                        notification.success({
-                            message: '强制流转成功',
-                            duration: 0,
-                            btn: <Button type='primary' onClick={window.close}>确认并关闭</Button>
-                        });
-                })
+                if (requestIn) {
+                    RequestAction(config.backs.request, requestIn).then((value) => {
+                        if (value !== false)
+                            notification.success({
+                                message: '强制流转成功',
+                                duration: 0,
+                                btn: <Button type='primary' onClick={window.close}>确认并关闭</Button>
+                            });
+                    })
+                }
+                else
+                    notification.warning({
+                        message: '缺少目标节点',
+                        duration: 0,
+                    });
             }} >
             流转
         </Button>,
@@ -211,62 +222,54 @@ const BackRequestConcrete = () => {
     ]
 
     let commentGroup: React.JSX.Element
-    if (requestDto.currentNode.nodeType != 3)
-        commentGroup = (
-            <div style={{ background: "#ffffff", padding: "5px", margin: "5px" }}>
-                <Title level={5}>  强制流转:</Title>
-                <p>签字意见</p>
-                <TextArea
-                    showCount
-                    maxLength={100}
-                    onChange={(e) => {
-                        flow.comment = e.target.value
-                    }}
-                    placeholder="请输入签字意见"
-                    style={{ height: 120, resize: 'none' }}
-                /> <br />
-                <p>目标节点</p> <br />
-                <Select
-                    showSearch
-                    filterOption={(input: string, option?: { label: string; value: string }) =>
-                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={nodes?.map(value => { return { value: value.dataId.toString(), label: value.workflowNodeName } }) ?? []}
-                    onChange={(e) => { flow.nodeId = e }}
-                    placeholder='请选择目标节点' />
-                <Tooltip placement="right" title='默认未节点定义操作者'>
-                    <p>节点操作者</p>
-                </Tooltip><br />
-                <Select
-                    showSearch
-                    filterOption={(input: string, option?: { label: string; value: string }) =>
-                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                    }
-                    mode="multiple"
-                    options={humans?.map(value => { return { value: value.dataId.toString(), label: value.name } }) ?? []}
-                    onChange={(e) => { flow.nodeId = e }}
-                    placeholder='请选择操作者'
-                />
-            </div>
-        )
-    else
-        commentGroup = <div></div>
+    commentGroup = (
+        <div style={{ background: "#ffffff", padding: "5px", margin: "5px" }}>
+            <Title level={5}>  强制流转:</Title>
+            <p>签字意见</p>
+            <TextArea
+                showCount
+                maxLength={100}
+                onChange={(e) => {
+                    flow.comment = e.target.value
+                }}
+                placeholder="请输入签字意见"
+                style={{ height: 120, resize: 'none' }}
+            /> <br />
+            <p>目标节点</p>
+            <Select
+                showSearch
+                style={{ width: 150 }}
+                filterOption={(input: string, option?: { label: string; value: string }) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                }
+                options={nodes?.map(value => { return { value: value.dataId.toString(), label: value.workflowNodeName } }) ?? []}
+                onChange={(e) => { flow.nodeId = e }}
+                placeholder='请选择目标节点' />
+            <Tooltip placement="right" title='默认未节点定义操作者'>
+                <p>节点操作者</p>
+            </Tooltip>
+            <Select
+                showSearch
+                filterOption={(input: string, option?: { label: string; value: string }) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                }
+                style={{ width: "100%" }}
+                mode="multiple"
+                options={humans?.map(value => { return { value: value.dataId.toString(), label: value.name } }) ?? []}
+                onChange={(e) => { flow.receivers = e }}
+                placeholder='请选择操作者'
+            />
+        </div>
+    )
+
 
     const baseStyle: React.CSSProperties = {
         width: '25%',
     };
 
     const editObject = JSON.parse(requestDto.currentNode.tableModifyAuthority)
-    const defaultEdit = requestDto.currentNode.nodeType === 0 || requestDto.currentNode.nodeType === 1
 
     console.log(editObject)
-    const editableFun = (str: string) => {
-        let strEditFromObject = editObject[str]
-        if (strEditFromObject !== undefined)
-            return strEditFromObject as boolean
-        else
-            return defaultEdit
-    }
 
     const commitHistorys: React.JSX.Element[] = []
     if (requestDto.requestOut?.doneHistory) {
@@ -286,7 +289,7 @@ const BackRequestConcrete = () => {
                 <div key={i + "empty"} style={{ ...baseStyle }} />
             ))}{actionButtons}<div style={{ width: "2.5%" }}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight: '100%', overflowY: 'auto' }}>
-                <FrontFormConcrete formOut={requestDto.formOut} getEdit={editableFun} getDetailAuthority={() => defaultEdit} setGetFunction={(fun) => { getFormIn.get = fun }} />
+                <FrontFormConcrete formOut={requestDto.formOut} getEdit={()=>true} getDetailAuthority={() => false} setGetFunction={(fun) => { getFormIn.get = fun }} />
                 {commentGroup}
                 <div style={{ height: "10px" }} />
                 {commitHistorys}

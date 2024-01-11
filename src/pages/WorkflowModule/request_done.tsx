@@ -94,8 +94,9 @@ const RequestList = () => {
             dateFormatter="string"
             headerTitle="已办请求"
             request={async (params,sort,filter)=>{
-                params.type = 'backlog'
-                params.doneTime = params.time
+                params.type = 'done'
+                if (params.time)
+                    params.doneTime = params.time
                 return getDataList(config.fronts.request,params)
             }}
             />
