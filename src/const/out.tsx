@@ -297,3 +297,62 @@ export type WorkflowNodeOut = {
     workflowName: string
     tableId: number
 }
+
+type SearchListOut = {
+    dataId: number
+
+    moduleTypeId: number
+    searchListName: string
+    defaultCondition: string
+    tableId: number
+    shareAuthority: string
+    order: string
+    isVirtual: number
+
+    creator: number
+    createTime:string
+
+    tableName: string
+    creatorName: string
+    moduleTypeName: string
+}
+
+type SearchListColumnOut = {
+    dataId: number
+    columnId: number
+    searchListId: number
+
+    title: string
+    viewNo: number
+    isVirtual: number
+
+    columnName: string
+    searchListName: string
+}
+
+type ChartsOut = {
+    dataId: number
+    moduleTypeId: number
+    chartName: string
+    defaultCondition: string
+    tableId: number
+    shareAuthority: string
+    order: string
+
+    rows: string
+    config: string
+
+    isVirtual: number
+    creator: number
+    createTime:string
+
+    tableName: string
+    creatorName: string
+    moduleTypeName: string
+}
+
+type SearchListDtoOut = {
+    searchListOut: SearchListOut
+    searchListColumns: SearchListColumnOut[]
+    columns: ColumnOut
+}

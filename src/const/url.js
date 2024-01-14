@@ -22,7 +22,12 @@
         workflow_node: '/back_workflow_node',
         workflow_node_concrete: '/back_workflow_node/',
         workflow_route: '/back_workflow_route',
-        workflow_route_concrete: '/back_workflow_route/'
+        workflow_route_concrete: '/back_workflow_route/',
+        search_list:'/back_search_list',
+        search_list_concrete:'/back_search_list/',
+        search_list_column:'/back_search_list_column',
+        charts:'/back_charts',
+        charts_concrete: '/back_charts/'
     },
     frontUrl: {
         human: "/human_resouce",
@@ -38,6 +43,8 @@
         request_self: '/request_self',
         request_done: '/request_done',
         request_backlog: '/request_backlog',
-        request_concrete: '/request/'
+        request_concrete: '/request/',
+        search_list_concrete:'/search_list/',
+        charts_concrete:'/charts/'
     }
 }
