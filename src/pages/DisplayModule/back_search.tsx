@@ -311,3 +311,5 @@ const BackSearchList = () => {
         </Layout>
     );
 }
+
+export default BackSearchList

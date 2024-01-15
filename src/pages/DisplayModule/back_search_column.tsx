@@ -342,7 +342,7 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
     )
 }
 
-const BackSearchList = (prop: { searchList: SearchListOut | null }) => {
+const BackSearchListColumn = (prop: { searchList: SearchListOut | null }) => {
     const [moduleList, setModuleList] = useState<ModuleOut[]>([])
     useEffect(() => {
         if (moduleList.length == 0)
@@ -388,3 +388,5 @@ const BackSearchList = (prop: { searchList: SearchListOut | null }) => {
         </Layout>
     );
 }
+
+export default BackSearchListColumn
