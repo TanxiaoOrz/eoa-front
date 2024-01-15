@@ -288,7 +288,7 @@ const BackWorkflow = () => {
     <Layout style={{ minHeight: '98.5vh' }}>
       <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
         <SnippetsFilled style={{ fontSize: "36px", marginTop: "30px", marginLeft: "5px", marginBottom: '30px' }} />
-        <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '30px' }}>表单列表</Title>
+        <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '30px' }}>流程列表</Title>
       </Header>
       <Layout hasSider>
         <Sider style={{ padding: '10px 10px', backgroundColor: "#f7f7f7" }}>
