@@ -26,8 +26,8 @@ type WorkflowNodeIn = {
 
 type ModifyRow = {
     id: number
-    columnId: number
-    edit: boolean
+    columnId: number |null
+    edit: boolean | null
 }
 
 const BackWorkflowNodeConcrete = () => {
@@ -128,7 +128,7 @@ const BackWorkflowNodeConcrete = () => {
             }}
             recordCreatorProps={{
                 position: 'bottom',
-                record: () => ({ id: (Math.random() * 1000000).toFixed(0), columnId:null, edit:null }),
+                record: () => ({ id: parseInt((Math.random() * 1000000).toFixed(0)), columnId:null, edit:null }),
             }}
             loading={false}
             columns={modifyColumn}
@@ -176,7 +176,8 @@ const BackWorkflowNodeConcrete = () => {
                     workflowIn.workflowId = node.workflowId
                     let tableModifyAuthority = {}
                     modifyRows.forEach((modifyRow) => {
-                        tableModifyAuthority[modifyRow.columnId] = modifyRow.edit
+                        if (modifyRow.columnId)
+                            tableModifyAuthority[modifyRow.columnId] = modifyRow.edit
                     })
                     console.log("tableModifyAuthority", tableModifyAuthority)
                     workflowIn.tableModifyAuthority = JSON.stringify(tableModifyAuthority)
