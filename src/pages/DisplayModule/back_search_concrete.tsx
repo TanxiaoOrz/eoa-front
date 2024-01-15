@@ -28,14 +28,14 @@ type SearchListIn = {
 }
 
 type Order = {
-    column:string
-    type:string
+    column: string
+    type: string
 }
 
 type ModifyRow = {
     id: number
-    columnDataName: string |null
-    input: string |null
+    columnDataName: string | null
+    input: string | null
 }
 
 
@@ -57,6 +57,7 @@ const BackSearchListConcrete = () => {
                 }
             })
     })
+
 
     if (searchListId === undefined) {
         window.location.replace(url.backUrl.workflow)
@@ -85,7 +86,7 @@ const BackSearchListConcrete = () => {
                 initialValues={searchList}
                 onFinish={async (searchListIn: SearchListIn) => {
                     let defaultCondition = {}
-                    modifyRows.forEach((modifyRow)=>{
+                    modifyRows.forEach((modifyRow) => {
                         if (modifyRow.columnDataName) {
                             defaultCondition[modifyRow.columnDataName] = modifyRow.input
                         }
@@ -138,7 +139,7 @@ const BackSearchListConcrete = () => {
                         }}
                         addonAfter={
                             <Button
-                                onClick={() => { window.open(url.backUrl.table_concrete + searchList.tableId ) }}
+                                onClick={() => { window.open(url.backUrl.table_concrete + searchList.tableId) }}
                             >查看</Button>
                         } />
                     <ProFormSelect
@@ -178,13 +179,13 @@ const BackSearchListConcrete = () => {
         </div>
     )
     let order: Order = {
-        column:'',
-        type:'asc'
+        column: '',
+        type: 'asc'
     }
     if (searchList.orders !== undefined) {
-        order =  JSON.parse(searchList.orders)
+        order = JSON.parse(searchList.orders)
     }
-    const orderChange = (value:any, type:0|1) => {
+    const orderChange = (value: any, type: 0 | 1) => {
         if (type === 0)
             order.column = value
         else
@@ -192,8 +193,8 @@ const BackSearchListConcrete = () => {
         searchList.orders = JSON.stringify(order)
     }
 
-    
-    
+
+
 
     const modifyColumn: ProColumns<ModifyRow>[] = [
         {
@@ -231,16 +232,16 @@ const BackSearchListConcrete = () => {
             }}
             recordCreatorProps={{
                 position: 'bottom',
-                record: () => ({ id: parseInt((Math.random() * 1000000).toFixed(0)), columnDataName:null, input:null }),
+                record: () => ({ id: parseInt((Math.random() * 1000000).toFixed(0)), columnDataName: null, input: null }),
             }}
             loading={false}
             columns={modifyColumn}
             request={async () => {
                 let modifyRows = searchList.defaultCondition ?
-                Object.entries(JSON.parse(searchList.defaultCondition)).map((key, index) => {
-                    return { id: index, columnDataName: key[0], input: key[1] as string}
-                })
-                : []
+                    Object.entries(JSON.parse(searchList.defaultCondition)).map((key, index) => {
+                        return { id: index, columnDataName: key[0], input: key[1] as string }
+                    })
+                    : []
                 return {
                     data: modifyRows,
                     total: modifyRows.length,
@@ -255,27 +256,27 @@ const BackSearchListConcrete = () => {
                 onSave: async (rowKey, data, row) => {
                     console.log(modifyRows)
                 },
-                
+
             }}
         />
     )
 
     const configPage = (
-        <div style={{margin:"5px"}}>
+        <div style={{ margin: "5px" }}>
             <p>排序字段</p>
-            <Input placeholder="请输入排序字段" onChange={(value)=>{orderChange(value,0)}}/>
-            <Select 
+            <Input placeholder="请输入排序字段" onChange={(value) => { orderChange(value, 0) }} style={{width:"30%"}}/>
+            <Select
                 options={[
                     {
-                        label:'升序',
-                        value:'asc'
-                    },{
-                        label:'降序',
-                    value:'desc'
+                        label: '升序',
+                        value: 'asc'
+                    }, {
+                        label: '降序',
+                        value: 'desc'
                     }
                 ]}
-                placeholder='请输入排序选项' 
-                onChange={(value)=>{orderChange(value,1)}}/>
+                placeholder='请输入排序选项'
+                onChange={(value) => { orderChange(value, 1) }} />
             <p>默认条件</p>
             {tableModify}
         </div>

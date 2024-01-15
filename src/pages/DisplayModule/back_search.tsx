@@ -71,7 +71,7 @@ const CreateSearch = (prop: { moduleTypeId: string | null, actionRef: React.Muta
             <ProFormText
                 width="md"
                 name="searchListName"
-                label="流程名称"
+                label="列表名称"
                 tooltip="最长为33位"
                 placeholder="请输入流程名称"
                 required={true} />
@@ -270,11 +270,11 @@ const BackSearchList = () => {
         {
             key: "Entity",
             label: (<span>实体表单台账</span>),
-            children: (<SearchList isVirtual={1} />)
+            children: (<SearchList isVirtual={0} />)
         }, {
             key: "Virtual",
             label: (<span>虚拟视图台账</span>),
-            children: (<SearchList isVirtual={0} />)
+            children: (<SearchList isVirtual={1} />)
         }
     ]
     return (

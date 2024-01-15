@@ -17,13 +17,13 @@ const { Title } = Typography
 
 type ModifyRow = {
     id: number
-    columnDataName: string |null
-    input: string |null
+    columnDataName: string | null
+    input: string | null
 }
 
 type Order = {
-    column:string
-    type:string
+    column: string
+    type: string
 }
 
 const columnGet = (searchListDto: SearchListDtoOut) => {
@@ -52,14 +52,18 @@ const columnGet = (searchListDto: SearchListDtoOut) => {
                 </Button>
             )
         },
+        width: 48 * 2
     })
+
+    console.log("columns", columns)
     return columns
 }
 
 const translateForm = (form: FormOut) => {
     let display = { dataId: form.dataId }
-    for (let [key, value] of Object.entries(form.groups))
-        display[key] = value
+    for (let group of form.groups)
+        for (let [key, value] of Object.entries(group.values))
+            display[key] = value
     return display
 }
 
@@ -70,7 +74,7 @@ const FrontSearchConcrete = () => {
 
     useEffect(() => {
         if (searchList === undefined)
-            getDataOne(config.fronts.search_list + "/" + searchListId).then((value) => {
+            getDataOne(config.fronts.search_dto + "/" + searchListId).then((value) => {
                 console.log(value.data)
                 if (value.success) {
                     setSearchList(value.data)
@@ -86,8 +90,8 @@ const FrontSearchConcrete = () => {
     if (searchList === undefined)
         return (<PageWait />)
 
-    const constraint:ModifyRow[] = JSON.parse(searchList.searchListOut.defaultCondition)
-    const order:Order = JSON.parse(searchList.searchListOut.orders)
+    const constraint: ModifyRow[] = searchList.searchListOut.defaultCondition === null ? [] : JSON.parse(searchList.searchListOut.defaultCondition)
+    const order: Order = searchList.searchListOut.orders === null ? null : JSON.parse(searchList.searchListOut.orders)
 
     const table = (
         <ProTable
@@ -107,10 +111,15 @@ const FrontSearchConcrete = () => {
             dateFormatter="string"
             headerTitle="流程监控"
             request={async (params, sort, filter) => {
-                for (let {columnDataName, input} of constraint)
-                    params[columnDataName??""] = [input]
-                params.order = [order.type, order.column]
+                console.log("params",params)
+                for (let { columnDataName, input } of constraint)
+                    params[columnDataName ?? ""] = [input]
+                if (order !== null)
+                    params.order = [order.type, order.column]
+                params.isVirtual = searchList.searchListOut.isVirtual === 1
+                params.tableId = searchList.searchListOut.tableId
                 let formCon = await getDataList(config.fronts.form, params)
+                console.log("transltaet", (formCon.data as FormOut[]).map((form) => translateForm(form)))
                 return {
                     data: (formCon.data as FormOut[]).map((form) => translateForm(form)),
                     success: formCon.success,

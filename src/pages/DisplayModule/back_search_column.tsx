@@ -3,7 +3,7 @@ import { UpdateData, deleteData, getDataList, newData } from "../../const/http.t
 import { ModuleOut, TableOut, SearchListOut, ColumnOut, SearchListColumnOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
 import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
-import { Button, Form, Layout, List, Tabs, Typography } from "antd"
+import { Button, Dropdown, Form, Layout, List, MenuProps, Tabs, Typography } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { Header, Content } from "antd/es/layout/layout"
 import React from "react"
@@ -50,6 +50,7 @@ const CreateSearchListColumn = (prop: { searchListId: number, isVirtual: 0 | 1, 
                     prop.actionRef.current?.reload()
                     return true
                 }
+                form.resetFields()
                 return false
             }}
         >
@@ -64,9 +65,9 @@ const CreateSearchListColumn = (prop: { searchListId: number, isVirtual: 0 | 1, 
                 width="md"
                 name="searchListId"
                 label="所属展示列表"
-                tooltip="请选择所属模块"
+                tooltip="请选择展示列表"
+                disabled
                 required={true}
-                readonly
                 request={async () => {
                     let searchLists: SearchListOut[] = (await getDataList(config.backs.search_list, { toBrowser: true })).data
                     const valueEnumModule: { title: string, value: number, children: any[] }[] = searchLists.map(
@@ -79,11 +80,11 @@ const CreateSearchListColumn = (prop: { searchListId: number, isVirtual: 0 | 1, 
             <ProFormTreeSelect
                 width="md"
                 name="columnId"
-                label="关联表单"
-                tooltip="请选择所属模块"
+                label="关联字段"
+                tooltip="请选择关联字段"
                 required={true}
                 request={async () => {
-                    let columnList: ColumnOut[] = (await getDataList(config.backs.column, { toBrowser: true, isVirtual: prop.isVirtual, tableNo: prop.tableId })).data
+                    let columnList: ColumnOut[] = (await getDataList(config.backs.column, { toBrowser: true, isVirtual: prop.isVirtual, tableNo: prop.tableId, columnDetailNo: -1 })).data
                     const valueEnumModule: { title: string, value: number, children: any[] }[] = columnList.map(
                         (item) => {
                             return { title: item.columnViewName, value: item.columnId, children: [] };
@@ -126,7 +127,6 @@ const UpdateSearchListColumn = (prop: { searchListColumn: SearchListColumnOut, t
             title="展示字段"
             trigger={
                 <Button type="primary">
-                    <PlusOutlined />
                     编辑
                 </Button>
             }
@@ -155,17 +155,18 @@ const UpdateSearchListColumn = (prop: { searchListColumn: SearchListColumnOut, t
                 name="title"
                 label="列表字段标题"
                 tooltip="最长为33位"
-                placeholder="请输入流程名称"
+                placeholder="请输入列表字段标题"
                 required={true} />
             <ProFormTreeSelect
                 width="md"
                 name="searchListId"
                 label="所属展示列表"
-                tooltip="请选择所属模块"
+                tooltip="请选择展示列表"
+                disabled
                 required={true}
-                readonly
                 request={async () => {
                     let searchLists: SearchListOut[] = (await getDataList(config.backs.search_list, { toBrowser: true })).data
+                    console.log("searchLists", searchLists)
                     const valueEnumModule: { title: string, value: number, children: any[] }[] = searchLists.map(
                         (item) => {
                             return { title: item.searchListName, value: item.dataId, children: [] };
@@ -175,11 +176,11 @@ const UpdateSearchListColumn = (prop: { searchListColumn: SearchListColumnOut, t
             <ProFormTreeSelect
                 width="md"
                 name="columnId"
-                label="关联表单"
-                tooltip="请选择所属模块"
+                label="关联字段"
+                tooltip="请选择关联字段"
                 required={true}
                 request={async () => {
-                    let columnList: ColumnOut[] = (await getDataList(config.backs.column, { toBrowser: true, isVirtual: prop.searchListColumn.isVirtual, tableNo: prop.tableId })).data
+                    let columnList: ColumnOut[] = (await getDataList(config.backs.column, { toBrowser: true, isVirtual: prop.searchListColumn.isVirtual, tableNo: prop.tableId, columnDetailNo: -1 })).data
                     const valueEnumModule: { title: string, value: number, children: any[] }[] = columnList.map(
                         (item) => {
                             return { title: item.columnViewName, value: item.columnId, children: [] };
@@ -219,7 +220,7 @@ const DeleteSearchListColumn = (prop: { dataId: number, actionRef: React.Mutable
         <Button
             danger
             onClick={async () => {
-                deleteData(config.backs.search_list_column + + "/" + prop.dataId).then((value) => {
+                deleteData(config.backs.search_list_column +  "/" + prop.dataId).then((value) => {
                     if (value)
                         prop.actionRef.current?.reload()
                 })
@@ -284,15 +285,31 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
             dataIndex: "dataId",
             width: 48 * 3,
             hideInSearch: true,
-            render: (dom, entity, index, action) =>
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        window.open(url.backUrl.search_list_concrete + entity.dataId)
-                    }}
-                >
-                    编辑
-                </Button>
+            render: (dom, entity, index, action) => {
+                let deleteB = <DeleteSearchListColumn key={"delete"} dataId={entity.dataId} actionRef={actionRef} />
+                if (prop.searchList === null)
+                    return deleteB
+                let updateB = <UpdateSearchListColumn key={"edit"} searchListColumn={entity} actionRef={actionRef} tableId={prop.searchList?.tableId} />
+                let items: MenuProps['items'] = [
+                    {
+                        key: "edit",
+                        label: updateB,
+                    },{
+                        key: "delete",
+                        label: deleteB
+                    }
+                ]
+                return (
+                    <Dropdown   
+                        menu={{items}}
+                        placement='bottomLeft'
+                        
+                        >
+                            <Button>操作</Button>
+                        </Dropdown>
+                        
+                )
+            }
         }
     ]
     let create = <></>
@@ -306,7 +323,7 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
             request={async (params, sort, filter) => {
                 if (prop.searchList?.dataId != null)
                     params.searchListId = prop.searchList.dataId
-                return getDataList(config.backs.search_list, params)
+                return getDataList(config.backs.search_list_column, params)
             }}
             rowKey='dataId'
             search={{
@@ -343,16 +360,9 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
 }
 
 const BackSearchListColumn = (prop: { searchList: SearchListOut | null }) => {
-    const [moduleList, setModuleList] = useState<ModuleOut[]>([])
-    useEffect(() => {
-        if (moduleList.length == 0)
-            (getDataList(config.backs.module)).then((value) => {
-                setModuleList(value.data)
-            })
-    })
 
     let header = <></>
-    if (prop.searchList !== null)
+    if (prop.searchList === null)
         header = (
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
                 <SnippetsFilled style={{ fontSize: "36px", marginTop: "30px", marginLeft: "5px", marginBottom: '30px' }} />
@@ -363,24 +373,7 @@ const BackSearchListColumn = (prop: { searchList: SearchListOut | null }) => {
     return (
         <Layout style={{ minHeight: '98.5vh' }}>
             {header}
-            <Layout hasSider>
-                <Sider style={{ padding: '10px 10px', backgroundColor: "#f7f7f7" }}>
-                    <List
-                        style={{ minHeight: '100%' }}
-                        pagination={{ position: 'top', align: 'center' }}
-                        bordered={true}
-                        itemLayout="horizontal"
-                        dataSource={moduleList}
-                        renderItem={(item, index) => (
-                            <List.Item>
-                                <List.Item.Meta
-                                    avatar={<FolderOpenTwoTone />}
-                                    title={<a href={window.location.pathname + "?moduleNo=" + item.moduleTypeId}>{item.moduleTypeName}</a>}
-                                />
-                            </List.Item>
-                        )}
-                    />
-                </Sider>
+            <Layout >
                 <Content style={{ padding: '15px 50px' }}>
                     <SearchListColumnList searchList={prop.searchList} />
                 </Content>
@@ -390,7 +383,7 @@ const BackSearchListColumn = (prop: { searchList: SearchListOut | null }) => {
 }
 
 BackSearchListColumn.defaultProps = {
-    searchList:null
+    searchList: null
 }
 
 export default BackSearchListColumn
