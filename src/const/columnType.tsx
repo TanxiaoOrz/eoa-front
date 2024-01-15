@@ -1,6 +1,6 @@
 import { ProFormText, ProFormTextArea, ProFormDigit, ProFormDateTimePicker, ProFormSelect, ProFormTreeSelect, ProColumns, EditableFormInstance } from "@ant-design/pro-components"
 import React from "react"
-import { ColumnSimpleOut, FormOut } from "./out.tsx"
+import { ColumnOut, ColumnSimpleOut, FormOut } from "./out.tsx"
 import { getDataList } from "./http.tsx"
 import config from "./config"
 import { Button, FormInstance, message } from "antd"
@@ -233,4 +233,87 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
         }
         default : return (<></>)
     }
+}
+
+export const transprotColumnSearch = (columnSimple:ColumnOut, title:string):ProColumns[] => {
+    let key = columnSimple.columnDataName
+    // console.log(values)
+    let column:ProColumns = {
+        title:title,
+        dataIndex:columnSimple.columnDataName,
+    }
+    switch (columnSimple.columnType) {
+        case columnType.singleText: {
+            column.valueType = 'text'
+            return [column]
+        }
+        case columnType.areaText :{
+            column.valueType = 'textarea'
+            return [column]
+        }
+        case columnType.number :{
+            column.valueType = 'digit'
+            let columnSearch:ProColumns = JSON.parse(JSON.stringify(column))
+            column.hideInSearch = true
+            columnSearch.hideInForm = true
+            columnSearch.valueType = 'digitRange'
+            return [column, columnSearch]
+        }
+        case columnType.date :{
+            let columnSearch:ProColumns = JSON.parse(JSON.stringify(column))
+            column.valueType = 'dateTime'
+            column.hideInSearch = true
+            columnSearch.hideInForm = true
+            columnSearch.valueType = 'dateRange'
+            return [column, columnSearch]
+        }
+        case columnType.select :{
+            column.valueType = 'select'
+            
+            column.request=async ()=>{
+                if (columnSimple.columnTypeDescription === null || columnSimple.columnTypeDescription === "")
+                    return []
+                let description:{
+                    items:string
+                } = JSON.parse(columnSimple.columnTypeDescription);
+                return description.items.split(',').map((value,index,array)=>{
+                    return {label:value,value,index}
+                })
+            }
+            return [column]
+        }
+        case columnType.browser :{
+            const description:{
+                isVirtual:false,
+                tableId:undefined,
+                columnId:undefined
+            } = JSON.parse(columnSimple.columnTypeDescription);
+            column.valueType = 'treeSelect'
+            column.request = async () => {
+                let formOut:FormOut[] = (await getDataList(config.fronts.form,description)).data
+                return formOut.map((value,index,array)=>{return {title:value.title,value:value.dataId}})
+            }
+            column.render = (text,entity,index,action) => {
+                let title = text?.valueOf().toString()
+                let param:any = {isVirtual:description.isVirtual,tableId:description.tableId} 
+                let s = new URLSearchParams(param).toString()
+                return <a href={url.frontUrl.form_concrete+"/"+entity[key]+"&"+s}>{title??""}</a>
+            }
+            return [column]
+        }
+        case columnType.file :{
+            column.render=(text,entity,index,action)=>{
+                window.sessionStorage.setItem("formId", entity.dataId.toString())
+                return <UpLoadFile 
+                dataName={key} 
+                column={columnSimple} 
+                set={(key,value)=>{}} 
+                values={entity} 
+                edit={false}/>
+            }
+            column.hideInSearch = true
+            return [column]
+        }
+        default : return [column]
+    }   
 }
