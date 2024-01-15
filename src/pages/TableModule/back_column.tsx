@@ -245,9 +245,8 @@ const UpdateColumn = (prop:{column:ColumnOut,groupSelect:DropSelect[],detaildSel
                 <ProFormDigit
                     width="md"
                     label = "显示排序"
-                    required = {true}
+                    placeholder={"不输入自动排到最后"}
                     name = "columnViewNo"
-                    readonly
                     fieldProps={{precision:0}}/>
         </ModalForm>
     )
