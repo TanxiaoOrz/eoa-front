@@ -45,6 +45,7 @@ import BackRequest from "../pages/WorkflowModule/back_request.tsx";
 import FrontSearchConcrete from "../pages/DisplayModule/front_search_concrete.tsx";
 import BackSearchList from "../pages/DisplayModule/back_search.tsx";
 import BackSearchListColumn from "../pages/DisplayModule/back_search_column.tsx";
+import BackSearchListConcrete from "../pages/DisplayModule/back_search_concrete.tsx";
 
 const Protable = protable
 
@@ -123,7 +124,7 @@ const backs = [
     element: <BackSearchListColumn />
   },{
     path:'/back_search_list/:dataId',
-    element: <BackSearchList />
+    element: <BackSearchListConcrete />
   }
 ]
 
