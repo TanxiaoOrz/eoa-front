@@ -351,7 +351,7 @@ export type ChartsOut = {
     moduleTypeName: string
 }
 
-type SearchListDtoOut = {
+export type SearchListDtoOut = {
     searchListOut: SearchListOut
     searchListColumns: SearchListColumnOut[]
     columns: ColumnOut
