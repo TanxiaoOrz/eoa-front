@@ -298,7 +298,7 @@ export type WorkflowNodeOut = {
     tableId: number
 }
 
-type SearchListOut = {
+export type SearchListOut = {
     dataId: number
 
     moduleTypeId: number
@@ -317,7 +317,7 @@ type SearchListOut = {
     moduleTypeName: string
 }
 
-type SearchListColumnOut = {
+export type SearchListColumnOut = {
     dataId: number
     columnId: number
     searchListId: number
@@ -330,7 +330,7 @@ type SearchListColumnOut = {
     searchListName: string
 }
 
-type ChartsOut = {
+export type ChartsOut = {
     dataId: number
     moduleTypeId: number
     chartName: string
