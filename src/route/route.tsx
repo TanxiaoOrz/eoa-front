@@ -42,6 +42,9 @@ import RequestBackLog from "../pages/WorkflowModule/request_backlog.tsx";
 import RequestDone from "../pages/WorkflowModule/request_done.tsx";
 import BackRequestConcrete from "../pages/WorkflowModule/back_request_concrete.tsx";
 import BackRequest from "../pages/WorkflowModule/back_request.tsx";
+import FrontSearchConcrete from "../pages/DisplayModule/front_search_concrete.tsx";
+import BackSearchList from "../pages/DisplayModule/back_search.tsx";
+import BackSearchListColumn from "../pages/DisplayModule/back_search_column.tsx";
 
 const Protable = protable
 
@@ -112,6 +115,15 @@ const backs = [
   },{
     path: '/back_request/:requestId',
     element: <BackRequestConcrete />
+  },{
+    path:'/back_search_list',
+    element: <BackSearchList />
+  },{
+    path:'/back_search_list_column',
+    element: <BackSearchListColumn />
+  },{
+    path:'/back_search_list/:dataId',
+    element: <BackSearchList />
   }
 ]
 
@@ -168,6 +180,9 @@ const fronts = [
   },{
     path: '/request/done' ,
     element: <RequestDone />
+  },{
+    path: '/search/:dataId',
+    element: <FrontSearchConcrete />
   }
 ]
 

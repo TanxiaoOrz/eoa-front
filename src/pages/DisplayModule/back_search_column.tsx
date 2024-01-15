@@ -389,4 +389,8 @@ const BackSearchListColumn = (prop: { searchList: SearchListOut | null }) => {
     );
 }
 
+BackSearchListColumn.defaultProps = {
+    searchList:null
+}
+
 export default BackSearchListColumn

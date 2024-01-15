@@ -87,7 +87,7 @@ const FrontSearchConcrete = () => {
         return (<PageWait />)
 
     const constraint:ModifyRow[] = JSON.parse(searchList.searchListOut.defaultCondition)
-    const order:Order = JSON.parse(searchList.searchListOut.order)
+    const order:Order = JSON.parse(searchList.searchListOut.orders)
 
     const table = (
         <ProTable
@@ -136,3 +136,5 @@ const FrontSearchConcrete = () => {
         </Layout>
     )
 }
+
+export default FrontSearchConcrete

@@ -306,7 +306,7 @@ export type SearchListOut = {
     defaultCondition: string
     tableId: number
     shareAuthority: string
-    order: string
+    orders: string
     isVirtual: number
 
     creator: number

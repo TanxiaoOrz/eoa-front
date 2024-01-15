@@ -22,7 +22,7 @@ type SearchListIn = {
     defaultCondition: string
     tableId: number
     shareAuthority: string
-    order: string
+    orders: string
     isVirtual: number
 
 }
@@ -45,7 +45,6 @@ const BackSearchListConcrete = () => {
     const [searchList, setSearchList] = useState<SearchListOut>()
     const [virtual, setVirtual] = useState<number>(0)
     const editorFormRef = useRef<EditableFormInstance>();
-    const [columns, SetColumns] = useState<ColumnOut[]>()
     const [modifyRows, setModifyRows] = useState<readonly ModifyRow[]>([])
 
     useEffect(() => {
@@ -93,7 +92,7 @@ const BackSearchListConcrete = () => {
                     })
                     searchListIn.defaultCondition = JSON.stringify(defaultCondition)
                     searchListIn.shareAuthority = searchList.shareAuthority
-                    searchListIn.order = searchList.order
+                    searchListIn.orders = searchList.orders
                     return (await UpdateData(config.backs.search_list + "/" + searchListId, searchListIn))
                 }}
                 onValuesChange={(changedValues, workflowIn) => {
@@ -182,15 +181,15 @@ const BackSearchListConcrete = () => {
         column:'',
         type:'asc'
     }
-    if (searchList.order !== undefined) {
-        order =  JSON.parse(searchList.order)
+    if (searchList.orders !== undefined) {
+        order =  JSON.parse(searchList.orders)
     }
     const orderChange = (value:any, type:0|1) => {
         if (type === 0)
             order.column = value
         else
             order.type = value
-        searchList.order = JSON.stringify(order)
+        searchList.orders = JSON.stringify(order)
     }
 
     
