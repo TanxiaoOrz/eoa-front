@@ -15,6 +15,17 @@ import { Header, Content } from "antd/es/layout/layout"
 
 const { Title } = Typography
 
+type ModifyRow = {
+    id: number
+    columnDataName: string |null
+    input: string |null
+}
+
+type Order = {
+    column:string
+    type:string
+}
+
 const columnGet = (searchListDto: SearchListDtoOut) => {
     window.sessionStorage.setItem("tableId", searchListDto.searchListOut.tableId.toString())
     window.sessionStorage.setItem("isVirtual", (searchListDto.searchListOut.isVirtual === 1).toString())
@@ -75,6 +86,9 @@ const FrontSearchConcrete = () => {
     if (searchList === undefined)
         return (<PageWait />)
 
+    const constraint:ModifyRow[] = JSON.parse(searchList.searchListOut.defaultCondition)
+    const order:Order = JSON.parse(searchList.searchListOut.order)
+
     const table = (
         <ProTable
             columns={columnGet(searchList)}
@@ -93,6 +107,9 @@ const FrontSearchConcrete = () => {
             dateFormatter="string"
             headerTitle="流程监控"
             request={async (params, sort, filter) => {
+                for (let {columnDataName, input} of constraint)
+                    params[columnDataName??""] = [input]
+                params.order = [order.type, order.column]
                 let formCon = await getDataList(config.fronts.form, params)
                 return {
                     data: (formCon.data as FormOut[]).map((form) => translateForm(form)),
