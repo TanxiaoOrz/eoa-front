@@ -278,7 +278,7 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
             key: 'order',
             title: '显示顺序',
             valueType: 'index',
-            dataIndex: 'order'
+            dataIndex: 'viewNo'
         }, {
             key: 'action',
             title: '操作',
