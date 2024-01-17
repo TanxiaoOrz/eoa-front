@@ -27,7 +27,11 @@
         search_list_concrete:'/back_search_list/',
         search_list_column:'/back_search_list_column',
         charts:'/back_charts',
-        charts_concrete: '/back_charts/'
+        charts_concrete: '/back_charts/',
+        menu:'/back_menu',
+        menu_concrete:'/back_menu/',
+        login_config:'/back_page_config',
+        page_config:'/back_page_config'
     },
     frontUrl: {
         human: "/human_resouce",

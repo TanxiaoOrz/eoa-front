@@ -356,3 +356,48 @@ export type SearchListDtoOut = {
     searchListColumns: SearchListColumnOut[]
     columns: ColumnOut
 }
+
+export type LoginConfigOut = {
+    dataId: number
+    backgroundImageUrl:string,
+    logoUrl:string,
+    backgroundVideoUrl:string,
+    loginTitle:string,
+    loginSubTitle:string,
+    activeMainTitle:string,
+    activeIntroduction:string,
+    linkUrl:string,
+    linkStr:string,
+    contactManager:string
+    onUse:number
+    creator: number
+    createTime:string
+    creatorName: string
+}
+
+export type PageConfigOut = {
+    dataId:number
+    companyName:string
+    headerColor:string
+    sideColor:string
+    onUse:number
+    creator: number
+    createTime:string
+    creatorName: string
+}
+
+export type MenuOut = {
+    dataId:number
+    contentName:string
+    belongContent:number
+    contentUrl:string
+    viewNumber:number
+    isDeprecated:number
+    shareAuthority:string
+    creator: number
+    createTime:string
+    creatorName: string
+    belongContentName: string
+    children:MenuOut[]
+}
+

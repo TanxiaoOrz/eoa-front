@@ -27,7 +27,10 @@ export default {
         workflowRoute:"/api/v1/workflow/back/workflowRoute",
         charts:"/api/v1/display/back/charts",
         search_list:"/api/v1/display/back/search",
-        search_list_column:"/api/v1/display/back/column"
+        search_list_column:"/api/v1/display/back/column",
+        menu:"/api/v1/menu/back/menu",
+        login_config:"/api/v1/menu/back/loginConfig",
+        page_config:"/api/v1/menu/back/pageConfig"
     },
     fronts:{
         module:'/api/v1/table/front/module',
@@ -46,7 +49,14 @@ export default {
         organization_tree : "/api/v1/organization/front/tree",
         request:"/api/v1/workflow/front/request",
         workflow:"/api/v1/workflow/front/workflow",
-        search_dto:"/api/v1/display/front/search"
+        search_dto:"/api/v1/display/front/search",
+        menu:"/api/v1/menu/front/menu",
+        page_config:"/api/v1/menu/front/pageConfig/onUse"
+    },
+    token:{
+        token:"/api/v1/token",
+        check:"/api/v1/token/check",
+        login_config:"/api/v1/token/loginConfig/onUse",
     },
     setScrollView:()=>{
         window.sessionStorage.setItem("scroll","0")
