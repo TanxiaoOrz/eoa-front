@@ -55,10 +55,10 @@ const CreateMenu = (prop: { belongContent: number | null, actionRef: React.Mutab
             }}
             onFinish={async (values: MenuIn) => {
                 console.log(values)
-                let dataId: number = await newData(config.backs.search_list, values)
+                let dataId: number = await newData(config.backs.menu, values)
                 if (dataId != -1) {
                     if (jump)
-                        window.location.assign(url.backUrl.workflow_concrete + dataId);
+                        window.location.assign(url.backUrl.menu_concrete + dataId);
                     prop.actionRef.current?.reload()
                     return true
                 }
@@ -78,7 +78,6 @@ const CreateMenu = (prop: { belongContent: number | null, actionRef: React.Mutab
                 label="上级菜单"
                 placeholder="请选择所属模块"
                 tooltip="置空代表根菜单"
-                required={true}
                 request={async () => {
                     let menuList: MenuOut[] = (await getDataList(config.backs.menu, { toBrowser: true })).data
                     const values: { title: string, value: number, children: any[] }[] = menuList.map(
@@ -93,8 +92,7 @@ const CreateMenu = (prop: { belongContent: number | null, actionRef: React.Mutab
                 name="contentUrl"
                 label="菜单链接"
                 tooltip="最长为333位"
-                placeholder="请输入菜单链接"
-                required={true} />
+                placeholder="请输入菜单链接"  />
             <ProFormDigit
                 width={'md'}
                 name={'viewNo'}
@@ -203,7 +201,7 @@ const MenuList = (prop: { belongContent: number | null }) => {
                 <Button
                     type="primary"
                     onClick={() => {
-                        window.open(url.backUrl.search_list_concrete + entity.dataId)
+                        window.open(url.backUrl.menu_concrete + entity.dataId)
                     }}
                 >
                     编辑
@@ -256,7 +254,7 @@ const MenuList = (prop: { belongContent: number | null }) => {
 
 const BackMenuList = (prop: { belongContent: number | null }) => {
     let header = <></>
-    if (prop.belongContent !== null)
+    if (prop.belongContent === null)
         header = (
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
                 <SnippetsFilled style={{ fontSize: "36px", marginTop: "30px", marginLeft: "5px", marginBottom: '30px' }} />

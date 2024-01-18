@@ -1,15 +1,11 @@
-import { useState, useEffect, useRef } from "react"
-import { UpdateData, deleteData, getDataList, newData } from "../../const/http.tsx"
-import { ModuleOut, TableOut, SearchListOut, ColumnOut, SearchListColumnOut, LoginConfigOut, MenuOut } from "../../const/out.tsx"
+import React, { useRef } from "react"
+import { UpdateData, getDataList, newData } from "../../const/http.tsx"
+import { LoginConfigOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
-import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
-import { Button, Dropdown, Form, Layout, List, MenuProps, Tabs, Typography } from "antd"
-import Sider from "antd/es/layout/Sider"
+import { SnippetsFilled, PlusOutlined } from "@ant-design/icons"
+import { Button, Form, Layout, Typography } from "antd"
 import { Header, Content } from "antd/es/layout/layout"
-import React from "react"
-import { ActionType, ModalForm, ProColumns, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
-import { useLocation } from "react-router"
-import url from "../../const/url.js"
+import { ActionType, ModalForm, ProColumns, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProTable } from "@ant-design/pro-components"
 
 const { Title } = Typography;
 
@@ -142,12 +138,6 @@ const CreateLoginConfig = (prop: { actionRef: React.MutableRefObject<ActionType 
                 ]}
                 required={true}
             />
-            <ProFormDigit
-                width={'md'}
-                name={'viewNo'}
-                label={'显示顺序'}
-                placeholder={"不输入自动排到最后"}
-                fieldProps={{ precision: 0 }} />
         </ModalForm>
     )
 }
@@ -264,12 +254,6 @@ const UpdateLoginConfig = (prop: { loginConfig:LoginConfigOut, actionRef: React.
                 ]}
                 required={true}
             />
-            <ProFormDigit
-                width={'md'}
-                name={'viewNo'}
-                label={'显示顺序'}
-                placeholder={"不输入自动排到最后"}
-                fieldProps={{ precision: 0 }} />
         </ModalForm>
     )
 }
@@ -303,11 +287,6 @@ const LoginConfigList = () => {
                     value: 0
                 }
             ]
-        }, {
-            key: 'order',
-            title: '显示顺序',
-            valueType: 'index',
-            dataIndex: 'viewNo'
         }, {
             key: 'action',
             title: '操作',
@@ -377,10 +356,6 @@ const BackLoginConfig = () => {
             </Layout>
         </Layout>
     );
-}
-
-BackLoginConfig.defaultProps = {
-    searchList: null
 }
 
 export default BackLoginConfig

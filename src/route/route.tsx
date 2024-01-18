@@ -47,6 +47,9 @@ import BackSearchList from "../pages/DisplayModule/back_search.tsx";
 import BackSearchListColumn from "../pages/DisplayModule/back_search_column.tsx";
 import BackSearchListConcrete from "../pages/DisplayModule/back_search_concrete.tsx";
 import BackMenuList from "../pages/MenuModule/back_menu.tsx";
+import BackMenuConcrete from "../pages/MenuModule/back_menu_concrete.tsx";
+import BackLoginConfig from "../pages/MenuModule/back_login.tsx";
+import BackPageConfig from "../pages/MenuModule/back_page.tsx";
 
 const Protable = protable
 
@@ -129,6 +132,15 @@ const backs = [
   },{
     path:'/back_menu',
     element: <BackMenuList />
+  },{
+    path:'/back_menu/:dataId',
+    element: <BackMenuConcrete />
+  },{
+    path:'/back_login_config',
+    element: <BackLoginConfig />
+  },{
+    path:'/back_page_config',
+    element: <BackPageConfig />
   }
 ]
 
