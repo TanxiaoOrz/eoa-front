@@ -533,6 +533,21 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
         }
     ]
 
+    if (prop.table === undefined)
+        columnsList.push({
+            key:'type',
+            title:'是否虚拟',
+            dataIndex:"virtual",
+            valueType:'select',
+            request:async () => {
+                return [
+                    {label:"是",value:true},
+                    {label:"否",value:false},
+                ]
+            },
+            hideInTable:true
+        })
+
     return (
         <ProTable<ColumnOut> 
             columns={columnsList}
