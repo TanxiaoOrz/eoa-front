@@ -9,10 +9,11 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { Button, Tabs, theme, Popconfirm, message } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import {loginPost} from '../const/http.tsx'
+import {getDataOne, loginPost} from '../const/http.tsx'
 import config from '../const/config.js';
+import PageWait from '../componet/PageWait.tsx';
 
 type LoginType = 'account';
 
@@ -59,18 +60,34 @@ type LoginConfig = {
 const Page = () => {
   const [loginType, setLoginType] = useState<LoginType>('account');
   const { token } = theme.useToken();
-  const loginConfig:LoginConfig = {
-    backgroundImageUrl:"https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp",
-    logoUrl:"https://github.githubassets.com/images/modules/logos_page/Octocat.png",
-    backgroundVideoUrl:"https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr",
-    loginTitle:"EOA",
-    loginSubTitle:"可配置的低代码办公平台",
-    activeMainTitle:'项目预算特化开发版本',
-    activeIntroduction:'作者相关',
-    linkUrl:"http://127.0.0.1:8080/doc.html",
-    linkStr:"查看",
-    contactManager:"张骏山:13671985248"
-  }
+  const [loginConfig, setLoginConfig] = useState<LoginConfig>()
+
+  useEffect(()=>{
+    if (loginConfig === undefined)
+      getDataOne(config.token.login_config).then((value)=>{
+        if (value.success && value.data)
+          setLoginConfig(value.data)
+        else
+          setLoginConfig(
+            {
+              backgroundImageUrl:"https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp",
+              logoUrl:"https://github.githubassets.com/images/modules/logos_page/Octocat.png",
+              backgroundVideoUrl:"https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr",
+              loginTitle:"EOA",
+              loginSubTitle:"可配置的低代码办公平台",
+              activeMainTitle:'项目预算特化开发版本',
+              activeIntroduction:'作者相关',
+              linkUrl:"http://127.0.0.1:8080/doc.html",
+              linkStr:"查看",
+              contactManager:"张骏山:13671985248"
+            }
+            )
+      })
+  })
+
+  if (loginConfig === null || loginConfig === undefined)
+    return <PageWait />
+
   const subButton = ()=>{
     window.open(loginConfig.linkUrl);
   }

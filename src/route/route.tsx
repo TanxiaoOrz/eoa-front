@@ -7,7 +7,7 @@ import BackModule from "../pages/TableModule/back_module.tsx";
 import protable from "../example/protable.tsx";
 import Login from "./login.tsx";
 import React from "react";
-import { FrontPage } from "./fornt.tsx";
+import FrontPage from "./fornt.tsx";
 import BackTable from "../pages/TableModule/back_table.tsx";
 import BackTableConcrete from "../pages/TableModule/back_table_concrete.tsx";
 import BackContent from "../pages/ContentModule/back_content.tsx";
@@ -50,6 +50,8 @@ import BackMenuList from "../pages/MenuModule/back_menu.tsx";
 import BackMenuConcrete from "../pages/MenuModule/back_menu_concrete.tsx";
 import BackLoginConfig from "../pages/MenuModule/back_login.tsx";
 import BackPageConfig from "../pages/MenuModule/back_page.tsx";
+import BackPage from "./back.tsx";
+import MainPage from "./main.tsx";
 
 const Protable = protable
 
@@ -141,6 +143,9 @@ const backs = [
   },{
     path:'/back_page_config',
     element: <BackPageConfig />
+  },{
+    path:'/back',
+    element: <BackPage />
   }
 ]
 
@@ -200,6 +205,9 @@ const fronts = [
   },{
     path: '/search/:dataId',
     element: <FrontSearchConcrete />
+  },{
+    path: '/main',
+    element: <MainPage />
   }
 ]
 

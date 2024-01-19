@@ -49,6 +49,10 @@
         request_backlog: '/request_backlog',
         request_concrete: '/request/',
         search_list_concrete:'/search_list/',
-        charts_concrete:'/charts/'
-    }
+        charts_concrete:'/charts/',
+        main:"/main"
+    },
+    front:'/front',
+    back:'/back',
+    login:'/login'
 }
