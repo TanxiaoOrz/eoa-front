@@ -2,12 +2,11 @@
 import { AppstoreTwoTone, BankTwoTone, LaptopOutlined, NotificationOutlined, PlusCircleTwoTone, PoweroffOutlined, RetweetOutlined, UserOutlined } from '@ant-design/icons';
 import type { App, MenuProps } from 'antd';
 import { Avatar, Breadcrumb, Button, Divider, Dropdown, Flex, Layout, Menu, Space, theme, Typography } from 'antd';
-import { FileOut, HumanOut, MenuOut, PageConfigOut } from '../const/out';
+import { FileOut, HumanOut, MenuOut, PageConfigOut } from '../const/out.tsx';
 import config from '../const/config';
-import { getDataList, getDataOne } from '../const/http';
-import { getValue } from '@testing-library/user-event/dist/utils';
-import PageWait from '../componet/PageWait';
-import url from '../const/url';
+import { getDataList, getDataOne } from '../const/http.tsx';
+import PageWait from '../componet/PageWait.tsx';
+import url from '../const/url.js';
 
 
 const { Header, Content, Sider } = Layout;
@@ -386,7 +385,7 @@ const BackPage: React.FC = () => {
     const [humanSelf, setHumanSelf] = useState<HumanOut>()
     const [humanPhoto, setHumanPhoto] = useState<FileOut>()
     const [pageConfig, setPageConfig] = useState<PageConfig>()
-    const [aimUrl, setUrl] = useState<string>(getFirstPage(menuId))
+    const [aimUrl, setAimUrl] = useState<string>(getFirstPage(menuId))
     useEffect(() => {
         if (pageConfig === undefined)
             getDataOne(config.fronts.page_config).then((value) => {
@@ -445,7 +444,7 @@ const BackPage: React.FC = () => {
                         defaultSelectedKeys={['1']}
                         defaultOpenKeys={['sub1']}
                         style={{ height: '100%', borderRight: 0 }}
-                        items={getMenuDtoItem(menuId ?? "1", (str: string) => { if (str) setUrl(str) })}
+                        items={getMenuDtoItem(menuId ?? "1", (str: string) => { if (str) setAimUrl(str) })}
                     />
                 </Sider>
                 <Content>

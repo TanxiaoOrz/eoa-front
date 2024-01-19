@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { AppstoreTwoTone, BankTwoTone, LaptopOutlined, NotificationOutlined, PlusCircleTwoTone, PoweroffOutlined, RetweetOutlined, UserOutlined } from '@ant-design/icons';
 import type { App, MenuProps } from 'antd';
 import { Avatar, Breadcrumb, Button, Divider, Dropdown, Flex, Layout, Menu, Space, theme, Typography } from 'antd';
-import { FileOut, HumanOut, MenuOut, PageConfigOut } from '../const/out';
+import { FileOut, HumanOut, MenuOut, PageConfigOut } from '../const/out.tsx';
 import config from '../const/config';
-import { getDataList, getDataOne } from '../const/http';
+import { getDataList, getDataOne } from '../const/http.tsx';
 import { getValue } from '@testing-library/user-event/dist/utils';
-import PageWait from '../componet/PageWait';
-import url from '../const/url';
+import PageWait from '../componet/PageWait.tsx';
+import url from '../const/url.js';
 
 
 const { Header, Content, Sider } = Layout;
@@ -24,7 +24,7 @@ const getRootMenuItem = (menus: MenuOut[]): MenuProps['items'] => {
         return {
             key: menu.dataId,
             label: (
-                <a href={url.front+"?menuId=" + menu.dataId} >
+                <a href={url.front + "?menuId=" + menu.dataId} >
                     {menu.contentName}
                 </a>
             )
@@ -108,7 +108,7 @@ const FrontPage: React.FC = () => {
     const [menuRoots, setMenuRoots] = useState<MenuOut[]>()
     const [menuDto, setMenuDto] = useState<MenuOut>()
     const [pageConfig, setPageConfig] = useState<PageConfig>()
-    const [aimUrl, setUrl] = useState<string>()
+    const [aimUrl, setAimUrl] = useState<string>()
     useEffect(() => {
         if (pageConfig === undefined)
             getDataOne(config.fronts.page_config).then((value) => {
@@ -126,13 +126,14 @@ const FrontPage: React.FC = () => {
     useEffect(() => {
         if (humanSelf === undefined) {
             getDataOne(config.fronts.human_self).then((value) => {
-                if (value.success)
+                if (value.success) {
                     setHumanSelf(value.data)
-                if (value.data.photo !== undefined && value.data.photo != null && value.data.photo !== 0)
-                    getDataOne(config.fronts.file + "/" + value.data.photo).then((photo) => {
-                        if (photo.success)
-                            setHumanPhoto(photo.data)
-                    })
+                    if (value.data.photo !== undefined && value.data.photo != null && value.data.photo !== 0)
+                        getDataOne(config.fronts.file + "/" + value.data.photo).then((value) => {
+                            if (value.success)
+                                setHumanPhoto(value.data)
+                        })
+                }
             })
         }
     })
@@ -140,39 +141,46 @@ const FrontPage: React.FC = () => {
         if (menuRoots === undefined) {
             getDataList(config.fronts.menu).then((value) => {
                 if (value.success)
-                    setMenuRoots(menuRoots)
+                    setMenuRoots(value.data)
             })
         }
     })
     useEffect(() => {
-        if (menuDto === undefined)
-            getDataOne(config.fronts.menu + "/" + menuId ?? 1).then((value) => {
+        if (menuDto === undefined) {
+            // console.log("menuId",menuId ?? 1)
+            getDataOne(config.fronts.menu + "/" + (menuId ?? 1)).then((value) => {
                 if (value.success) {
                     setMenuDto(value.data)
-                    setUrl((value.data as MenuOut).contentUrl)
+                    setAimUrl((value.data as MenuOut).contentUrl)
                 }
 
             })
+        }
     })
 
-    if (pageConfig === undefined || menuRoots === undefined || menuDto === undefined || humanSelf == undefined)
+    if (pageConfig === undefined || pageConfig === null || menuRoots === undefined || menuDto === undefined || humanSelf == undefined)
         return <PageWait />
 
+    console.log("menuDto", menuDto, getMenuDtoItem(menuDto, (str: string) => { if (str) setAimUrl(str) }))
+
     return (
-        <Layout>
-            <Header style={{ display: 'flex', alignItems: 'center' }} hasSider>
-                <Space align='center' style={{ backgroundColor: pageConfig?.headerColor, display: 'flex' }}>
-                    <div style={{ width: "200" }}><Title level={3} color='#ffffff'></Title></div>
-                    <BankTwoTone href={""} />
-                    <Dropdown
-                        menu={{ items: getRootMenuItem(menuRoots) }}>
-                        <Space>
-                            <AppstoreTwoTone />
-                            应用
-                        </Space>
-                    </Dropdown>
+        <Layout style={{ height: "98vh" }}>
+            <Header style={{ display: 'flex', alignItems: 'center', width: '100%', color: pageConfig?.headerColor}} hasSider>
+                <Space align='center' style={{ backgroundColor: pageConfig?.headerColor, display: 'flex', width: "100vh" }}>
+                    <Space align='center' style={{ display: "flex" }} size='middle'>
+
+                        <div style={{ width: "200", backgroundColor: pageConfig?.headerColor }}><Title level={3} color='#ffffff'>{pageConfig.companyName}</Title></div>
+                        <BankTwoTone href={""} />
+                        <Dropdown
+                            menu={{ items: getRootMenuItem(menuRoots) }}>
+                            <Space>
+                                <AppstoreTwoTone />
+                                应用
+                            </Space>
+                        </Dropdown>
+                    </Space>
                     <Space />
-                    <Sider width={200}>
+                    <Sider width={200} style={{ flex: "right" }}>
                         <HumanAvater humanSelf={humanSelf} humanPhoto={humanPhoto} />
                     </Sider>
                 </Space>
@@ -184,11 +192,11 @@ const FrontPage: React.FC = () => {
                         defaultSelectedKeys={['1']}
                         defaultOpenKeys={['sub1']}
                         style={{ height: '100%', borderRight: 0 }}
-                        items={getMenuDtoItem(menuDto, (str: string) => { if (str) setUrl(str) })}
+                        items={getMenuDtoItem(menuDto, (str: string) => { if (str) setAimUrl(str) })}
                     />
                 </Sider>
                 <Content>
-                    <iframe height="99%" width="99%" src={aimUrl} style={{border:"none"}}/>
+                    <iframe height="99%" width="99%" src={aimUrl} style={{ border: "none" }} />
                 </Content>
             </Layout>
         </Layout>
