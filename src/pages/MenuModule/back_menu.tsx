@@ -60,6 +60,7 @@ const CreateMenu = (prop: { belongContent: number | null, actionRef: React.Mutab
                     if (jump)
                         window.location.assign(url.backUrl.menu_concrete + dataId);
                     prop.actionRef.current?.reload()
+                    form.resetFields()
                     return true
                 }
                 return false
@@ -117,7 +118,7 @@ const MenuList = (prop: { belongContent: number | null }) => {
         }, {
             key: 'contentName',
             title: '菜单名称',
-            dataIndex: 'searchListName'
+            dataIndex: 'contentName'
         }, {
             key: 'contentUrl',
             title: '菜单链接',
