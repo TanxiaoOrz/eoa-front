@@ -123,7 +123,7 @@ const BackMenuConcrete = () => {
     )
     
 
-    let title = menu.isDeprecated?"已废弃": ""
+    let title = menu.isDeprecated?" 已废弃": ""
     return (
         <div
             style={{ background: '#F5F7FA' }}
@@ -144,9 +144,9 @@ const BackMenuConcrete = () => {
                         ],
                     },
                     extra: [
-                        <Button key='save' type="primary" onClick={() => { form.submit() }}>保存</Button>,
+                        <Button key='save' type="primary" onClick={() => { form.submit() }}>{menu.isDeprecated === 0?"保存":"保存并启用"}</Button>,
                         <Button key='reset' onClick={() => { form.resetFields() }}>重置</Button>,
-                        <Button key='drop' type='default' danger onClick={dropMenu}>封存</Button>
+                        <Button key='drop' type='default' danger onClick={dropMenu} disabled={menu.isDeprecated !== 0}>封存</Button>
                     ]
                 }}
                 tabList={[

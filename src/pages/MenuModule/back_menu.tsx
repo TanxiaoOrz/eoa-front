@@ -151,7 +151,6 @@ const MenuList = (prop: { belongContent: number | null }) => {
         }, {
             key: 'order',
             title: '显示顺序',
-            valueType: 'index',
             dataIndex: 'viewNo'
         }, {
             key: 'isDeprecated',
