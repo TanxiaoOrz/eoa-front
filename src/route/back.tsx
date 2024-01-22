@@ -1,16 +1,24 @@
-﻿import React, { useEffect, useState } from 'react';
-import { AppstoreTwoTone, BankTwoTone, LaptopOutlined, NotificationOutlined, PlusCircleTwoTone, PoweroffOutlined, RetweetOutlined, UserOutlined } from '@ant-design/icons';
-import type { App, MenuProps } from 'antd';
-import { Avatar, Breadcrumb, Button, Divider, Dropdown, Flex, Layout, Menu, Space, theme, Typography } from 'antd';
-import { FileOut, HumanOut, MenuOut, PageConfigOut } from '../const/out.tsx';
-import config from '../const/config';
-import { getDataList, getDataOne } from '../const/http.tsx';
+﻿import {
+    CrownFilled,
+    PoweroffOutlined,
+    RetweetOutlined,
+    UserOutlined} from '@ant-design/icons';
+import type { ProSettings } from '@ant-design/pro-components';
+import {
+    ProConfigProvider,
+    ProLayout,
+    SettingDrawer,
+} from '@ant-design/pro-components';
+import {
+    ConfigProvider,
+    Dropdown,
+} from 'antd';
+import React, { useEffect, useState } from 'react';
+import url from '../const/url';
+import { HumanOut, FileOut, MenuOut } from '../const/out.tsx';
 import PageWait from '../componet/PageWait.tsx';
-import url from '../const/url.js';
-
-
-const { Header, Content, Sider } = Layout;
-const { Title } = Typography
+import config from '../const/config.js';
+import { getDataOne, getDataList } from '../const/http.tsx';
 
 type PageConfig = {
     companyName: string
@@ -18,374 +26,191 @@ type PageConfig = {
     sideColor: string
 }
 
-const getRootMenuItem = (): MenuProps['items'] => {
+const getRootMenuItem = (): { icon:string, title:string, desc:string, url:string }[] => {
     return [
         {
-            key: 1,
-            label: <a href={url.back + "?menuId=" + 1}>组织结构</a>
+            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            title:"组织结构",
+            desc:"",
+            url: url.back + "?menuId=" + 1
         }, {
-            key: 2,
-            label: <a href={url.back + "?menuId=" + 2}>权限管理</a>
+            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            title:"权限管理",
+            desc:"",
+            url: url.back + "?menuId=" + 2
         }, {
-            key: 3,
-            label: <a href={url.back + "?menuId=" + 3}>表单设置</a>
+            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            title:"表单设置",
+            desc:"",
+            url: url.back + "?menuId=" + 3
         }, {
-            key: 4,
-            label: <a href={url.back + "?menuId=" + 4}>知识目录</a>
+            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            title:"知识目录",
+            desc:"",
+            url: url.back + "?menuId=" + 4
         }, {
-            key: 5,
-            label: <a href={url.back + "?menuId=" + 5}>工作流程</a>
+            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            title:"工作流程",
+            desc:"",
+            url: url.back + "?menuId=" + 5
         }, {
-            key: 6,
-            label: <a href={url.back + "?menuId=" + 6}>数据展示</a>
+            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            title:"数据展示",
+            desc:"",
+            url: url.back + "?menuId=" + 6
         }, {
-            key: 7,
-            label: <a href={url.back + "?menuId=" + 7}>页面菜单</a>
+            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            title:"页面菜单",
+            desc:"",
+            url: url.back + "?menuId=" + 7
         },
     ]
 }
 
-const getFirstPage = (menuId: string | null): string => {
+const getMenuDtoItem = (menuId: string| null ) => {
     switch (parseInt(menuId ?? "1")) {
-        case 7:
-            return url.backUrl.menu
-        case 6:
-            return url.backUrl.search_list
-        case 5:
-            return url.backUrl.workflow
-        case 4:
-            return url.backUrl.content
-        case 3:
-            return url.backUrl.module
-        case 2:
-            return url.backUrl.character
-        default:
-            return url.backUrl.organization_tree
-    }
-}
-
-const getMenuDtoItem = (menuId: string, onChange: (str: string) => void): MenuProps['items'] => {
-    switch (parseInt(menuId)) {
-        case 1:
-            return [
-                {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.organization_tree)
-                            }}
-                            color='#ffffff'
-                        >
-                            组织结构树
-                        </Button>
-                    )
-                }, {
-                    key: 2,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.section)
-                            }}
-                            color='#ffffff'
-                        >
-                            分部列表
-                        </Button>
-                    )
-                }, {
-                    key: 3,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.depart)
-                            }}
-                            color='#ffffff'
-                        >
-                            部门列表
-                        </Button>
-                    )
-                }, {
-                    key: 4,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.section)
-                            }}
-                            color='#ffffff'
-                        >
-                            人员列表
-                        </Button>
-                    )
-                },
-            ]
+        
         case 2:
             return [
                 {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.character)
-                            }}
-                            color='#ffffff'
-                        >
-                            角色列表
-                        </Button>
-                    )
+                    name:"角色列表",
+                    path:url.backUrl.character,
+                    component:url.backUrl.character,
+                    routes:[],
                 }
             ]
         case 3:
             return [
                 {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.module)
-                            }}
-                            color='#ffffff'
-                        >
-                            应用列表
-                        </Button>
-                    )
+                    name:"应用列表",
+                    path:url.backUrl.module,
+                    component:url.backUrl.module,
+                    routes:[],
                 }, {
-                    key: 2,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.table)
-                            }}
-                            color='#ffffff'
-                        >
-                            表单列表
-                        </Button>
-                    )
+                    name:"表单列表",
+                    path:url.backUrl.table,
+                    component:url.backUrl.table,
+                    routes:[],
                 }, {
-                    key: 3,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.column)
-                            }}
-                            color='#ffffff'
-                        >
-                            字段列表
-                        </Button>
-                    )
+                    name:"字段列表",
+                    path:url.backUrl.column,
+                    component:url.backUrl.column,
+                    routes:[],
                 }
             ]
         case 4:
             return [
                 {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.content)
-                            }}
-                            color='#ffffff'
-                        >
-                            目录列表
-                        </Button>
-                    )
+                    name:"目录列表",
+                    path:url.backUrl.content,
+                    component:url.backUrl.content,
+                    routes:[],
                 },
             ]
         case 5:
             return [
                 {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.workflow)
-                            }}
-                            color='#ffffff'
-                        >
-                            流程列表
-                        </Button>
-                    )
+                    name:"流程列表",
+                    path:url.backUrl.workflow,
+                    component:url.backUrl.workflow,
+                    routes:[],
                 }, {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.workflow_route)
-                            }}
-                            color='#ffffff'
-                        >
-                            路径列表
-                        </Button>
-                    )
+                    name:"路径列表",
+                    path:url.backUrl.workflow_route,
+                    component:url.backUrl.workflow_route,
+                    routes:[],
                 }, {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.workflow_node)
-                            }}
-                            color='#ffffff'
-                        >
-                            节点列表
-                        </Button>
-                    )
+                    name:"节点列表",
+                    path:url.backUrl.workflow_node,
+                    component:url.backUrl.workflow_node,
+                    routes:[],
                 }, {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.request)
-                            }}
-                            color='#ffffff'
-                        >
-                            流程监控
-                        </Button>
-                    )
+                    name:"流程监控",
+                    path:url.backUrl.request,
+                    component:url.backUrl.request,
+                    routes:[],
                 },
             ]
         case 6:
             return [
                 {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.search_list)
-                            }}
-                            color='#ffffff'
-                        >
-                            展示列表
-                        </Button>
-                    )
+                    name:"展示列表",
+                    path:url.backUrl.search_list,
+                    component:url.backUrl.search_list,
+                    routes:[],
                 }, {
-                    key: 2,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.search_list_column)
-                            }}
-                            color='#ffffff'
-                        >
-                            展示字段列表
-                        </Button>
-                    )
+                    name:"展示字段列表",
+                    path:url.backUrl.search_list_column,
+                    component:url.backUrl.search_list_column,
+                    routes:[],
                 },
             ]
         case 7:
             return [
                 {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.menu)
-                            }}
-                            color='#ffffff'
-                        >
-                            页面菜单
-                        </Button>
-                    )
+                    name:"页面菜单",
+                    path:url.backUrl.menu,
+                    component:url.backUrl.menu,
+                    routes:[],
                 }, {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.login_config)
-                            }}
-                            color='#ffffff'
-                        >
-                            登录设置
-                        </Button>
-                    )
+                    name:"登录设置",
+                    path:url.backUrl.login_config,
+                    component:url.backUrl.login_config,
+                    routes:[],
                 }, {
-                    key: 1,
-                    label: (
-                        <Button
-                            type='link'
-                            onClick={() => {
-                                onChange(url.backUrl.page_config)
-                            }}
-                            color='#ffffff'
-                        >
-                            页面设置
-                        </Button>
-                    )
+                    name:"页面设置",
+                    path:url.backUrl.page_config,
+                    component:url.backUrl.page_config,
+                    routes:[],
+                },
+            ]
+            default:
+            return [
+                {
+                    name:"组织结构树",
+                    path:url.backUrl.organization_tree,
+                    component:url.backUrl.organization_tree,
+                    routes:[],
+                }, {
+                    name:"分部列表",
+                    path:url.backUrl.section,
+                    component:url.backUrl.section,
+                    routes:[],
+                }, {
+                    name:"部门列表",
+                    path:url.backUrl.depart,
+                    component:url.backUrl.depart,
+                    routes:[],
+                }, {
+                    name:"人员列表",
+                    path:url.backUrl.human,
+                    component:url.backUrl.human,
+                    routes:[],
                 },
             ]
     }
 }
 
-const HumanAvater = (prop: { humanSelf: HumanOut, humanPhoto: FileOut | undefined }) => {
-    let avater
-    if (prop.humanPhoto !== undefined)
-        avater = <Avatar shape="square" size={16} src={config.backUrl + prop.humanPhoto.fileRoute} />
-    else
-        avater = <Avatar shape="square" size={16} icon={<UserOutlined />} />
+export default () => {
+    const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
+        fixSiderbar: true,
+        layout: 'mix',
+        splitMenus: true,
+    });
 
-    return (
-        <Space align='center' style={{ display: "flex" }} size='middle'>
-            <Divider type="vertical" style={{ color: "#d9d9d9" }} />
-            <Dropdown
-                menu={{
-                    items: [
-                        {
-                            key: 'self',
-                            label: (
-                                <a href={url.frontUrl.humanResource + prop.humanSelf.dataId}>
-                                    <UserOutlined />
-                                    个人信息
-                                </a>
-                            )
-                        }, {
-                            key: 'jump',
-                            label: (
-                                <a href={url.front}>
-                                    <RetweetOutlined />
-                                    前台用户中心
-                                </a>
-                            )
-                        }, {
-                            key: 'exit',
-                            label: (
-                                <a href={url.login}>
-                                    <PoweroffOutlined />
-                                    退出登录
-                                </a>
-                            )
-                        }
-                    ],
-                }} >
-                <Space align='center' style={{ display: "flex" }} size='small'>
-                    {avater}
-                    <Title level={4} style={{ color: "#ffffff" }}>{prop.humanSelf.name}</Title>
-                </Space>
-            </Dropdown>
-        </Space>
-    )
-}
-
-const BackPage: React.FC = () => {
     const menuId = new URLSearchParams(window.location.search.substring(1)).get("menuId")
+    const root = getRootMenuItem()
+    const routes = getMenuDtoItem(menuId??"1")
+    const nowRoote = {
+        title:root[parseInt(menuId??'1')-1].title,
+        url:routes[0].path
+    }
+    
     const [humanSelf, setHumanSelf] = useState<HumanOut>()
     const [humanPhoto, setHumanPhoto] = useState<FileOut>()
     const [pageConfig, setPageConfig] = useState<PageConfig>()
-    const [aimUrl, setAimUrl] = useState<string>(getFirstPage(menuId))
+    const [pathname, setPathname] = useState<string>(nowRoote.url)
+
     useEffect(() => {
         if (pageConfig === undefined)
             getDataOne(config.fronts.page_config).then((value) => {
@@ -403,56 +228,176 @@ const BackPage: React.FC = () => {
     useEffect(() => {
         if (humanSelf === undefined) {
             getDataOne(config.fronts.human_self).then((value) => {
-                if (value.success)
+                if (value.success) {
                     setHumanSelf(value.data)
-                if (value.data.photo !== undefined && value.data.photo != null && value.data.photo !== 0)
-                    getDataOne(config.fronts.file + "/" + value.data.photo).then((photo) => {
-                        if (photo.success)
-                            setHumanPhoto(photo.data)
-                    })
+                    if (value.data.photo !== undefined && value.data.photo != null && value.data.photo !== 0)
+                        getDataOne(config.fronts.file + "/" + value.data.photo).then((value) => {
+                            if (value.success)
+                                setHumanPhoto(value.data)
+                        })
+                }
             })
         }
     })
+    useEffect(()=>{
+        document.body.style.overflow = 'hidden'
+    })
 
+    
 
-    if (pageConfig === undefined || humanSelf == undefined)
+    if (pageConfig === undefined || pageConfig === null || humanSelf == undefined)
         return <PageWait />
 
+    if (typeof document === 'undefined') {
+        return <PageWait />;
+    }
+
+    
+
+    const defaultProps = {
+        route: {
+            path: '/',
+            routes: [
+                {
+                    path: nowRoote.url,
+                    name: nowRoote.title,
+                    icon: <CrownFilled />,
+                    access: nowRoote.url,
+                    component: nowRoote.url,
+                    routes: routes
+                },
+            ],
+        },
+        location: {
+            pathname:'/'
+        },
+        appList: root
+    };
+
     return (
-        <Layout>
-            <Header style={{ display: 'flex', alignItems: 'center' }} hasSider>
-                <Space align='center' style={{ backgroundColor: pageConfig?.headerColor, display: 'flex' }}>
-                    <div style={{ width: "200" }}><Title level={3} color='#ffffff'></Title></div>
-                    <BankTwoTone href={""} />
-                    <Dropdown
-                        menu={{ items: getRootMenuItem() }}>
-                        <Space>
-                            <AppstoreTwoTone />
-                            引擎
-                        </Space>
-                    </Dropdown>
-                    <Space />
-                    <Sider width={200}>
-                        <HumanAvater humanSelf={humanSelf} humanPhoto={humanPhoto} />
-                    </Sider>
-                </Space>
-            </Header>
-            <Layout>
-                <Sider width={200} style={{ background: pageConfig.sideColor }}>
-                    <Menu
-                        mode="inline"
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
-                        style={{ height: '100%', borderRight: 0 }}
-                        items={getMenuDtoItem(menuId ?? "1", (str: string) => { if (str) setAimUrl(str) })}
-                    />
-                </Sider>
-                <Content>
-                    <iframe height="99%" width="99%" src={aimUrl} style={{ border: "none" }} />
-                </Content>
-            </Layout>
-        </Layout>
+        <div
+            id="test-pro-layout"
+            style={{
+                height: '100vh',
+                
+            }}
+        >
+            <ProConfigProvider hashed={false}>
+                <ConfigProvider
+                    getTargetContainer={() => {
+                        return document.getElementById('test-pro-layout') || document.body;
+                    }}
+                >
+                    <ProLayout
+                        prefixCls="my-prefix"
+                        title={pageConfig.companyName}
+                        token={{
+                            colorBgAppListIconHover: 'rgba(0,0,0,0.06)',
+                            colorTextAppListIconHover: 'rgba(255,255,255,0.95)',
+                            colorTextAppListIcon: 'rgba(255,255,255,0.85)',
+                            sider: {
+                                colorBgCollapsedButton: '#fff',
+                                colorTextCollapsedButtonHover: 'rgba(0,0,0,0.65)',
+                                colorTextCollapsedButton: 'rgba(0,0,0,0.45)',
+                                colorMenuBackground: pageConfig.sideColor,
+                                colorBgMenuItemCollapsedElevated: 'rgba(0,0,0,0.85)',
+                                colorMenuItemDivider: 'rgba(255,255,255,0.15)',
+                                colorBgMenuItemHover: 'rgba(0,0,0,0.06)',
+                                colorBgMenuItemSelected: 'rgba(0,0,0,0.15)',
+                                colorTextMenuSelected: '#fff',
+                                colorTextMenuItemHover: 'rgba(255,255,255,0.75)',
+                                colorTextMenu: 'rgba(255,255,255,0.75)',
+                                colorTextMenuSecondary: 'rgba(255,255,255,0.65)',
+                                colorTextMenuTitle: 'rgba(255,255,255,0.95)',
+                                colorTextMenuActive: 'rgba(255,255,255,0.95)',
+                                colorTextSubMenuSelected: '#fff',
+                            },
+                            header: {
+                                colorBgHeader: pageConfig.headerColor,
+                                colorBgRightActionsItemHover: 'rgba(0,0,0,0.06)',
+                                colorTextRightActionsItem: 'rgba(255,255,255,0.65)',
+                                colorHeaderTitle: '#fff',
+                                colorBgMenuItemHover: 'rgba(0,0,0,0.06)',
+                                colorBgMenuItemSelected: 'rgba(0,0,0,0.15)',
+                                colorTextMenuSelected: '#fff',
+                                colorTextMenu: 'rgba(255,255,255,0.75)',
+                                colorTextMenuSecondary: 'rgba(255,255,255,0.65)',
+                                colorTextMenuActive: 'rgba(255,255,255,0.95)',
+                            },
+                        }}
+                        {...defaultProps}
+                        location={{
+                            pathname,
+                        }}
+                        siderMenuType="group"
+                        menu={{
+                            collapsedShowGroupTitle: true,
+                        }}
+                        headerTitleRender={
+                            (logo, title, _) =>  (
+                                  <a href='/'>
+                                    {title}
+                                  </a>
+                                )
+                        } 
+                        avatarProps={{
+                            src: humanPhoto?.fileRoute ?? 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+                            size: 'small',
+                            title: humanSelf.name,
+                            render: (props, dom) => {
+                                return (
+                                    <Dropdown
+                                        menu={{
+                                            items: [
+                                                {
+                                                    key: 'self',
+                                                    label: (
+                                                        <a href={url.frontUrl.humanResource + humanSelf.dataId}>
+                                                            <UserOutlined />
+                                                            个人信息
+                                                        </a>
+                                                    )
+                                                }, {
+                                                    key: 'jump',
+                                                    label: (
+                                                        <a href={url.front}>
+                                                            <RetweetOutlined />
+                                                            前台应用中心
+                                                        </a>
+                                                    )
+                                                }, {
+                                                    key: 'exit',
+                                                    label: (
+                                                        <a href={url.login}>
+                                                            <PoweroffOutlined />
+                                                            退出登录
+                                                        </a>
+                                                    )
+                                                }
+                                            ],
+                                        }}
+                                    >
+                                        {dom}
+                                    </Dropdown>
+                                );
+                            },
+                        }}
+                        onMenuHeaderClick={(e) => console.log(e)}
+                        menuItemRender={(item, dom) => (
+                            <div
+                                onClick={() => {
+                                    setPathname((item.path)as unknown as string);
+                                }}
+                            >
+                                {dom}
+                            </div>
+                        )}
+                        {...settings}
+                    >
+                        <iframe title='page' width="100%" src={pathname} style={{ border: "none", display:"block", height:"100vh", overflowX:'hidden'}} />
+                    </ProLayout>
+                </ConfigProvider>
+            </ProConfigProvider>
+        </div>
     );
 };
-
-export default BackPage;

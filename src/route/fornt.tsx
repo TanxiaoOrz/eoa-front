@@ -1,37 +1,16 @@
 import {
-    CaretDownFilled,
-    DoubleRightOutlined,
-    GithubFilled,
-    InfoCircleFilled,
-    LogoutOutlined,
-    PlusCircleFilled,
-    QuestionCircleFilled,
-    SearchOutlined,
-    ChromeFilled,
     CrownFilled,
-    SmileFilled,
-    TabletFilled,
     PoweroffOutlined,
     RetweetOutlined,
-    UserOutlined,
-    BankTwoTone
-} from '@ant-design/icons';
+    UserOutlined} from '@ant-design/icons';
 import type { ProSettings } from '@ant-design/pro-components';
 import {
-    PageContainer,
-    ProCard,
     ProConfigProvider,
     ProLayout,
-    SettingDrawer,
 } from '@ant-design/pro-components';
 import {
-    Button,
     ConfigProvider,
-    Divider,
     Dropdown,
-    Input,
-    Popover,
-    theme,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import url from '../const/url';
@@ -81,11 +60,7 @@ export default () => {
     const [menuRoots, setMenuRoots] = useState<MenuOut[]>()
     const [menuDto, setMenuDto] = useState<MenuOut>()
     const [pageConfig, setPageConfig] = useState<PageConfig>()
-    const [aimUrl, setAimUrl] = useState<string>()
-
-
-
-    const [pathname, setPathname] = useState('/list/sub-page/sub-sub-page1');
+    const [pathname, setPathname] = useState<string>()
 
     useEffect(() => {
         if (pageConfig === undefined)
@@ -129,11 +104,14 @@ export default () => {
             getDataOne(config.fronts.menu + "/" + (menuId ?? 1)).then((value) => {
                 if (value.success) {
                     setMenuDto(value.data)
-                    setAimUrl((value.data as MenuOut).contentUrl)
+                    setPathname((value.data as MenuOut).contentUrl)
                 }
 
             })
         }
+    })
+    useEffect(()=>{
+        document.body.style.overflow = 'hidden'
     })
 
     
@@ -164,12 +142,14 @@ export default () => {
         },
         appList: getRootMenuItem(menuRoots)
     };
+    console.log("menuRoots",menuRoots)
+    console.log("defaultProps",defaultProps)
     return (
         <div
             id="test-pro-layout"
             style={{
                 height: '100vh',
-                overflow: 'auto',
+                
             }}
         >
             <ProConfigProvider hashed={false}>
@@ -180,6 +160,7 @@ export default () => {
                 >
                     <ProLayout
                         prefixCls="my-prefix"
+                        title={pageConfig.companyName}
                         token={{
                             colorBgAppListIconHover: 'rgba(0,0,0,0.06)',
                             colorTextAppListIconHover: 'rgba(255,255,255,0.95)',
@@ -275,7 +256,7 @@ export default () => {
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {
-                                    setAimUrl(item.path);
+                                    setPathname(item.path);
                                 }}
                             >
                                 {dom}
@@ -283,7 +264,7 @@ export default () => {
                         )}
                         {...settings}
                     >
-                        <iframe height="110%" width="100%" src={aimUrl} style={{ border: "none" }} />
+                        <iframe title='page' width="100%" src={pathname} style={{ border: "none", display:"block", height:"100vh", overflowX:'hidden'}} />
                     </ProLayout>
                 </ConfigProvider>
             </ProConfigProvider>
