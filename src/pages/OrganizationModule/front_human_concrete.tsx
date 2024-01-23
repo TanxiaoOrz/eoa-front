@@ -266,7 +266,7 @@ const FrontHumanConcrete = () => {
         return (<PageWait />)
     let avaterGroup: React.JSX.Element[] = []
     if (humanPhoto === undefined)
-        avaterGroup.push(<Avatar style={{ width: "100%" }} shape="square" size={64} icon={<UserOutlined />} />)
+        avaterGroup.push(<Avatar style={{ width: "100%" }} shape="square" size={64} src="'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg'" />)
     else
         avaterGroup.push(<Avatar style={{ width: "100%" }} shape="square" size={64} src={config.backUrl + humanPhoto?.fileRoute} />)
     let editable = humanSelf?.dataId.toString() === humanId
