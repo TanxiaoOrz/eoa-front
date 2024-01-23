@@ -1,8 +1,14 @@
 import {
+    AppstoreAddOutlined,
+    AppstoreOutlined,
     CrownFilled,
+    GithubFilled,
+    InfoCircleFilled,
     PoweroffOutlined,
+    QuestionCircleFilled,
     RetweetOutlined,
-    UserOutlined} from '@ant-design/icons';
+    UserOutlined
+} from '@ant-design/icons';
 import type { ProSettings } from '@ant-design/pro-components';
 import {
     ProConfigProvider,
@@ -26,18 +32,18 @@ type PageConfig = {
     sideColor: string
 }
 
-const getRootMenuItem = (menus: MenuOut[]): { icon:string, title:string, desc:string, url:string }[] => {
+const getRootMenuItem = (menus: MenuOut[]): { icon: string, title: string, desc: string, url: string }[] => {
     return menus.map((menu) => {
         return {
-            icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            icon: "https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
             title: menu.contentName,
-            desc:"",
-            url:url.front + "?menuId=" + menu.dataId
+            desc: "",
+            url: url.front + "?menuId=" + menu.dataId
         }
     })
 }
 
-const getMenuDtoItem = (menuDto: MenuOut ) => {
+const getMenuDtoItem = (menuDto: MenuOut) => {
     return menuDto.children.map((menu) => {
         return {
             name: menu.contentName,
@@ -111,11 +117,11 @@ export default () => {
             })
         }
     })
-    useEffect(()=>{
+    useEffect(() => {
         document.body.style.overflow = 'hidden'
     })
 
-    
+
 
     if (pageConfig === undefined || pageConfig === null || menuRoots === undefined || menuDto === undefined || humanSelf == undefined)
         return <PageWait />
@@ -143,14 +149,14 @@ export default () => {
         },
         appList: getRootMenuItem(menuRoots)
     };
-    console.log("menuRoots",menuRoots)
-    console.log("defaultProps",defaultProps)
+    console.log("menuRoots", menuRoots)
+    console.log("defaultProps", defaultProps)
     return (
         <div
             id="test-pro-layout"
             style={{
                 height: '100vh',
-                
+
             }}
         >
             <ProConfigProvider hashed={false}>
@@ -205,12 +211,20 @@ export default () => {
                             collapsedShowGroupTitle: true,
                         }}
                         headerTitleRender={
-                            (logo, title, _) =>  (
-                                  <a href='/'>
+                            (logo, title, _) => (
+                                <a href='/'>
                                     {title}
-                                  </a>
-                                )
-                        } 
+                                </a>
+                            )
+                        }
+                        actionsRender={(props) => {
+                            if (props.isMobile) return [];
+                            if (typeof window === 'undefined') return [];
+                            return [
+                                <p key={"Text"}>前台应用中心</p>,
+                                <AppstoreAddOutlined key='icon'/>
+                            ];
+                        }}
                         avatarProps={{
                             src: humanPhoto?.fileRoute ?? 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
                             size: 'small',
@@ -223,7 +237,7 @@ export default () => {
                                                 {
                                                     key: 'self',
                                                     label: (
-                                                        <Button type='link' onClick={()=>{window.open(url.frontUrl.humanResource + humanSelf.dataId)}}>
+                                                        <Button type='link' onClick={() => { window.open(url.frontUrl.humanResource + humanSelf.dataId) }}>
                                                             <UserOutlined />
                                                             个人信息
                                                         </Button>
@@ -231,15 +245,15 @@ export default () => {
                                                 }, {
                                                     key: 'jump',
                                                     label: (
-                                                        <Button type='link' onClick={()=>{window.open(url.back)}}>
+                                                        <Button type='link' onClick={() => { window.open(url.back) }}>
                                                             <RetweetOutlined />
-                                                            后台应用中心
+                                                            后台引擎中心
                                                         </Button>
                                                     )
                                                 }, {
                                                     key: 'exit',
                                                     label: (
-                                                        <Button type='link' href={url.login}>
+                                                        <Button type='link' danger href={url.login}>
                                                             <PoweroffOutlined />
                                                             退出登录
                                                         </Button>
@@ -254,6 +268,20 @@ export default () => {
                             },
                         }}
                         onMenuHeaderClick={(e) => console.log(e)}
+                        menuFooterRender={(props) => {
+                            if (props?.collapsed) return undefined;
+                            return (
+                                <div
+                                    style={{
+                                        textAlign: 'center',
+                                        paddingBlockStart: 12,
+                                    }}
+                                >
+                                    <div>© 2024 Made with love</div>
+                                    <div>by Zhang JunShan</div>
+                                </div>
+                            );
+                        }}
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {
@@ -265,7 +293,7 @@ export default () => {
                         )}
                         {...settings}
                     >
-                        <iframe title='page' width="100%" src={pathname} style={{ border: "none", display:"block", height:"100vh", overflowX:'hidden'}} />
+                        <iframe title='page' width="100%" src={pathname} style={{ border: "none", display: "block", height: "100vh", overflowX: 'hidden' }} />
                     </ProLayout>
                 </ConfigProvider>
             </ProConfigProvider>

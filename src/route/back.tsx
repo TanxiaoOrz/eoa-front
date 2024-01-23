@@ -1,6 +1,10 @@
 ﻿import {
+    AppstoreOutlined,
     CrownFilled,
+    GithubFilled,
+    InfoCircleFilled,
     PoweroffOutlined,
+    QuestionCircleFilled,
     RetweetOutlined,
     UserOutlined} from '@ant-design/icons';
 import type { ProSettings } from '@ant-design/pro-components';
@@ -336,7 +340,7 @@ export default () => {
                         }}
                         headerTitleRender={
                             (logo, title, _) =>  (
-                                  <a href='/'>
+                                  <a href='/' >
                                     {title}
                                   </a>
                                 )
@@ -351,7 +355,7 @@ export default () => {
                                         menu={{
                                             items: [
                                                 {
-                                                key: 'self',
+                                                    key: 'self',
                                                     label: (
                                                         <Button type='link' onClick={()=>{window.open(url.frontUrl.humanResource + humanSelf.dataId)}}>
                                                             <UserOutlined />
@@ -361,18 +365,18 @@ export default () => {
                                                 }, {
                                                     key: 'jump',
                                                     label: (
-                                                        <Button type='link' onClick={()=>{window.open(url.back)}}>
+                                                        <Button type='link' onClick={()=>{window.open(url.front)}}>
                                                             <RetweetOutlined />
-                                                            后台应用中心
+                                                            前台应用中心
                                                         </Button>
                                                     )
                                                 }, {
                                                     key: 'exit',
                                                     label: (
-                                                        <a href={url.login}>
+                                                        <Button type='link' danger href={url.login}>
                                                             <PoweroffOutlined />
                                                             退出登录
-                                                        </a>
+                                                        </Button>
                                                     )
                                                 }
                                             ],
@@ -383,7 +387,29 @@ export default () => {
                                 );
                             },
                         }}
+                        actionsRender={(props) => {
+                            if (props.isMobile) return [];
+                            if (typeof window === 'undefined') return [];
+                            return [
+                                <p key={"Text"}>后台引擎中心</p>,
+                                <AppstoreOutlined key='app' />
+                            ];
+                          }}
                         onMenuHeaderClick={(e) => console.log(e)}
+                        menuFooterRender={(props) => {
+                            if (props?.collapsed) return undefined;
+                            return (
+                              <div
+                                style={{
+                                  textAlign: 'center',
+                                  paddingBlockStart: 12,
+                                }}
+                              >
+                                <div>© 2024 Made with love</div>
+                                <div>by Zhang JunShan</div>
+                              </div>
+                            );
+                          }}
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {
