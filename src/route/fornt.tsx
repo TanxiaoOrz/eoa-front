@@ -9,6 +9,7 @@ import {
     ProLayout,
 } from '@ant-design/pro-components';
 import {
+    Button,
     ConfigProvider,
     Dropdown,
 } from 'antd';
@@ -222,26 +223,26 @@ export default () => {
                                                 {
                                                     key: 'self',
                                                     label: (
-                                                        <a href={url.frontUrl.humanResource + humanSelf.dataId}>
+                                                        <Button type='link' onClick={()=>{window.open(url.frontUrl.humanResource + humanSelf.dataId)}}>
                                                             <UserOutlined />
                                                             个人信息
-                                                        </a>
+                                                        </Button>
                                                     )
                                                 }, {
                                                     key: 'jump',
                                                     label: (
-                                                        <a href={url.back}>
+                                                        <Button type='link' onClick={()=>{window.open(url.back)}}>
                                                             <RetweetOutlined />
                                                             后台应用中心
-                                                        </a>
+                                                        </Button>
                                                     )
                                                 }, {
                                                     key: 'exit',
                                                     label: (
-                                                        <a href={url.login}>
+                                                        <Button type='link' href={url.login}>
                                                             <PoweroffOutlined />
                                                             退出登录
-                                                        </a>
+                                                        </Button>
                                                     )
                                                 }
                                             ],
