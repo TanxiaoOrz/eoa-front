@@ -10,6 +10,7 @@ import {
     SettingDrawer,
 } from '@ant-design/pro-components';
 import {
+    Button,
     ConfigProvider,
     Dropdown,
 } from 'antd';
@@ -350,20 +351,20 @@ export default () => {
                                         menu={{
                                             items: [
                                                 {
-                                                    key: 'self',
+                                                key: 'self',
                                                     label: (
-                                                        <a href={url.frontUrl.humanResource + humanSelf.dataId}>
+                                                        <Button type='link' onClick={()=>{window.open(url.frontUrl.humanResource + humanSelf.dataId)}}>
                                                             <UserOutlined />
                                                             个人信息
-                                                        </a>
+                                                        </Button>
                                                     )
                                                 }, {
                                                     key: 'jump',
                                                     label: (
-                                                        <a href={url.front}>
+                                                        <Button type='link' onClick={()=>{window.open(url.back)}}>
                                                             <RetweetOutlined />
-                                                            前台应用中心
-                                                        </a>
+                                                            后台应用中心
+                                                        </Button>
                                                     )
                                                 }, {
                                                     key: 'exit',

@@ -183,7 +183,7 @@ const FrontContent = (prop:{leadContent:number|undefined}) => {
         sort,
         filter,
       ) => {
-        params.leadContent = prop.leadContent === 0 ? "null" : prop.leadContent
+        params.leadContent = prop.leadContent
         return getDataList(config.fronts.content,params)
       }}
       editable={{
