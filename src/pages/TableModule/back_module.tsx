@@ -1,6 +1,6 @@
 import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown, Form, Layout, MenuProps , Typography } from 'antd';
+import { Button, Dropdown, Form, Layout, MenuProps, Typography } from 'antd';
 import React, { useRef } from 'react';
 import url from '../../const/url.js';
 import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
@@ -8,7 +8,7 @@ import { Content, Header } from 'antd/es/layout/layout';
 import { ModuleOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
 
-const {Title} = Typography
+const { Title } = Typography
 
 const baseURL = config.backs.module
 
@@ -19,7 +19,7 @@ type FormModule = {
 
 
 
-const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableRefObject<ActionType|undefined>}) => {
+const UpdateModule = (prop: { dataId: number, data: FormModule, action: React.MutableRefObject<ActionType | undefined> }) => {
   const [form] = Form.useForm<FormModule>();
   const items = [
     {
@@ -28,19 +28,19 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
       danger: true
     }
   ];
-  const deleteMethod: MenuProps['onClick'] = ()=>{
-    deleteData(baseURL+"/"+prop.dataId)
-    if (prop.action.current!==undefined)
+  const deleteMethod: MenuProps['onClick'] = () => {
+    deleteData(baseURL + "/" + prop.dataId)
+    if (prop.action.current !== undefined)
       prop.action.current.reload();
   }
   return (
-    <ModalForm<{moduleTypeName: string; workflowRemark: string}>
+    <ModalForm<{ moduleTypeName: string; workflowRemark: string }>
       initialValues={prop.data}
       title="编辑应用"
       trigger={
-        <Dropdown.Button 
+        <Dropdown.Button
           type="primary"
-          menu={{items,onClick:deleteMethod}}
+          menu={{ items, onClick: deleteMethod }}
         >
           编辑
         </Dropdown.Button>
@@ -49,10 +49,10 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
       form={form}
       submitTimeout={2000}
       autoFocusFirstInput
-      onFinish={async (values:FormModule)=>{
-        let success:boolean = await UpdateData(baseURL+"/"+prop.dataId,values)
+      onFinish={async (values: FormModule) => {
+        let success: boolean = await UpdateData(baseURL + "/" + prop.dataId, values)
         if (success)
-          if (prop.action.current!==undefined)
+          if (prop.action.current !== undefined)
             prop.action.current.reload();
         return success;
       }}
@@ -60,29 +60,29 @@ const UpdateModule = (prop:{dataId:number, data:FormModule,action:React.MutableR
         destroyOnClose: true,
         onCancel: () => console.log('run'),
       }}>
-        <ProFormText
-          width="md"
-          name="moduleTypeName"
-          label="应用名称"
-          tooltip="最长为33位"
-          placeholder="请输入应用名称"
-          required = {true}/>
-        <ProFormTextArea
-          width="md"
-          name="workflowRemark"  
-          label="应用备注"
-          tooltip="最长333位"
-          placeholder="请输入应用备注"
-          required={false}/>
-      </ModalForm>
+      <ProFormText
+        width="md"
+        name="moduleTypeName"
+        label="应用名称"
+        tooltip="最长为33位"
+        placeholder="请输入应用名称"
+        required={true} />
+      <ProFormTextArea
+        width="md"
+        name="workflowRemark"
+        label="应用备注"
+        tooltip="最长333位"
+        placeholder="请输入应用备注"
+        required={false} />
+    </ModalForm>
 
   )
 }
 
-const CreateModule = (prop:{action:React.MutableRefObject<ActionType|undefined>}) => {
+const CreateModule = (prop: { action: React.MutableRefObject<ActionType | undefined> }) => {
   const [form] = Form.useForm<FormModule>();
   return (
-    <ModalForm<{moduleTypeName: string; workflowRemark: string}>
+    <ModalForm<{ moduleTypeName: string; workflowRemark: string }>
       title="新建应用"
       trigger={
         <Button type="primary">
@@ -94,10 +94,10 @@ const CreateModule = (prop:{action:React.MutableRefObject<ActionType|undefined>}
       form={form}
       submitTimeout={2000}
       autoFocusFirstInput
-      onFinish={async (values:FormModule)=>{
-        let dataId = await newData(baseURL,values)
-        if (dataId!=-1) {
-          if (prop.action.current!==undefined)
+      onFinish={async (values: FormModule) => {
+        let dataId = await newData(baseURL, values)
+        if (dataId != -1) {
+          if (prop.action.current !== undefined)
             prop.action.current.reload();
         }
         return dataId != -1
@@ -106,21 +106,21 @@ const CreateModule = (prop:{action:React.MutableRefObject<ActionType|undefined>}
         destroyOnClose: true,
         onCancel: () => console.log('run'),
       }}>
-        <ProFormText
-          width="md"
-          name="moduleTypeName"
-          label="应用名称"
-          tooltip="最长为33位"
-          placeholder="请输入应用名称"
-          required = {true}/>
-        <ProFormTextArea
-          width="md"
-          name="workflowRemark"  
-          label="应用备注"
-          tooltip="最长333位"
-          placeholder="请输入应用备注"
-          required={false}/>
-      </ModalForm>
+      <ProFormText
+        width="md"
+        name="moduleTypeName"
+        label="应用名称"
+        tooltip="最长为33位"
+        placeholder="请输入应用名称"
+        required={true} />
+      <ProFormTextArea
+        width="md"
+        name="workflowRemark"
+        label="应用备注"
+        tooltip="最长333位"
+        placeholder="请输入应用备注"
+        required={false} />
+    </ModalForm>
 
   )
 }
@@ -128,97 +128,65 @@ const CreateModule = (prop:{action:React.MutableRefObject<ActionType|undefined>}
 
 const ModuleList = () => {
   const actionRef = useRef<ActionType>();
-  
+
   const columns: ProColumns<ModuleOut>[] = [
     {
-      key:'code',
-      title:'编号',
-      dataIndex:'moduleTypeId',
-      valueType:"indexBorder",
-      width:48,
+      key: 'code',
+      title: '编号',
+      dataIndex: 'moduleTypeId',
+      valueType: "indexBorder",
+      width: 48,
       align: "center"
-      
+
     },
     {
-      key:'name',
-      title:'应用名称',
-      dataIndex:'moduleTypeName',
+      key: 'moduleTypeName',
+      title: '应用名称',
+      dataIndex: 'moduleTypeName',
     },
     {
-      key:'remark',
-      title:'应用备注',
-      dataIndex:'workflowRemark',
+      key: 'workflowRemark',
+      title: '应用备注',
+      dataIndex: 'workflowRemark',
       ellipsis: true,
-      tip:"备注过长会自动收缩,鼠标放上去查看",
+      tip: "备注过长会自动收缩,鼠标放上去查看",
       hideInSearch: true,
     },
     {
-      key:'form',
-      title:'表单',
-      dataIndex:'tableCounts',
-      width:72,
-      align: "center",
-      hideInSearch: true,
-    },
-    {
-      key:'flow',
-      title:'流程',
-      dataIndex:'flowCounts',
-      width:72,
-      align: "center",
-      hideInSearch: true,
-    },
-    {
-      key:'serach',
-      title:'列表',
-      dataIndex:'searchCounts',
-      width:72,
-      align: "center",
-      hideInSearch: true,
-    },
-    {
-      key:'chart',
-      title:'图表',
-      dataIndex:'chartsCounts',
-      width:72,
-      align: "center",
-      hideInSearch: true,
-    },
-    {
-      key:'creator',
-      title:'创建者',
-      dataIndex:'creatorId',
-      width:48*2,
-      render:(dom,entity,index,action) => [
-        <a href={url.frontUrl.humanResource+entity.creatorId} key={"href"+entity.creatorId}>{entity.creatorName}</a>
+      key: 'creator',
+      title: '创建者',
+      dataIndex: 'creatorId',
+      width: 48 * 2,
+      render: (dom, entity, index, action) => [
+        <a href={url.frontUrl.humanResource + entity.creatorId} key={"href" + entity.creatorId}>{entity.creatorName}</a>
       ],
-      hideInSearch:true
+      hideInSearch: true
     },
     {
-      key:'createTimeShow',
-      title:'创建时间',
-      dataIndex:'createTime',
+      key: 'createTimeShow',
+      title: '创建时间',
+      dataIndex: 'createTime',
       valueType: "dateTime",
-      width:48*4,
-      hideInSearch:true
+      width: 48 * 4,
+      hideInSearch: true
     },
     {
-      key:'createTime',
-      title:'创建时间',
-      dataIndex:'createTime',
-      valueType:"dateTimeRange",
-      hideInTable:true
+      key: 'createTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
+      valueType: "dateTimeRange",
+      hideInTable: true
     },
     {
-      key:'action',
-      title:'操作',
-      dataIndex:"moduleTypeId",
-      width:48*3,
-      hideInSearch:true,
-      render:(dom,entity,index,action)=>
-        <UpdateModule 
-          dataId ={entity.moduleTypeId} 
-          data ={{
+      key: 'action',
+      title: '操作',
+      dataIndex: "moduleTypeId",
+      width: 48 * 3,
+      hideInSearch: true,
+      render: (dom, entity, index, action) =>
+        <UpdateModule
+          dataId={entity.moduleTypeId}
+          data={{
             moduleTypeName: entity.moduleTypeName,
             workflowRemark: entity.workflowRemark
           }}
@@ -226,7 +194,7 @@ const ModuleList = () => {
         />
     }
   ];
-  
+
   return (
     <ProTable<ModuleOut>
       columns={columns}
@@ -244,7 +212,7 @@ const ModuleList = () => {
         // console.log(params)
         // console.log(sort);
         // console.log(filter);
-        return getDataList("/api/v1/table/back/module",params)
+        return getDataList("/api/v1/table/back/module", params)
       }}
       editable={{
         type: 'multiple',
@@ -277,7 +245,7 @@ const ModuleList = () => {
       dateFormatter="string"
       headerTitle="应用列表"
       toolBarRender={() => [
-        <CreateModule key="create" action={actionRef}/>,
+        <CreateModule key="create" action={actionRef} />,
       ]}
     />
   );
@@ -285,21 +253,21 @@ const ModuleList = () => {
 
 const BackModule = () => {
   return (
-    <Layout style={{ minHeight: '100vh'}}>
-      <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
-        <div style={{display:'flex'}}>
-          <FolderOpenTwoTone style={{fontSize:"36px",marginTop:"15px",marginLeft:"5px"}}/>
-          <Title level={2} style={{color:'GrayText', marginLeft:'10px',marginBottom:'15px'}}>应用列表</Title>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
+        <div style={{ display: 'flex' }}>
+          <FolderOpenTwoTone style={{ fontSize: "36px", marginTop: "15px", marginLeft: "5px" }} />
+          <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '15px' }}>应用列表</Title>
         </div>
       </Header>
-      <Content style={{ padding: '15px 50px', minHeight:'100%'}}>
+      <Content style={{ padding: '15px 50px', minHeight: '100%' }}>
         <ModuleList />
       </Content>
-      
+
     </Layout>
 
 
-    
+
   )
 }
 

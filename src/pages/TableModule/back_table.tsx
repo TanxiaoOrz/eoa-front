@@ -43,7 +43,7 @@ const UpdateTable = (prop: { dataId: number, action: React.MutableRefObject<Acti
       type="primary"
       menu={{ items, onClick: deleteMethod }}
       onClick={() => {
-        window.location.assign(url.backUrl.table + "/" + prop.dataId + "?isVirtual=" + Number(prop.isVirtual))
+        window.open(url.backUrl.table + "/" + prop.dataId + "?isVirtual=" + Number(prop.isVirtual))
       }}
     >
       编辑
@@ -58,7 +58,7 @@ const TableList = (prop: { isvirtual: boolean }) => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableOut>[] = [
     {
-      key: 'code',
+      key: 'tableId',
       title: '编号',
       dataIndex: 'tableId',
       valueType: "indexBorder",
@@ -67,7 +67,7 @@ const TableList = (prop: { isvirtual: boolean }) => {
 
     },
     {
-      key: 'name',
+      key: 'tableViewName',
       title: '表单名称',
       dataIndex: 'tableViewName',
     },
@@ -80,7 +80,7 @@ const TableList = (prop: { isvirtual: boolean }) => {
       hideInSearch: true,
     },
     {
-      key: 'creator',
+      key: 'creatorId',
       title: '创建者',
       dataIndex: 'creatorId',
       width: 48 * 2,
@@ -238,8 +238,9 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
         let dataId: number = await newData(baseURL, values)
         if (dataId != -1) {
           if (jump)
-            window.location.assign(url.backUrl.table + "/" + dataId + "?isVirtual=" + Number(values.virtual));
+            window.open(url.backUrl.table + "/" + dataId + "?isVirtual=" + Number(values.virtual));
           prop.actionRef.current?.reload()
+          form.resetFields()
           return true
         }
         return false

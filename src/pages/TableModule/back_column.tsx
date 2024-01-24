@@ -276,6 +276,7 @@ const CreateColumn = (prop:{virtual:boolean,groupSelect:DropSelect[],detaildSele
                 let id:number = await newData(config.backs.column,values)
                 if (id>0) {
                     prop.actionRef.current?.reload();
+                    form.resetFields()
                     return true;
                 }
                 return false
@@ -447,7 +448,7 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
     const actionRef = useRef<ActionType>();
     const columnsList: ProColumns<ColumnOut>[] = [
         {
-            key:'id',
+            key:'columnId',
             title:'字段编号',
             valueType:'indexBorder',
             dataIndex:'columnId',
@@ -455,15 +456,15 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
             align:'center',
             hideInSearch:true
         },{
-            key:'name',
+            key:'columnViewName',
             title:'字段名称',
             dataIndex:'columnViewName',
         },{
-            key:'dataName',
+            key:'columnDataName',
             title:'数据库名称',
             dataIndex:'columnDataName'
         },{
-            key:'type',
+            key:'columnType',
             title:'字段类型',
             valueType:'select',
             dataIndex:'columnType',
@@ -471,12 +472,12 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
                 return columnTypeSelect;
             }
         },{
-            key:'order',
+            key:'columnViewNo',
             title:'显示顺序',
             valueType:'index',
             dataIndex:'columnViewNo'
         },{
-            key:'group',
+            key:'columnGroupNo',
             title:'主表分组',
             valueType:'select',
             dataIndex:'columnGroupNo',
@@ -486,7 +487,7 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
                 return prop.table.groupSelect.map((v)=>{v.disable=false; return {value:v.key,label:v.label}})
             }
         },{
-            key:'detail',
+            key:'columnDetailNo',
             title:'明细分组',
             valueType:'select',
             dataIndex:'columnDetailNo',
@@ -533,20 +534,20 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
         }
     ]
 
-    // if (prop.table === undefined)
-    //     columnsList.push({
-    //         key:'type',
-    //         title:'是否虚拟',
-    //         dataIndex:"virtual",
-    //         valueType:'select',
-    //         request:async () => {
-    //             return [
-    //                 {label:"是",value:true},
-    //                 {label:"否",value:false},
-    //             ]
-    //         },
-    //         hideInTable:true
-    //     })
+    if (prop.table === undefined)
+        columnsList.push({
+            key:'isVirtualSelect',
+            title:'是否虚拟',
+            dataIndex:"isVirtual",
+            valueType:'select',
+            request:async () => {
+                return [
+                    {label:"是",value:true},
+                    {label:"否",value:false},
+                ]
+            },
+            hideInTable:true
+        })
 
     return (
         <ProTable<ColumnOut> 
@@ -557,11 +558,11 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
                 sort,
                 filter
               ) => {
-                if (prop.table !== undefined) {
+                if (prop.table !== undefined  ) {
                     params.tableNo = prop.table.tableId
-                    params.virtual = prop.table.virtual
-                } else {
-                    params.virtual = true
+                    params.isVirtual = prop.table.virtual
+                } else if (params.isVirtual === undefined) {
+                    params.isVirtual = true
                 }
                 return getDataList(config.backs.column, params)
               }
