@@ -2,7 +2,7 @@ import { FolderOpenTwoTone, PlusOutlined, SnippetsFilled, UnorderedListOutlined 
 import { ActionType, ModalForm, ProColumns, ProFormDependency, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
 import { Button, Dropdown, Form, Layout, List, MenuProps, Modal, Tabs } from "antd"
 import Title from "antd/lib/typography/Title";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import config from "../../const/config";
 import { ColumnOut, ContentOut, DropSelect, TableOut } from "../../const/out"
 import { deleteData, getDataList, newData, UpdateData } from "../../const/http.tsx"
@@ -448,6 +448,10 @@ const ColumnGroup = (prop: { table: TableOut | undefined }) => {
 }
 
 const BackColumn = (prop: { table: TableOut | undefined }) => {
+    useEffect(() => {
+        if (prop.table === undefined)
+            document.title = "字段列表"
+    })
     const actionRef = useRef<ActionType>();
     const columnsList: ProColumns<ColumnOut>[] = [
         {
@@ -623,11 +627,11 @@ const BackColumn = (prop: { table: TableOut | undefined }) => {
                     <UnorderedListOutlined style={{ fontSize: "36px", marginTop: "30px", marginLeft: "5px", marginBottom: '30px' }} />
                     <Title level={2} style={{ color: 'GrayText', marginLeft: '10px', marginBottom: '30px' }}>字段列表</Title>
                 </Header>
-                
-                    <Content style={{ padding: '15px 50px' }}>
-                        {base}
-                    </Content>
-                
+
+                <Content style={{ padding: '15px 50px' }}>
+                    {base}
+                </Content>
+
             </Layout>
         )
     else

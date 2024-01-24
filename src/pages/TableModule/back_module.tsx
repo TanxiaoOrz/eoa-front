@@ -1,7 +1,7 @@
 import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown, Form, Layout, MenuProps, Typography } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import url from '../../const/url.js';
 import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
@@ -127,6 +127,9 @@ const CreateModule = (prop: { action: React.MutableRefObject<ActionType | undefi
 
 
 const ModuleList = () => {
+  useEffect(()=>{
+    document.title = "模块列表"
+  })
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<ModuleOut>[] = [

@@ -241,6 +241,7 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
             window.open(url.backUrl.table + "/" + dataId + "?isVirtual=" + Number(values.virtual));
           prop.actionRef.current?.reload()
           form.resetFields()
+          jump = false
           return true
         }
         return false
@@ -307,6 +308,9 @@ const BackTable = () => {
   const [position, setPosition] = useState<PaginationPosition>('top');
   const [align, setAlign] = useState<PaginationAlign>('center');
   const [moduleList, setModuleList] = useState<ModuleOut[]>([])
+  useEffect(()=>{
+    document.title = "表单列表"
+  })
   useEffect(() => {
     if (moduleList.length == 0)
       (getDataList("/api/v1/table/back/module", { toBrowser: true })).then((value) => {
