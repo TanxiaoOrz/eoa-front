@@ -10,6 +10,7 @@ export default function ErrorPage() {
       <p>Sorry, an unexpected error has occurred.</p>
       <p>
         <i>{error.statusText || error.message}</i>
+        <i>  {window.location.href}  </i>
       </p>
     </div>
   );
