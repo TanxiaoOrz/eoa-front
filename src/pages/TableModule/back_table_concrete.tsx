@@ -211,11 +211,10 @@ const BackTableConcrete = () => {
                 breadcrumb: {
                 items: [
                     {
-                    path: '',
+                    path: url.backUrl.table+"?moduleNo="+table.moduleNo,
                     title: table.moduleName,
                     },
                     {
-                    path: '',
                     title: table.tableViewName,
                     },
                 ],
