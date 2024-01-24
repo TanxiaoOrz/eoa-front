@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { UpdateData, deleteData, getDataList, getDataOne } from "../../const/http.tsx"
 import { MenuOut } from "../../const/out.tsx"
 import config from "../../const/config"
 import { Button, Form } from "antd"
-import React from "react"
 import { PageContainer, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormText, ProFormTreeSelect } from "@ant-design/pro-components"
 import { useParams } from "react-router"
 import url from "../../const/url"
@@ -35,7 +34,9 @@ const BackMenuConcrete = () => {
                 }
             })
     })
-
+    useEffect(() => {
+        document.title = '页面菜单-' + menu?.contentName
+    }, [menu?.contentName])
 
     if (menuId === undefined) {
         window.location.replace(url.backUrl.menu)
@@ -48,7 +49,7 @@ const BackMenuConcrete = () => {
 
     const dropMenu = async () => {
         if ((await deleteData(config.backs.menu + "/" + menuId)))
-            window.location.reload()
+            setTimeout(() => window.close(), 1000)
     }
 
     const MenuBase = (
@@ -64,45 +65,49 @@ const BackMenuConcrete = () => {
                 initialValues={menu}
                 onFinish={async (menuIn: MenuIn) => {
                     menuIn.shareAuthority = menu.shareAuthority
-                    return (await UpdateData(config.backs.menu + "/" + menuId, menuIn))
+                    if (await UpdateData(config.backs.menu + "/" + menuId, menuIn)) {
+                        setTimeout(() => window.location.reload(), 1000)
+                        return true
+                    } else
+                        return false
                 }}
             >
                 <ProFormGroup size={"large"} title="基本信息">
-                <ProFormText
-                width="md"
-                name="contentName"
-                label="菜单名称"
-                tooltip="最长为33位"
-                placeholder="请输入菜单名称"
-                required={true} />
-            <ProFormTreeSelect
-                width="md"
-                name="belongContent"
-                label="上级菜单"
-                placeholder="请选择所属模块"
-                tooltip="置空代表根菜单"
-                required={true}
-                request={async () => {
-                    let menuList: MenuOut[] = (await getDataList(config.backs.menu, { toBrowser: true })).data
-                    const values: { title: string, value: number, children: any[] }[] = menuList.map(
-                        (item) => {
-                            return { title: item.contentName, value: item.dataId, children: [] };
-                        })
-                    return values
-                }} />
-            <ProFormText
-                width="md"
-                name="contentUrl"
-                label="菜单链接"
-                tooltip="最长为333位"
-                placeholder="请输入菜单链接"
-                required={true} />
-            <ProFormDigit
-                width={'md'}
-                name={'viewNo'}
-                label={'显示顺序'}
-                placeholder={"不输入自动排到最后"}
-                fieldProps={{ precision: 0 }} />
+                    <ProFormText
+                        width="md"
+                        name="contentName"
+                        label="菜单名称"
+                        tooltip="最长为33位"
+                        placeholder="请输入菜单名称"
+                        required={true} />
+                    <ProFormTreeSelect
+                        width="md"
+                        name="belongContent"
+                        label="上级菜单"
+                        placeholder="请选择所属模块"
+                        tooltip="置空代表根菜单"
+                        required={true}
+                        request={async () => {
+                            let menuList: MenuOut[] = (await getDataList(config.backs.menu, { toBrowser: true })).data
+                            const values: { title: string, value: number, children: any[] }[] = menuList.map(
+                                (item) => {
+                                    return { title: item.contentName, value: item.dataId, children: [] };
+                                })
+                            return values
+                        }} />
+                    <ProFormText
+                        width="md"
+                        name="contentUrl"
+                        label="菜单链接"
+                        tooltip="最长为333位"
+                        placeholder="请输入菜单链接"
+                        required={true} />
+                    <ProFormDigit
+                        width={'md'}
+                        name={'viewNo'}
+                        label={'显示顺序'}
+                        placeholder={"不输入自动排到最后"}
+                        fieldProps={{ precision: 0 }} />
                 </ProFormGroup>
                 <ProFormGroup size={"large"} title="创建信息">
                     <ProFormDatePicker
@@ -121,9 +126,9 @@ const BackMenuConcrete = () => {
             </ProForm>
         </div>
     )
-    
 
-    let title = menu.isDeprecated?" 已废弃": ""
+
+    let title = menu.isDeprecated ? " 已废弃" : ""
     return (
         <div
             style={{ background: '#F5F7FA' }}
@@ -134,17 +139,15 @@ const BackMenuConcrete = () => {
                     breadcrumb: {
                         items: [
                             {
-                                path: url.backUrl.menu,
                                 title: '展示列表',
                             },
                             {
-                                path: url.backUrl.menu + '/' + menuId,
                                 title: menu.contentName,
                             },
                         ],
                     },
                     extra: [
-                        <Button key='save' type="primary" onClick={() => { form.submit() }}>{menu.isDeprecated === 0?"保存":"保存并启用"}</Button>,
+                        <Button key='save' type="primary" onClick={() => { form.submit() }}>{menu.isDeprecated === 0 ? "保存" : "保存并启用"}</Button>,
                         <Button key='reset' onClick={() => { form.resetFields() }}>重置</Button>,
                         <Button key='drop' type='default' danger onClick={dropMenu} disabled={menu.isDeprecated !== 0}>封存</Button>
                     ]

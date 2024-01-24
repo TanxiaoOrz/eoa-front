@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { getDataList, newData } from "../../const/http.tsx"
 import { MenuOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
@@ -61,6 +61,7 @@ const CreateMenu = (prop: { belongContent: number | null, actionRef: React.Mutab
                         window.location.assign(url.backUrl.menu_concrete + dataId);
                     prop.actionRef.current?.reload()
                     form.resetFields()
+                    jump = false
                     return true
                 }
                 return false
@@ -254,6 +255,10 @@ const MenuList = (prop: { belongContent: number | null }) => {
 
 const BackMenuList = (prop: { belongContent: number | null }) => {
     let header = <></>
+    useEffect(() => {
+        if (prop.belongContent === null)
+            document.title = '页面菜单'
+    })
     if (prop.belongContent === null)
         header = (
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>

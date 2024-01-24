@@ -1,7 +1,7 @@
 ﻿import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
 import { Button, Form, Layout, Typography } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import url from '../../const/url.js';
 import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
@@ -64,10 +64,12 @@ const CreaterDepart = (prop: { action: React.MutableRefObject<ActionType | undef
                 let dataId = await newData(config.backs.depart, values)
                 if (dataId != -1) {
                     if (jump)
-                        window.location.assign(url.backUrl.depart_concrete + dataId)
+                        window.open(url.backUrl.depart_concrete + dataId)
                     if (prop.action.current !== undefined)
                         prop.action.current.reload();
+                    form.resetFields()
                 }
+                jump = false
                 return dataId != -1
             }}
             modalProps={{
@@ -151,7 +153,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             dataIndex: 'departName',
             ellipsis: true,
         }, {
-            key:'departManagerSearch',
+            key:'departManager',
             hideInTable:true,
             dataIndex:'departManager',
             valueType:'select',
@@ -160,7 +162,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
                 return humans.map((human,index,array)=>{return {label:human.name, value:human.dataId}})
             }
         }, {
-            key: 'departManager',
+            key: 'managerName',
             title: '部门负责人',
             dataIndex: 'managerName',
             render: (dom, entity, index, action, schema) => {
@@ -168,7 +170,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             },
             search: false
         },{
-            key:'belongSectionSearch',
+            key:'belongSection',
             hideInTable:true,
             dataIndex:'belongSection',
             valueType:'select',
@@ -177,7 +179,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
                 return sections.map((section,index,array)=>{return {label:section.sectionName, value:section.dataId}})
             }
         }, {
-            key: 'belongSection',
+            key: 'belongSectionName',
             title: '所属分部',
             dataIndex: 'belongSectionName',
             render: (dom, entity, index, action, schema) => {
@@ -185,7 +187,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             },
             hideInSearch:true
         },{
-            key:'belongDepartSearch',
+            key:'belongDepart',
             hideInTable:true,
             dataIndex:'belongDepart',
             valueType:'select',
@@ -195,7 +197,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             }
         },
         {
-            key: 'belongDepart',
+            key: 'belongDepartName',
             title: '上级部门',
             dataIndex: 'belongDepartName',
             valueType: "select",
@@ -255,13 +257,6 @@ const DepartList = (prop: { depart: number, section: number }) => {
             editable={{
                 type: 'multiple',
             }}
-            columnsState={{
-                persistenceKey: 'pro-table-singe-demos',
-                persistenceType: 'localStorage',
-                onChange(value) {
-                    console.log('value: ', value);
-                },
-            }}
             rowKey="id"
             search={{
                 labelWidth: 'auto',
@@ -269,18 +264,6 @@ const DepartList = (prop: { depart: number, section: number }) => {
             options={{
                 setting: {
                     listsHeight: 400,
-                },
-            }}
-            form={{
-                // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
                 },
             }}
             pagination={{
@@ -297,6 +280,9 @@ const DepartList = (prop: { depart: number, section: number }) => {
 };
 
 const BackDepart = (prop: { depart: number, section: number }) => {
+    useEffect(() => {
+        document.title = '部门列表' 
+    })
     let header = (
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
             <div style={{ display: 'flex' }}>

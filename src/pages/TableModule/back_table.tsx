@@ -5,7 +5,6 @@ import { Content, Header } from 'antd/es/layout/layout';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { deleteData, getDataList, newData } from '../../const/http.tsx';
-import { PaginationAlign, PaginationPosition } from 'antd/es/pagination/Pagination';
 import { ModuleOut, TableOut } from '../../const/out.tsx';
 import { ActionType, ModalForm, ProFormText, ProFormTextArea, ProColumns, ProTable, ProFormSelect, ProFormTreeSelect } from '@ant-design/pro-components';
 import url from '../../const/url.js';
@@ -198,10 +197,10 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
     title = "虚拟视图"
   else
     title = "实体表单"
-  // console.log(moduleNo);
+  
   if (moduleNo == "")
     moduleNo = null;
-  // console.log(valueEnumModule);
+  
   return (
     <ModalForm<TableInSimple>
       title={title}
@@ -305,8 +304,8 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
 
 
 const BackTable = () => {
-  const [position, setPosition] = useState<PaginationPosition>('top');
-  const [align, setAlign] = useState<PaginationAlign>('center');
+  const position ='top'
+  const align = 'center';
   const [moduleList, setModuleList] = useState<ModuleOut[]>([])
   useEffect(()=>{
     document.title = "表单列表"

@@ -1,14 +1,12 @@
-import { useState, useEffect, useRef } from "react"
-import { UpdateData, deleteData, getDataList, getDataOne } from "../../const/http.tsx"
-import { ColumnOut, FormOut, SearchListColumnOut, SearchListDtoOut, TableOut, WorkflowNodeOut, WorkflowRouteOut } from "../../const/out.tsx"
+import React, { useState, useEffect, useRef } from "react"
+import { getDataList, getDataOne } from "../../const/http.tsx"
+import { ColumnOut, FormOut, SearchListColumnOut, SearchListDtoOut } from "../../const/out.tsx"
 import config from "../../const/config"
-import { Button, Form, Layout, Typography } from "antd"
-import React from "react"
-import { ActionType, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormDigit, ProFormGroup, ProFormText, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
+import { Button, Layout, Typography } from "antd"
+import { ActionType, ProColumns, ProTable } from "@ant-design/pro-components"
 import { useParams } from "react-router"
 import url from "../../const/url"
 import PageWait from "../../componet/PageWait.tsx"
-import ActionEdit from "../../componet/ActionEdit.tsx"
 import { transprotColumnSearch } from "../../const/columnType.tsx"
 import { FolderOpenTwoTone } from "@ant-design/icons"
 import { Header, Content } from "antd/es/layout/layout"
@@ -81,6 +79,9 @@ const FrontSearchConcrete = () => {
                 }
             })
     })
+    useEffect(() => {
+        document.title = '展示列表-' + searchList?.searchListOut.searchListName
+    }, [searchList?.searchListOut.searchListName])
 
     if (searchListId === undefined) {
         window.location.replace(url.backUrl.workflow)

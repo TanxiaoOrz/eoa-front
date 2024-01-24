@@ -1,17 +1,12 @@
-import { useState, useEffect, useRef, Children } from "react"
-import { UpdateData, deleteData, getDataList, getDataOne, newData } from "../../const/http.tsx"
-import { ColumnOut, ModuleOut, SearchListOut, TableOut, WorkflowOut } from "../../const/out.tsx"
+import React, { useState, useEffect, useRef } from "react"
+import { UpdateData, deleteData, getDataList, getDataOne } from "../../const/http.tsx"
+import { ModuleOut, SearchListOut, TableOut } from "../../const/out.tsx"
 import config from "../../const/config"
-import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Layout, List, Modal, Select, Tabs, Typography } from "antd"
-import Sider from "antd/es/layout/Sider"
-import { Header, Content } from "antd/es/layout/layout"
-import React from "react"
-import { ActionType, EditableFormInstance, EditableProTable, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormGroup, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
-import { useLocation, useParams } from "react-router"
+import { Button, Form, Input, Select } from "antd"
+import { EditableFormInstance, EditableProTable, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormGroup, ProFormSelect, ProFormText, ProFormTreeSelect } from "@ant-design/pro-components"
+import { useParams } from "react-router"
 import url from "../../const/url"
 import PageWait from "../../componet/PageWait.tsx"
-import { tab } from "@testing-library/user-event/dist/tab"
 import BackSearchListColumn from "./back_search_column.tsx"
 import { AuthorityEdit } from "../../componet/AuthorityEdit.tsx"
 
@@ -57,7 +52,9 @@ const BackSearchListConcrete = () => {
                 }
             })
     })
-
+    useEffect(() => {
+        document.title = '展示列表-' + searchList?.searchListName
+    }, [searchList?.searchListName])
 
     if (searchListId === undefined) {
         window.location.replace(url.backUrl.workflow)
@@ -68,12 +65,12 @@ const BackSearchListConcrete = () => {
         return (<PageWait />)
 
 
-    const dropDepart = async () => {
+    const dropSearchList = async () => {
         if ((await deleteData(config.backs.search_list + "/" + searchListId)))
-            window.location.reload()
+            setTimeout(() => window.close(), 1000)
     }
 
-    const SearchListBase = (
+    const searchListBase = (
         <div style={{ display: "flex", background: "#fdfdfd", paddingTop: "30px", paddingLeft: "10px" }}>
             <ProForm<SearchListIn>
                 form={form}
@@ -94,11 +91,15 @@ const BackSearchListConcrete = () => {
                     searchListIn.defaultCondition = JSON.stringify(defaultCondition)
                     searchListIn.shareAuthority = searchList.shareAuthority
                     searchListIn.orders = searchList.orders
-                    return (await UpdateData(config.backs.search_list + "/" + searchListId, searchListIn))
+                    if (await UpdateData(config.backs.search_list + "/" + searchListId, searchListIn)) {
+                        setTimeout(() => window.location.reload(), 1000)
+                        return true
+                    } else
+                        return false
                 }}
                 onValuesChange={(changedValues, workflowIn) => {
                     if (workflowIn.isVirtual !== virtual)
-                        setVirtual(virtual)
+                        setVirtual(workflowIn.isVirtual)
                 }}
             >
                 <ProFormGroup size={"large"} title="基本信息">
@@ -264,7 +265,7 @@ const BackSearchListConcrete = () => {
     const configPage = (
         <div style={{ margin: "5px" }}>
             <p>排序字段</p>
-            <Input placeholder="请输入排序字段" onChange={(value) => { orderChange(value, 0) }} style={{width:"30%"}}/>
+            <Input placeholder="请输入排序字段" onChange={(value) => { orderChange(value, 0) }} style={{ width: "30%" }} />
             <Select
                 options={[
                     {
@@ -293,11 +294,9 @@ const BackSearchListConcrete = () => {
                     breadcrumb: {
                         items: [
                             {
-                                path: url.backUrl.search_list,
                                 title: '展示列表',
                             },
                             {
-                                path: url.backUrl.workflow_concrete + '/' + searchListId,
                                 title: searchList.searchListName,
                             },
                         ],
@@ -305,14 +304,14 @@ const BackSearchListConcrete = () => {
                     extra: [
                         <Button key='save' type="primary" onClick={() => { form.submit() }}>保存</Button>,
                         <Button key='reset' onClick={() => { form.resetFields() }}>重置</Button>,
-                        <Button key='drop' type='default' danger onClick={dropDepart}>封存</Button>
+                        <Button key='drop' type='default' danger onClick={dropSearchList}>封存</Button>
                     ]
                 }}
                 tabList={[
                     {
                         key: "base",
                         tab: "基本信息",
-                        children: SearchListBase
+                        children: searchListBase
                     }, {
                         key: "columns",
                         tab: "展示字段信息",

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { getDataList, newData } from "../../const/http.tsx"
 import { ModuleOut, TableOut, SearchListOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
@@ -6,7 +6,6 @@ import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/ico
 import { Button, Form, Layout, List, Tabs, Typography } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { Header, Content } from "antd/es/layout/layout"
-import React from "react"
 import { ActionType, ModalForm, ProColumns, ProFormSelect, ProFormText, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
 import { useLocation } from "react-router"
 import url from "../../const/url.js"
@@ -63,6 +62,8 @@ const CreateSearch = (prop: { moduleTypeId: string | null, actionRef: React.Muta
                     if (jump)
                         window.location.assign(url.backUrl.search_list_concrete + dataId);
                     prop.actionRef.current?.reload()
+                    form.resetFields()
+                    jump = false
                     return true
                 }
                 return false
@@ -134,7 +135,7 @@ const SearchList = (prop: { isVirtual: 0 | 1 }) => {
     const moduleNo = query.get("moduleNo");
     const columns: ProColumns<SearchListOut>[] = [
         {
-            key: 'code',
+            key: 'dataId',
             title: '编号',
             dataIndex: 'dataId',
             valueType: "indexBorder",
@@ -233,18 +234,6 @@ const SearchList = (prop: { isVirtual: 0 | 1 }) => {
                     listsHeight: 400,
                 },
             }}
-            form={{
-                // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
-                },
-            }}
             pagination={{
                 pageSize: 10,
                 onChange: (page) => console.log(page),
@@ -265,6 +254,9 @@ const BackSearchList = () => {
             (getDataList(config.backs.module)).then((value) => {
                 setModuleList(value.data)
             })
+    })
+    useEffect(() => {
+        document.title = '展示列表'
     })
     const tabs = [
         {

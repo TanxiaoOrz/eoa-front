@@ -1,14 +1,11 @@
-import { useState, useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { UpdateData, deleteData, getDataList, newData } from "../../const/http.tsx"
-import { ModuleOut, TableOut, SearchListOut, ColumnOut, SearchListColumnOut } from "../../const/out.tsx"
+import { SearchListOut, ColumnOut, SearchListColumnOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
-import { SnippetsFilled, FolderOpenTwoTone, PlusOutlined } from "@ant-design/icons"
-import { Button, Dropdown, Form, Layout, List, MenuProps, Tabs, Typography } from "antd"
-import Sider from "antd/es/layout/Sider"
+import { SnippetsFilled, PlusOutlined } from "@ant-design/icons"
+import { Button, Dropdown, Form, Layout, MenuProps, Typography } from "antd"
 import { Header, Content } from "antd/es/layout/layout"
-import React from "react"
 import { ActionType, ModalForm, ProColumns, ProFormDigit, ProFormSelect, ProFormText, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
-import { useLocation } from "react-router"
 import url from "../../const/url.js"
 
 const { Title } = Typography;
@@ -48,9 +45,9 @@ const CreateSearchListColumn = (prop: { searchListId: number, isVirtual: 0 | 1, 
                 let dataId: number = await newData(config.backs.search_list_column, values)
                 if (dataId != -1) {
                     prop.actionRef.current?.reload()
+                    form.resetFields()
                     return true
                 }
-                form.resetFields()
                 return false
             }}
         >
@@ -142,7 +139,7 @@ const UpdateSearchListColumn = (prop: { searchListColumn: SearchListColumnOut, t
                 },
             }}
             onFinish={async (values: SearchListColumnIn) => {
-                console.log(values)
+                // console.log(values)
                 if (await UpdateData(config.backs.search_list_column + "/" + prop.searchListColumn.dataId, values)) {
                     prop.actionRef.current?.reload()
                     return true
@@ -220,7 +217,7 @@ const DeleteSearchListColumn = (prop: { dataId: number, actionRef: React.Mutable
         <Button
             danger
             onClick={async () => {
-                deleteData(config.backs.search_list_column +  "/" + prop.dataId).then((value) => {
+                deleteData(config.backs.search_list_column + "/" + prop.dataId).then((value) => {
                     if (value)
                         prop.actionRef.current?.reload()
                 })
@@ -275,7 +272,7 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
                 }
             ]
         }, {
-            key: 'order',
+            key: 'viewNo',
             title: '显示顺序',
             valueType: 'index',
             dataIndex: 'viewNo'
@@ -294,20 +291,20 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
                     {
                         key: "edit",
                         label: updateB,
-                    },{
+                    }, {
                         key: "delete",
                         label: deleteB
                     }
                 ]
                 return (
-                    <Dropdown   
-                        menu={{items}}
+                    <Dropdown
+                        menu={{ items }}
                         placement='bottomLeft'
-                        
-                        >
-                            <Button>操作</Button>
-                        </Dropdown>
-                        
+
+                    >
+                        <Button>操作</Button>
+                    </Dropdown>
+
                 )
             }
         }
@@ -334,18 +331,6 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
                     listsHeight: 400,
                 },
             }}
-            form={{
-                // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
-                },
-            }}
             pagination={{
                 pageSize: 10,
                 onChange: (page) => console.log(page),
@@ -360,6 +345,10 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
 }
 
 const BackSearchListColumn = (prop: { searchList: SearchListOut | null }) => {
+    useEffect(()=>{
+        if (prop.searchList === null)
+            document.title = '展示字段列表'
+    })
 
     let header = <></>
     if (prop.searchList === null)

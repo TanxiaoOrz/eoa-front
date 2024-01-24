@@ -1,11 +1,11 @@
-import React, { useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { UpdateData, getDataList, newData } from "../../const/http.tsx"
 import { LoginConfigOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
 import { SnippetsFilled, PlusOutlined } from "@ant-design/icons"
 import { Button, Form, Layout, Typography } from "antd"
 import { Header, Content } from "antd/es/layout/layout"
-import { ActionType, ModalForm, ProColumns, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProTable } from "@ant-design/pro-components"
+import { ActionType, ModalForm, ProColumns, ProFormSelect, ProFormText, ProFormTextArea, ProTable } from "@ant-design/pro-components"
 
 const { Title } = Typography;
 
@@ -342,7 +342,9 @@ const LoginConfigList = () => {
 }
 
 const BackLoginConfig = () => {
-
+    useEffect(() => {
+        document.title = '登录配置' 
+    })
     return (
         <Layout style={{ minHeight: '98.5vh' }}>
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>

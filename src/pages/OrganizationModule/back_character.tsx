@@ -1,11 +1,11 @@
 ﻿import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown, Form, Layout, MenuProps , Typography } from 'antd';
-import React, { useRef } from 'react';
+import { Button, Form, Layout, Typography } from 'antd';
+import React, { useEffect, useRef } from 'react';
 import url from '../../const/url.js';
-import { UpdateData, deleteData, getDataList, newData } from '../../const/http.tsx';
+import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
-import { CharacterOut, ModuleOut } from '../../const/out.tsx';
+import { CharacterOut } from '../../const/out.tsx';
 import config from '../../const/config.js';
 
 const {Title} = Typography
@@ -141,7 +141,7 @@ const CharacterList = () => {
       width:48*3,
       hideInSearch:true,
       render:(dom,entity,index,action)=>
-        <Button href={url.backUrl.character_concrete+entity.dataId}>编辑</Button>
+        <Button onClick={()=>{window.open(url.backUrl.character_concrete+entity.dataId)}}>编辑</Button>
     }
   ];
   
@@ -167,13 +167,6 @@ const CharacterList = () => {
       editable={{
         type: 'multiple',
       }}
-      columnsState={{
-        persistenceKey: 'pro-table-singe-demos',
-        persistenceType: 'localStorage',
-        onChange(value) {
-          console.log('value: ', value);
-        },
-      }}
       rowKey="id"
       search={{
         labelWidth: 'auto',
@@ -181,18 +174,6 @@ const CharacterList = () => {
       options={{
         setting: {
           listsHeight: 400,
-        },
-      }}
-      form={{
-        // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-        syncToUrl: (values, type) => {
-          if (type === 'get') {
-            return {
-              ...values,
-              created_at: [values.startTime, values.endTime],
-            };
-          }
-          return values;
         },
       }}
       pagination={{
@@ -209,6 +190,9 @@ const CharacterList = () => {
 };
 
 const BackCharacter = () => {
+  useEffect(() => {
+    document.title = '角色列表' 
+})
   return (
     <Layout style={{ minHeight: '100vh'}}>
       <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px",}}>
