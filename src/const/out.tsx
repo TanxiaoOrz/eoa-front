@@ -160,6 +160,7 @@ export type FileOut = {
 }
 
 export type ColumnSimpleOut = {
+    columnDataName: string
     columnViewName: string,
     columnType: string,
     columnTypeDescription: string,
@@ -168,14 +169,14 @@ export type ColumnSimpleOut = {
 export type Group = {
     groupId: number
     groupName: string
-    columns: any
+    columns: ColumnSimpleOut[]
     values: any
 }
 
 export type Detail = {
     detailId: number
     detailName: string
-    columns: any
+    columns: ColumnSimpleOut[]
     values: any[]
     editorFormRef: React.MutableRefObject<EditableFormInstance | undefined>
 }

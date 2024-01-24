@@ -32,9 +32,9 @@ const DetailTable = (prop: { detail: Detail, getEditAble: (columnName: string) =
     let entries = Object.entries(detail.columns)
     if (entries.length === 0)
         return (<></>)
-    for (let [key, column] of entries) {
+    for (let column of detail.columns) {
         // console.log(key, prop.getEditAble(key))
-        detailColumn.push(transprotColumn(key, detail.values, column as ColumnSimpleOut, prop.getEditAble(key), editorFormRef))
+        detailColumn.push(transprotColumn(column.columnDataName, detail.values, column, prop.getEditAble(column.columnDataName), editorFormRef))
     }
 
     if (prop.editable)
@@ -104,9 +104,9 @@ const GroupForm = (prop: { group: Group, getEditAble: (columnName: string) => bo
     if (entries.length === 0)
         return (<></>)
 
-    for (let [key, value] of entries) {
-        // console.log(key,prop.getEditAble(key))
-        row.push(transportInput(key, group.values, value as ColumnSimpleOut, prop.form, prop.getEditAble(key)))
+    for (let value of group.columns) {
+        console.log(prop.getEditAble(value.columnDataName),value)
+        row.push(transportInput(value.columnDataName, group.values, value as ColumnSimpleOut, prop.form, prop.getEditAble(value.columnDataName)))
         count++
         if (count == 2 || (value as ColumnSimpleOut).columnType == columnType.areaText) {
             children.push(
