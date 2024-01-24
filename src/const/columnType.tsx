@@ -253,18 +253,22 @@ export const transprotColumnSearch = (columnSimple:ColumnOut, title:string):ProC
         }
         case columnType.number :{
             column.valueType = 'digit'
+            column.key = columnSimple.columnDataName+"show"
             let columnSearch:ProColumns = JSON.parse(JSON.stringify(column))
             column.hideInSearch = true
             columnSearch.hideInForm = true
             columnSearch.valueType = 'digitRange'
+            columnSearch.key = columnSimple.columnDataName
             return [column, columnSearch]
         }
         case columnType.date :{
             let columnSearch:ProColumns = JSON.parse(JSON.stringify(column))
             column.valueType = 'dateTime'
+            column.key = columnSimple.columnDataName
             column.hideInSearch = true
             columnSearch.hideInForm = true
             columnSearch.valueType = 'dateRange'
+            columnSearch.key = columnSimple.columnDataName
             return [column, columnSearch]
         }
         case columnType.select :{
