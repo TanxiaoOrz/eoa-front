@@ -242,7 +242,7 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: strin
     const detailLists = formOut.details.map((value, index, array) => <DetailTable key={index} detail={value} getEditAble={getEditAble} addable={type === 0 || prop.getDetailAuthority(value.detailId, "add")} minusable={type === 0 || prop.getDetailAuthority(value.detailId, "remove")} editable={type === 0 || prop.getDetailAuthority(value.detailId, "edit")} />)
     let subbmiter: React.JSX.Element[]
 
-    if (prop.formOut === null)
+    if (prop.formOut === null && !formOut.virtual)
         if (type === 0)
             subbmiter = [<Button key='save' type='primary' onClick={save}>保存</Button>]
         else
