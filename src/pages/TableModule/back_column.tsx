@@ -381,29 +381,29 @@ const toNovel = (names:string[]) => {
     })
 }
 
-const ColumnGroup = (prop:{table:TableOut})=>{
+const ColumnGroup = (prop:{table:TableOut|undefined})=>{
 
     
 
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [groups,setGroups] = useState(toNovel(prop.table.groupNames))
-    const [detailNames,setDetailNames] = useState(toNovel(prop.table.detailNames))
+    const [groups,setGroups] = useState(toNovel(prop.table?.groupNames ?? []))
+    const [detailNames,setDetailNames] = useState(toNovel(prop.table?.detailNames ?? []))
     const showModel = ()=>{
         setIsModalOpen(true);
     }
 
 
     const addGroup = (name:string):boolean => {
-        let index = prop.table.groupNames.push(name)
-        prop.table.groupSelect.push({key:index,label:name,disable:false,children:[]})
-        setGroups(toNovel(prop.table.groupNames))
+        let index = prop.table?.groupNames.push(name) ?? 0
+        prop.table?.groupSelect.push({key:index,label:name,disable:true,children:[]})
+        setGroups(toNovel(prop.table?.groupNames??[]))
         return true
     }
 
     const addDetail = (name:string):boolean => {
-        let index = prop.table.detailNames.push(name)
-        prop.table.detailSelect.push({key:index,label:name,disable:false,children:[]})
-        setDetailNames(toNovel(prop.table.detailNames))
+        let index = prop.table?.detailNames.push(name)?? 0
+        prop.table?.detailSelect.push({key:index,label:name,disable:true,children:[]})
+        setDetailNames(toNovel(prop.table?.detailNames??[]))
         return true
     }
 
@@ -483,7 +483,7 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
             request: async () => {
                 if (prop.table === undefined)
                     return []
-                return prop.table.groupSelect
+                return prop.table.groupSelect.map((v)=>{v.disable=false; return {value:v.key,label:v.label}})
             }
         },{
             key:'detail',
@@ -493,7 +493,7 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
             request: async () => {
                 if (prop.table === undefined)
                     return []
-                return prop.table.detailSelect
+                return prop.table.detailSelect.map((v)=>{v.disable=false; return {value:v.key,label:v.label}})
             }
         },{
             key:'creator',
@@ -533,20 +533,20 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
         }
     ]
 
-    if (prop.table === undefined)
-        columnsList.push({
-            key:'type',
-            title:'是否虚拟',
-            dataIndex:"virtual",
-            valueType:'select',
-            request:async () => {
-                return [
-                    {label:"是",value:true},
-                    {label:"否",value:false},
-                ]
-            },
-            hideInTable:true
-        })
+    // if (prop.table === undefined)
+    //     columnsList.push({
+    //         key:'type',
+    //         title:'是否虚拟',
+    //         dataIndex:"virtual",
+    //         valueType:'select',
+    //         request:async () => {
+    //             return [
+    //                 {label:"是",value:true},
+    //                 {label:"否",value:false},
+    //             ]
+    //         },
+    //         hideInTable:true
+    //     })
 
     return (
         <ProTable<ColumnOut> 
@@ -560,6 +560,8 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
                 if (prop.table !== undefined) {
                     params.tableNo = prop.table.tableId
                     params.virtual = prop.table.virtual
+                } else {
+                    params.virtual = true
                 }
                 return getDataList(config.backs.column, params)
               }
@@ -574,7 +576,7 @@ const BackColumn = (prop:{table:TableOut|undefined})=>{
                 console.log('value: ', value);
             },
             }}
-            rowKey="id"
+            rowKey="columnId"
             search={{
             labelWidth: 'auto',
             }}
