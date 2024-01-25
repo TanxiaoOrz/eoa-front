@@ -267,7 +267,7 @@ const FrontHumanConcrete = () => {
         }
     })
     useEffect(()=>{
-        let title = ((human?.isDeprecated ?? 0 === 0) ? "" : "  (已离职)")
+        let title = ((human?.isDeprecated  === 0) ? "" : "  (已离职)")
         document.title ="人员详情" + human?.name + title
     },[human])
     if (human == undefined)

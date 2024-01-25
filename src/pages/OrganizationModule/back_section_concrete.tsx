@@ -38,7 +38,7 @@ const BackSectionConcrete = () => {
             })
     })
     useEffect(()=>{
-        let title = ((section?.isDeprecated ?? 0 === 0) ? "" : "  (已封存)")
+        let title = ((section?.isDeprecated === 0) ? "" : "  (已封存)")
         document.title ="分部详情" + section?.sectionName + title
     },[section])
     if (sectionId === undefined) {

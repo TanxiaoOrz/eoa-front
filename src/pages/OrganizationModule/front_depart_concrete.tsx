@@ -159,7 +159,7 @@ const FrontDepartConcrete = () => {
         }
     })
     useEffect(()=>{
-        let title = ((depart?.isDeprecated ?? 0 === 0) ? "" : "  (已封存)")
+        let title = ((depart?.isDeprecated  === 0) ? "" : "  (已封存)")
         document.title ="部门详情" + depart?.departName + title
     },[depart])
     if (depart == undefined)
