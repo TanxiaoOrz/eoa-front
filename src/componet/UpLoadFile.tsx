@@ -1,10 +1,9 @@
-﻿import { EditableFormInstance, ProCoreActionType, ProForm, ProFormText } from "@ant-design/pro-components"
+﻿import { ProFormText } from "@ant-design/pro-components"
 import { ColumnSimpleOut, FileOut } from "../const/out.tsx"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { getDataOne } from "../const/http.tsx"
 import config from "../const/config.js"
-import { useSearchParams } from "react-router-dom"
-import { Button, Dropdown, FormInstance, Upload, UploadProps, message } from "antd"
+import { Button, FormInstance, Upload, UploadProps, message } from "antd"
 import { UploadOutlined } from "@ant-design/icons"
 
 export default (prop:{dataName:string,column:ColumnSimpleOut,values:any,edit:boolean,set:(key:string,value:number)=>void}) => {

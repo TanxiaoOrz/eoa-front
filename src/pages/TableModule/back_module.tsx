@@ -96,11 +96,11 @@ const CreateModule = (prop: { action: React.MutableRefObject<ActionType | undefi
       autoFocusFirstInput
       onFinish={async (values: FormModule) => {
         let dataId = await newData(baseURL, values)
-        if (dataId != -1) {
+        if (dataId !== -1) {
           if (prop.action.current !== undefined)
             prop.action.current.reload();
         }
-        return dataId != -1
+        return dataId !== -1
       }}
       modalProps={{
         destroyOnClose: true,

@@ -1,17 +1,13 @@
 ﻿import {
     AppstoreOutlined,
     CrownFilled,
-    GithubFilled,
-    InfoCircleFilled,
     PoweroffOutlined,
-    QuestionCircleFilled,
     RetweetOutlined,
     UserOutlined} from '@ant-design/icons';
 import type { ProSettings } from '@ant-design/pro-components';
 import {
     ProConfigProvider,
     ProLayout,
-    SettingDrawer,
 } from '@ant-design/pro-components';
 import {
     Button,
@@ -20,10 +16,10 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import url from '../const/url';
-import { HumanOut, FileOut, MenuOut } from '../const/out.tsx';
+import { HumanOut, FileOut } from '../const/out.tsx';
 import PageWait from '../componet/PageWait.tsx';
 import config from '../const/config.js';
-import { getDataOne, getDataList } from '../const/http.tsx';
+import { getDataOne } from '../const/http.tsx';
 
 type PageConfig = {
     companyName: string

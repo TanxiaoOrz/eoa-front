@@ -1,11 +1,7 @@
 import {
     AppstoreAddOutlined,
-    AppstoreOutlined,
     CrownFilled,
-    GithubFilled,
-    InfoCircleFilled,
     PoweroffOutlined,
-    QuestionCircleFilled,
     RetweetOutlined,
     UserOutlined
 } from '@ant-design/icons';

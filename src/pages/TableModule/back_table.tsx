@@ -198,7 +198,7 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
   else
     title = "实体表单"
   
-  if (moduleNo == "")
+  if (moduleNo === "")
     moduleNo = null;
   
   return (
@@ -235,7 +235,7 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
       onFinish={async (values: TableInSimple) => {
         console.log(values)
         let dataId: number = await newData(baseURL, values)
-        if (dataId != -1) {
+        if (dataId !== -1) {
           if (jump)
             window.open(url.backUrl.table + "/" + dataId + "?isVirtual=" + Number(values.virtual));
           prop.actionRef.current?.reload()
@@ -311,7 +311,7 @@ const BackTable = () => {
     document.title = "表单列表"
   })
   useEffect(() => {
-    if (moduleList.length == 0)
+    if (moduleList.length === 0)
       (getDataList("/api/v1/table/back/module", { toBrowser: true })).then((value) => {
         setModuleList(value.data)
       })

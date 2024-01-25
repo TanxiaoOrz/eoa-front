@@ -54,8 +54,6 @@ import BackPage from "./back.tsx";
 import MainPage from "./main.tsx";
 import BackColumn from "../pages/TableModule/back_column.tsx";
 
-const Protable = protable
-
 const backs = [
   {
     path: "back_module",
