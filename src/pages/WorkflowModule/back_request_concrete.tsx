@@ -163,6 +163,9 @@ const BackRequestConcrete = () => {
             })
         }
     })
+    useEffect(()=>{
+        document.title ="流程详情" + requestDto?.requestOut.requestTitle 
+    },[requestDto])
 
     const getFormIn: { get: () => FormIn | null } = { get: () => null }
 

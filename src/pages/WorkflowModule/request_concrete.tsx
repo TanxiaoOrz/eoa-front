@@ -139,6 +139,10 @@ const RequestConcrete = () => {
         }
     })
 
+    useEffect(()=>{
+        document.title ="流程详情" + requestDto?.requestOut.requestTitle 
+    },[requestDto])
+
     const getFormIn: { get: () => FormIn | null } = { get: () => null }
 
     const getRequestIn = (request: RequestDtoOut, comment: string, requestId: string, action: number = -1) => {

@@ -43,7 +43,12 @@ const BaseInformation = (prop: { depart: DepartOut, editable: boolean, form: For
                 layout="horizontal"
                 initialValues={prop.depart}
                 onFinish={async (depart: DepartIn) => {
-                    return (await UpdateData(config.fronts.depart + "/" + prop.depart.dataId, depart))
+                    if (await UpdateData(config.fronts.depart + "/" + prop.depart.dataId, depart)) {
+                        setTimeout(() => { window.location.reload() }, 1000)
+                        return true
+                    }
+                    return false
+
                 }}
 
             >
@@ -153,6 +158,10 @@ const FrontDepartConcrete = () => {
             })
         }
     })
+    useEffect(()=>{
+        let title = ((depart?.isDeprecated ?? 0 === 0) ? "" : "  (已封存)")
+        document.title ="部门详情" + depart?.departName + title
+    },[depart])
     if (depart == undefined)
         return (<PageWait />)
     let avaterGroup: React.JSX.Element[] = []

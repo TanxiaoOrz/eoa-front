@@ -45,6 +45,10 @@ const BackHumanConcrete = () => {
                     setHuman(value.data)
             })
     })
+    useEffect(()=>{
+        let title = ((human?.isDeprecated ?? 0 === 0) ? "" : "  (已离职)")
+        document.title ="人员详情" + human?.name + title
+    },[human])
     if (humanId === undefined) {
         window.location.replace(url.backUrl.human)
         return (<div></div>)
@@ -53,7 +57,7 @@ const BackHumanConcrete = () => {
         return (<PageWait />)
     const dropHuman = async () => {
         if ((await deleteData(config.backs.human + "/" + humanId)))
-            window.location.reload()
+            setTimeout(()=>{window.location.reload()},1000)
     }
 
     const HumanBase = () => {
@@ -69,7 +73,10 @@ const BackHumanConcrete = () => {
                     layout="horizontal"
                     initialValues={human}
                     onFinish={async (human: HumanIn) => {
-                        return (await UpdateData(config.backs.human + "/" + humanId, human))
+                        if (await UpdateData(config.backs.human + "/" + humanId, human)) {
+                            setTimeout(()=>{window.location.reload()},1000)
+                            return true
+                        }
                     }}
 
                 >
@@ -275,11 +282,9 @@ const BackHumanConcrete = () => {
                     breadcrumb: {
                         items: [
                             {
-                                path: url.backUrl.human,
                                 title: '人员列表',
                             },
                             {
-                                path: url.backUrl.human_concrete + '/' + humanId,
                                 title: human.name,
                             },
                         ],

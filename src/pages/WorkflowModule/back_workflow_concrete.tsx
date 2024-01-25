@@ -39,6 +39,10 @@ const BackWorkflowConcrete = () => {
             })
     })
 
+    useEffect(()=>{
+        document.title ="流程详情" + workflow?.workFlowName
+    },[workflow])
+
     if (workflowId === undefined) {
         window.location.replace(url.backUrl.workflow)
         return (<div></div>)
@@ -47,10 +51,10 @@ const BackWorkflowConcrete = () => {
     if (workflow === undefined)
         return (<PageWait />)
 
-    
+
     const dropDepart = async () => {
         if ((await deleteData(config.backs.workflow + "/" + workflowId)))
-            window.location.reload()
+            setTimeout(() => { window.close() }, 1000)
     }
 
     const WorkflowBase = (
@@ -65,7 +69,11 @@ const BackWorkflowConcrete = () => {
                 layout="horizontal"
                 initialValues={workflow}
                 onFinish={async (workflowIn: WorkflowIn) => {
-                    return (await UpdateData(config.backs.workflow + "/" + workflowId, workflowIn))
+                    if (await UpdateData(config.backs.workflow + "/" + workflowId, workflowIn)) {
+                        setTimeout(() => { window.location.reload() }, 1000)
+                        return true
+                    }
+                    return false
                 }}
                 onValuesChange={(changedValues, workflowIn) => {
                     if (workflowIn.tableId !== tableId)
@@ -111,7 +119,7 @@ const BackWorkflowConcrete = () => {
                         required={true}
                         disabled={true}
                         request={async () => {
-                            let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual:false })).data
+                            let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual: false })).data
                             const valueEnumModule: { title: string, value: number, children: any[] }[] = tableList.map(
                                 (item) => {
                                     return { title: item.tableViewName, value: item.tableId, children: [] };
@@ -136,9 +144,9 @@ const BackWorkflowConcrete = () => {
                         name="titleColumnId"
                         label="流程标题字段"
                         placeholder="请选择流程标题字段"
-                        request={async()=>{
-                            let columnList:ColumnOut[] =(await getDataList(config.backs.column,{...config.toBrowser, tableId:tableId, isVirtual:false})).data
-                            return columnList.map((item)=>{return {title:item.columnViewName, value:item.columnId}})
+                        request={async () => {
+                            let columnList: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: tableId, isVirtual: false })).data
+                            return columnList.map((item) => { return { title: item.columnViewName, value: item.columnId } })
                         }}
                     />
                     <ProFormText
@@ -183,11 +191,9 @@ const BackWorkflowConcrete = () => {
                     breadcrumb: {
                         items: [
                             {
-                                path: url.backUrl.workflow,
                                 title: '流程列表',
                             },
                             {
-                                path: url.backUrl.workflow_concrete + '/' + workflowId,
                                 title: workflow.workFlowName,
                             },
                         ],
@@ -211,16 +217,12 @@ const BackWorkflowConcrete = () => {
                         key: "nodes",
                         tab: "节点信息",
                         children: <BackNode workflowId={parseInt(workflowId)} />
-                    }, {
-                        key: 'flow',
-                        tab: '流程图',
-                        children: <></>
                     }
                 ]}
             />
         </div>
     )
-            
+
 }
 
 export default BackWorkflowConcrete

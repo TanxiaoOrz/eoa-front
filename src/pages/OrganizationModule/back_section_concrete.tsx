@@ -1,5 +1,5 @@
 ﻿import { PageContainer, ProForm, ProFormDatePicker, ProFormGroup, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
-import { Button, Form, Typography } from 'antd';
+import { Button, Form } from 'antd';
 import React, { useEffect, useState } from 'react';
 import url from '../../const/url.js';
 import { UpdateData, deleteData, getDataList, getDataOne } from '../../const/http.tsx';
@@ -11,7 +11,6 @@ import { UploadFileProposed } from '../../componet/UpLoadFile.tsx';
 import BackDepart from './back_depart.tsx';
 import BackSecion from './back_section.tsx';
 
-const { Title } = Typography
 
 type SectionIn = {
     sectionName: string
@@ -38,6 +37,10 @@ const BackSectionConcrete = () => {
                     setSection(value.data)
             })
     })
+    useEffect(()=>{
+        let title = ((section?.isDeprecated ?? 0 === 0) ? "" : "  (已封存)")
+        document.title ="分部详情" + section?.sectionName + title
+    },[section])
     if (sectionId === undefined) {
         window.location.replace(url.backUrl.depart)
         return (<div></div>)
@@ -47,7 +50,7 @@ const BackSectionConcrete = () => {
         return (<PageWait />)
     const dropSection = async () => {
         if ((await deleteData(config.backs.section + "/" + sectionId)))
-            window.location.reload()
+            setTimeout(() => { window.location.reload() }, 1000)
     }
 
     const sectionBase = (
@@ -62,7 +65,11 @@ const BackSectionConcrete = () => {
                 layout="horizontal"
                 initialValues={section}
                 onFinish={async (section: SectionIn) => {
-                    return (await UpdateData(config.backs.section + "/" + sectionId, section))
+                    if (await UpdateData(config.backs.section + "/" + sectionId, section)) {
+                        setTimeout(()=>{window.location.reload()},1000)
+                        return true
+                    }
+                    return false
                 }}
 
             >
@@ -107,10 +114,10 @@ const BackSectionConcrete = () => {
                         disabled
                         request={async () => {
                             let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
-                            return sections.map((depart, index, array) => { return { title: depart.sectionName, value: depart.dataId } })
+                            return sections.map((depart) => { return { title: depart.sectionName, value: depart.dataId } })
                         }}
                         required={true}
-                        addonAfter={<Button onClick={()=>(window.open(url.frontUrl.humanResource+form.getFieldValue("belongSection")))}>查看</Button>}
+                        addonAfter={<Button onClick={() => (window.open(url.frontUrl.humanResource + form.getFieldValue("belongSection")))}>查看</Button>}
                     />
                     <ProFormTreeSelect
                         width="md"
@@ -120,10 +127,10 @@ const BackSectionConcrete = () => {
                         placeholder="请选择领导"
                         request={async () => {
                             let humans: HumanOut[] = (await getDataList(config.fronts.human, { toBrowser: true, isDeprecated: 0 })).data
-                            return humans.map((value, index, array) => { return { title: value.name, value: value.dataId } })
+                            return humans.map((value) => { return { title: value.name, value: value.dataId } })
                         }}
                         required={true}
-                        addonAfter={<Button onClick={()=>(window.open(url.frontUrl.humanResource+form.getFieldValue("sectionManager")))}>查看</Button>}
+                        addonAfter={<Button onClick={() => (window.open(url.frontUrl.humanResource + form.getFieldValue("sectionManager")))}>查看</Button>}
                     />
                 </ProFormGroup>
                 <ProFormGroup size={"large"} title="展示资料" >
@@ -146,11 +153,9 @@ const BackSectionConcrete = () => {
                     breadcrumb: {
                         items: [
                             {
-                                path: url.backUrl.section,
                                 title: '分部列表',
                             },
                             {
-                                path: url.backUrl.depart_concrete + '/' + sectionId,
                                 title: section.sectionName,
                             },
                         ],

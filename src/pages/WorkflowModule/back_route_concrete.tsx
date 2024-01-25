@@ -36,6 +36,10 @@ const BackWorkflowRouteConcrete = () => {
             })
     })
 
+    useEffect(() => {
+        document.title = "路径详情" + route?.routeName
+    }, [route])
+
     if (routeId === undefined) {
         window.location.replace(url.backUrl.workflow_route)
         return (<div></div>)
@@ -43,10 +47,10 @@ const BackWorkflowRouteConcrete = () => {
 
     if (route === undefined)
         return (<PageWait />)
-        
+
     const dropRoute = async () => {
         if ((await deleteData(config.backs.workflowRoute + "/" + routeId)))
-            window.location.reload()
+            setTimeout(() => { window.close() }, 1000)
     }
 
     const WorkflowNodeBase = (
@@ -65,36 +69,40 @@ const BackWorkflowRouteConcrete = () => {
                     workflowIn.enterCondition = route.enterCondition
                     workflowIn.workflowId = route.workflowId
                     console.log(workflowIn)
-                    return (await UpdateData(config.backs.workflowRoute + "/" + routeId, workflowIn))
+                    if (await UpdateData(config.backs.workflowRoute + "/" + routeId, workflowIn)) {
+                        setTimeout(() => { window.location.reload() }, 1000)
+                        return true
+                    }
+                    return false
                 }} >
                 <ProFormGroup size={"large"} title="基本信息">
-                <ProFormText
-                    width="md"
-                    name="routeName"
-                    label="路径名称"
-                    tooltip="最长为33位"
-                    placeholder="请输入路径名称"
-                    required={true} />
-                <ProFormTreeSelect
-                    width="md"
-                    name="startNodeId"
-                    label="路径起点"
-                    placeholder="请选择起始节点"
-                    required
-                    request={async () => {
-                        let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId:route.workflowId })).data
-                        return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
-                    }} />
-                <ProFormTreeSelect
-                    width="md"
-                    name="endNodeId"
-                    label="路径终点"
-                    placeholder="请选择到达节点"
-                    required
-                    request={async () => {
-                        let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId:route.workflowId })).data
-                        return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
-                    }} />
+                    <ProFormText
+                        width="md"
+                        name="routeName"
+                        label="路径名称"
+                        tooltip="最长为33位"
+                        placeholder="请输入路径名称"
+                        required={true} />
+                    <ProFormTreeSelect
+                        width="md"
+                        name="startNodeId"
+                        label="路径起点"
+                        placeholder="请选择起始节点"
+                        required
+                        request={async () => {
+                            let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId: route.workflowId })).data
+                            return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
+                        }} />
+                    <ProFormTreeSelect
+                        width="md"
+                        name="endNodeId"
+                        label="路径终点"
+                        placeholder="请选择到达节点"
+                        required
+                        request={async () => {
+                            let nodeList: WorkflowNodeOut[] = (await getDataList(config.backs.workflowNode, { toBrowser: true, workflowId: route.workflowId })).data
+                            return nodeList.map((value, index, array) => { return { title: value.workflowNodeName, value: value.dataId } })
+                        }} />
                     <ProFormText
                         width="md"
                         name="workflowName"
@@ -163,11 +171,9 @@ const BackWorkflowRouteConcrete = () => {
                     breadcrumb: {
                         items: [
                             {
-                                path: url.backUrl.workflow_route,
                                 title: '路径列表',
                             },
                             {
-                                path: url.backUrl.workflow_concrete + '/' + routeId,
                                 title: route.routeName,
                             },
                         ],

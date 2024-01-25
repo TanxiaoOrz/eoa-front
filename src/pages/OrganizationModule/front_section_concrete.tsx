@@ -42,7 +42,11 @@ const BaseInformation = (prop: { section: SectionOut, editable: boolean, form: F
                 layout="horizontal"
                 initialValues={prop.section}
                 onFinish={async (section: SectionIn) => {
-                    return (await UpdateData(config.fronts.section + "/" + prop.section.dataId, section))
+                    if (await UpdateData(config.fronts.section + "/" + prop.section.dataId, section)) {
+                    setTimeout(()=>{window.location.reload()},1000)
+                        return true
+                    }
+                    return false
                 }}
 
             >
@@ -137,6 +141,10 @@ const FrontSectionConcrete = () => {
             })
         }
     })
+    useEffect(()=>{
+        let title = ((section?.isDeprecated ?? 0 === 0) ? "" : "  (已封存)")
+        document.title ="分部详情" + section?.sectionName + title
+    },[section])
     if (section == undefined)
         return (<PageWait />)
     let avaterGroup: React.JSX.Element[] = []

@@ -51,7 +51,11 @@ const BaseInformation = (prop: { human: HumanOut, editable: boolean, form: FormI
                 layout="horizontal"
                 initialValues={prop.human}
                 onFinish={async (human: HumanIn) => {
-                    return (await UpdateData(config.fronts.human + "/" + prop.human.dataId, human))
+                    if (await UpdateData(config.fronts.human + "/" + prop.human.dataId, human)) {
+                    setTimeout(()=>{window.location.reload()},1000)
+                        return true
+                    }
+                    return false
                 }}
 
             >
@@ -262,6 +266,10 @@ const FrontHumanConcrete = () => {
             })
         }
     })
+    useEffect(()=>{
+        let title = ((human?.isDeprecated ?? 0 === 0) ? "" : "  (已离职)")
+        document.title ="人员详情" + human?.name + title
+    },[human])
     if (human == undefined)
         return (<PageWait />)
     let avaterGroup: React.JSX.Element[] = []

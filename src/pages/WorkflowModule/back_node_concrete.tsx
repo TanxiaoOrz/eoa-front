@@ -26,7 +26,7 @@ type WorkflowNodeIn = {
 
 type ModifyRow = {
     id: number
-    columnId: number |null
+    columnId: number | null
     edit: boolean | null
 }
 
@@ -59,11 +59,14 @@ const BackWorkflowNodeConcrete = () => {
     if (node === undefined)
         return (<PageWait />)
 
+    useEffect(() => {
+        document.title = "节点详情" + node?.workflowNodeName
+    }, [node])
 
 
-    const dropDepart = async () => {
+    const dropNode = async () => {
         if ((await deleteData(config.backs.workflowNode + "/" + nodeId)))
-            window.location.reload()
+            setTimeout(() => { window.close() }, 1000)
     }
 
     const modifyColumn: ProColumns<ModifyRow>[] = [
@@ -128,16 +131,16 @@ const BackWorkflowNodeConcrete = () => {
             }}
             recordCreatorProps={{
                 position: 'bottom',
-                record: () => ({ id: parseInt((Math.random() * 1000000).toFixed(0)), columnId:null, edit:null }),
+                record: () => ({ id: parseInt((Math.random() * 1000000).toFixed(0)), columnId: null, edit: null }),
             }}
             loading={false}
             columns={modifyColumn}
             request={async () => {
                 let modifyRows = node.tableModifyAuthority ?
-                Object.entries(JSON.parse(node.tableModifyAuthority)).map((key, index) => {
-                    return { id: index, columnId: parseInt(key[0]), edit: key[1] as boolean }
-                })
-                : []
+                    Object.entries(JSON.parse(node.tableModifyAuthority)).map((key, index) => {
+                        return { id: index, columnId: parseInt(key[0]), edit: key[1] as boolean }
+                    })
+                    : []
                 return {
                     data: modifyRows,
                     total: modifyRows.length,
@@ -152,7 +155,7 @@ const BackWorkflowNodeConcrete = () => {
                 onSave: async (rowKey, data, row) => {
                     console.log(modifyRows)
                 },
-                
+
             }}
         />
     )
@@ -182,7 +185,11 @@ const BackWorkflowNodeConcrete = () => {
                     console.log("tableModifyAuthority", tableModifyAuthority)
                     workflowIn.tableModifyAuthority = JSON.stringify(tableModifyAuthority)
                     console.log(workflowIn)
-                    return (await UpdateData(config.backs.workflowNode + "/" + nodeId, workflowIn))
+                    if (await UpdateData(config.backs.workflowNode + "/" + nodeId, workflowIn)) {
+                        setTimeout(() => { window.location.reload() }, 1000)
+                        return true
+                    }
+                    return false
                 }} >
                 <ProFormGroup size={"large"} title="基本信息">
                     <ProFormText
@@ -302,18 +309,16 @@ const BackWorkflowNodeConcrete = () => {
                     breadcrumb: {
                         items: [
                             {
-                                path: url.backUrl.workflow_node,
                                 title: '节点列表',
                             },
                             {
-                                path: url.backUrl.workflow_concrete + '/' + nodeId,
                                 title: node.workflowNodeName,
                             },
                         ],
                     },
                     extra: [
                         <Button key='save' type="primary" onClick={() => { form.submit() }}>保存</Button>,
-                        <Button key='drop' type='default' danger onClick={dropDepart} >封存</Button>
+                        <Button key='drop' type='default' danger onClick={dropNode} >封存</Button>
                     ]
                 }}
                 tabList={[
