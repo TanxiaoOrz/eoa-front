@@ -55,6 +55,9 @@ const CreateWorkflow = () => {
                     setWorkflows(value.data)
             })
     })
+    useEffect(() => {
+        document.title = '发起请求'
+    })
 
     if (workflows === undefined || modules === undefined)
         return <PageWait />

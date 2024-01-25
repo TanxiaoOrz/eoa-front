@@ -1,7 +1,7 @@
 ﻿import { FolderOpenTwoTone } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Layout, Typography } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import url from '../../const/url.js';
 import { getDataList } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
@@ -39,7 +39,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             dataIndex: 'departName',
             ellipsis: true,
         }, {
-            key:'departManagerSearch',
+            key:'departManager',
             hideInTable:true,
             dataIndex:'departManager',
             valueType:'select',
@@ -48,7 +48,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
                 return humans.map((human,index,array)=>{return {label:human.name, value:human.dataId}})
             }
         }, {
-            key: 'departManager',
+            key: 'managerName',
             title: '部门负责人',
             dataIndex: 'managerName',
             render: (dom, entity, index, action, schema) => {
@@ -56,7 +56,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             },
             search: false
         },{
-            key:'belongSectionSearch',
+            key:'belongSection',
             hideInTable:true,
             dataIndex:'belongSection',
             valueType:'select',
@@ -65,7 +65,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
                 return sections.map((section,index,array)=>{return {label:section.sectionName, value:section.dataId}})
             }
         }, {
-            key: 'belongSection',
+            key: 'belongSectionName',
             title: '所属分部',
             dataIndex: 'belongSectionName',
             render: (dom, entity, index, action, schema) => {
@@ -73,7 +73,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             },
             hideInSearch:true
         },{
-            key:'belongDepartSearch',
+            key:'belongDepart',
             hideInTable:true,
             dataIndex:'belongDepart',
             valueType:'select',
@@ -83,7 +83,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
             }
         },
         {
-            key: 'belongDepart',
+            key: 'belongDepartName',
             title: '上级部门',
             dataIndex: 'belongDepartName',
             valueType: "select",
@@ -161,18 +161,7 @@ const DepartList = (prop: { depart: number, section: number }) => {
                     listsHeight: 400,
                 },
             }}
-            form={{
-                // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
-                },
-            }}
+            
             pagination={{
                 pageSize: 10,
                 onChange: (page) => console.log(page),
@@ -185,6 +174,10 @@ const DepartList = (prop: { depart: number, section: number }) => {
 };
 
 const FrontDepart = (prop: { depart: number, section: number }) => {
+    useEffect(() => {
+        if (prop.depart + prop.section === 0)
+        document.title = '部门列表' 
+    },[prop])
     let header = (
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
             <div style={{ display: 'flex' }}>

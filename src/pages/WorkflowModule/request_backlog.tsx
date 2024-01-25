@@ -1,4 +1,4 @@
-﻿import React, { useRef } from "react"
+﻿import React, { useEffect, useRef } from "react"
 import { getDataList } from "../../const/http.tsx"
 import { RequestOut } from "../../const/out.tsx"
 import config from "../../const/config.js"
@@ -104,6 +104,9 @@ const RequestList = () => {
 }
 
 const RequestBackLog = () => {
+    useEffect(() => {
+        document.title = '待办请求'
+    })
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>

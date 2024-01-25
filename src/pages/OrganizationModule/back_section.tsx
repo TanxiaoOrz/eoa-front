@@ -1,7 +1,7 @@
 ﻿import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
 import { Button, Form, Layout, Typography } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import url from '../../const/url.js';
 import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
@@ -61,10 +61,12 @@ const CreaterSection = (prop: { action: React.MutableRefObject<ActionType | unde
                 let dataId = await newData(config.backs.section, values)
                 if (dataId != -1) {
                     if (jump)
-                        window.location.assign(url.backUrl.section_concrete + dataId)
+                        window.open(url.backUrl.section_concrete + dataId)
                     if (prop.action.current !== undefined)
                         prop.action.current.reload();
+                    form.resetFields()
                 }
+                jump = false
                 return dataId != -1
             }}
             modalProps={{
@@ -130,7 +132,7 @@ const SectionList = (prop: { section: number }) => {
             dataIndex: 'sectionName',
             ellipsis: true,
         }, {
-            key:'sectionManagerSearch',
+            key:'sectionManager',
             hideInTable:true,
             dataIndex:'sectionManager',
             valueType:'select',
@@ -139,7 +141,7 @@ const SectionList = (prop: { section: number }) => {
                 return humans.map((human,index,array)=>{return {label:human.name, value:human.dataId}})
             }
         }, {
-            key: 'sectionManager',
+            key: 'managerName',
             title: '部门负责人',
             dataIndex: 'managerName',
             render: (dom, entity, index, action, schema) => {
@@ -147,7 +149,7 @@ const SectionList = (prop: { section: number }) => {
             },
             search: false
         }, {
-            key: 'belongSectionSearch',
+            key: 'belongSection',
             hideInTable: true,
             dataIndex: 'belongSection',
             valueType: 'select',
@@ -156,7 +158,7 @@ const SectionList = (prop: { section: number }) => {
                 return sections.map((section, index, array) => { return { label: section.sectionName, value: section.dataId } })
             }
         }, {
-            key: 'belongSection',
+            key: 'belongSectionName',
             title: '所属分部',
             dataIndex: 'belongSectionName',
             render: (dom, entity, index, action, schema) => {
@@ -230,18 +232,6 @@ const SectionList = (prop: { section: number }) => {
                     listsHeight: 400,
                 },
             }}
-            form={{
-                // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
-                },
-            }}
             pagination={{
                 pageSize: 10,
                 onChange: (page) => console.log(page),
@@ -256,6 +246,10 @@ const SectionList = (prop: { section: number }) => {
 };
 
 const BackSection = (prop: { section: number }) => {
+    useEffect(() => {
+        if ( prop.section === 0)
+            document.title = '分部列表'
+    }, [prop])
     let header = (
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
             <div style={{ display: 'flex' }}>

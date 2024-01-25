@@ -281,8 +281,9 @@ const DepartList = (prop: { depart: number, section: number }) => {
 
 const BackDepart = (prop: { depart: number, section: number }) => {
     useEffect(() => {
+        if (prop.depart + prop.section === 0)
         document.title = '部门列表' 
-    })
+    },[prop])
     let header = (
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
             <div style={{ display: 'flex' }}>

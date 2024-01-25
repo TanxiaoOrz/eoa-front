@@ -60,7 +60,9 @@ const CreateWorkflow = (prop: { moduleTypeId: string | null, actionRef: React.Mu
         let dataId: number = await newData(config.backs.workflow, values)
         if (dataId != -1) {
           if (jump)
-            window.location.assign(url.backUrl.workflow_concrete + dataId);
+            window.open(url.backUrl.workflow_concrete + dataId);
+          form.resetFields()
+          jump = false
           return true
         }
         return false
@@ -93,8 +95,8 @@ const CreateWorkflow = (prop: { moduleTypeId: string | null, actionRef: React.Mu
               return { title: item.moduleTypeName, value: item.moduleTypeId, children: [] };
             })
           return valueEnumModule
-        }} 
-        initialValue={moduleTypeId}/>
+        }}
+        initialValue={moduleTypeId} />
       <ProFormTreeSelect
         width="md"
         name="tableId"
@@ -102,7 +104,7 @@ const CreateWorkflow = (prop: { moduleTypeId: string | null, actionRef: React.Mu
         tooltip="请选择所属模块"
         required={true}
         request={async () => {
-          let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual:false })).data
+          let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual: false })).data
           const valueEnumModule: { title: string, value: number, children: any[] }[] = tableList.map(
             (item) => {
               return { title: item.tableViewName, value: item.tableId, children: [] };
@@ -162,7 +164,7 @@ const WorkflowList = () => {
     }, {
       key: 'moduleTypeId',
       title: '所属模块',
-      hideInSearch:true,
+      hideInSearch: true,
       render: (dom, entity, index, action, schema) => (
         <Button
           type="link"
@@ -223,7 +225,7 @@ const WorkflowList = () => {
         <Button
           type="primary"
           onClick={() => {
-            window.open(url.backUrl.workflow_concrete+entity.dataId)
+            window.open(url.backUrl.workflow_concrete + entity.dataId)
           }}
         >
           编辑
@@ -249,18 +251,7 @@ const WorkflowList = () => {
           listsHeight: 400,
         },
       }}
-      form={{
-        // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-        syncToUrl: (values, type) => {
-          if (type === 'get') {
-            return {
-              ...values,
-              created_at: [values.startTime, values.endTime],
-            };
-          }
-          return values;
-        },
-      }}
+
       pagination={{
         pageSize: 10,
         onChange: (page) => console.log(page),
@@ -283,7 +274,9 @@ const BackWorkflow = () => {
         setModuleList(value.data)
       })
   })
-
+  useEffect(() => {
+    document.title = '流程列表'
+  })
   return (
     <Layout style={{ minHeight: '98.5vh' }}>
       <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>

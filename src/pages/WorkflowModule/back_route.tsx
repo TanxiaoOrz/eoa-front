@@ -62,11 +62,12 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
                     let dataId: number = await newData(config.backs.workflowRoute, values)
                     if (dataId != -1) {
                         if (jump)
-                            window.location.assign(url.backUrl.workflow_route_concrete + dataId);
+                            window.open(url.backUrl.workflow_route_concrete + dataId);
                         prop.actionRef.current?.reload()
                         form.resetFields()
                         return true
                     }
+                    jump = false
                     return false
                 }}
             >
@@ -243,18 +244,6 @@ const BackRouteList = (prop: { workflowId: number }) => {
                     listsHeight: 400,
                 },
             }}
-            form={{
-                // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
-                },
-            }}
             pagination={{
                 pageSize: 10,
                 onChange: (page) => console.log(page),
@@ -269,6 +258,10 @@ const BackRouteList = (prop: { workflowId: number }) => {
 }
 
 const BackRoute = (prop: { workflowId: number }) => {
+    useEffect(() => {
+        if ( prop.workflowId === 0)
+            document.title = '路径列表'
+    }, [prop])
     let header = (
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
             <div style={{ display: 'flex' }}>

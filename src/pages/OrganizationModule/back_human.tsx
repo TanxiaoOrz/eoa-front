@@ -1,7 +1,7 @@
 ﻿import { FolderOpenTwoTone, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ModalForm, ProColumns, ProFormText, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
 import { Button, Form, Layout, Typography } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import url from '../../const/url.js';
 import { getDataList, newData } from '../../const/http.tsx';
 import { Content, Header } from 'antd/es/layout/layout';
@@ -72,10 +72,12 @@ const CreaterHuman = (prop: { action: React.MutableRefObject<ActionType | undefi
                 let dataId = await newData(config.backs.human, values)
                 if (dataId != -1) {
                     if (jump)
-                        window.location.assign(url.backUrl.human_concrete + dataId)
+                        window.open(url.backUrl.human_concrete + dataId)
                     if (prop.action.current !== undefined)
                         prop.action.current.reload();
+                    form.resetFields()
                 }
+                jump = false
                 return dataId != -1
             }}
             modalProps={{
@@ -177,38 +179,38 @@ const HumanList = (prop: { depart: number, section: number }) => {
             title: '工号',
             dataIndex: 'workCode',
         }, {
-            key:'departSearch',
-            hideInTable:true,
-            dataIndex:'depart',
-            valueType:'select',
-            request:async ()=>{
-                let departs:DepartOut[] = (await getDataList(config.fronts.depart,{toBrowser:true})).data
-                return departs.map((depart,index,array)=>{return {label:depart.departName, value:depart.dataId}})
+            key: 'depart',
+            hideInTable: true,
+            dataIndex: 'depart',
+            valueType: 'select',
+            request: async () => {
+                let departs: DepartOut[] = (await getDataList(config.fronts.depart, { toBrowser: true })).data
+                return departs.map((depart, index, array) => { return { label: depart.departName, value: depart.dataId } })
             }
         }, {
-            key: 'depart',
+            key: 'departName',
             title: '所属部门',
             dataIndex: 'departName',
-            hideInSearch:true,
+            hideInSearch: true,
             render: (dom, entity, index, action, schema) => {
                 return (<a href={url.frontUrl.depart_concrete + entity.depart}>{entity.departName}</a>)
             },
         }, {
-            key: 'section',
+            key: 'sectionName',
             title: '所属分部',
             dataIndex: 'sectionName',
-            hideInSearch:true,
+            hideInSearch: true,
             render: (dom, entity, index, action, schema) => {
                 return (<a href={url.frontUrl.depart_concrete + entity.section}>{entity.sectionName}</a>)
             },
-        },{
-            key:'sectionSearch',
-            hideInTable:true,
-            dataIndex:'section',
-            valueType:'select',
-            request:async ()=>{
-                let sections:SectionOut[] = (await getDataList(config.fronts.section,{toBrowser:true})).data
-                return sections.map((section,index,array)=>{return {label:section.sectionName, value:section.dataId}})
+        }, {
+            key: 'section',
+            hideInTable: true,
+            dataIndex: 'section',
+            valueType: 'select',
+            request: async () => {
+                let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true })).data
+                return sections.map((section, index, array) => { return { label: section.sectionName, value: section.dataId } })
             }
         }, {
             key: 'isDeprecated',
@@ -278,18 +280,6 @@ const HumanList = (prop: { depart: number, section: number }) => {
                     listsHeight: 400,
                 },
             }}
-            form={{
-                // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
-                },
-            }}
             pagination={{
                 pageSize: 10,
                 onChange: (page) => console.log(page),
@@ -304,6 +294,10 @@ const HumanList = (prop: { depart: number, section: number }) => {
 };
 
 const BackHuman = (prop: { depart: number, section: number }) => {
+    useEffect(() => {
+        if (prop.depart + prop.section === 0)
+            document.title = '人员列表'
+    }, [prop])
     let header = (
         <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>
             <div style={{ display: 'flex' }}>
