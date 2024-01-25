@@ -51,6 +51,10 @@ const BackWorkflowNodeConcrete = () => {
             })
     })
 
+    useEffect(() => {
+        document.title = "节点详情" + node?.workflowNodeName
+    }, [node])
+
     if (nodeId === undefined) {
         window.location.replace(url.backUrl.workflow_node)
         return (<div></div>)
@@ -59,9 +63,7 @@ const BackWorkflowNodeConcrete = () => {
     if (node === undefined)
         return (<PageWait />)
 
-    useEffect(() => {
-        document.title = "节点详情" + node?.workflowNodeName
-    }, [node])
+    
 
 
     const dropNode = async () => {
