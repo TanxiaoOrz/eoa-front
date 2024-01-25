@@ -41,7 +41,7 @@ const getRootMenuItem = (): { icon:string, title:string, desc:string, url:string
             url: url.back + "?menuId=" + 2
         }, {
             icon:"https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
-            title:"表单设置",
+            title:"表单模块",
             desc:"",
             url: url.back + "?menuId=" + 3
         }, {
