@@ -5,9 +5,8 @@ import PageWait from "../../componet/PageWait.tsx"
 import { Button, Card, Flex, Form, FormInstance, Layout, Typography, message } from "antd"
 import { UpdateData, deleteData, getDataOne, newData } from "../../const/http.tsx"
 import config from "../../const/config.js"
-import { EditableFormInstance, EditableProTable, ProColumns, ProForm, ProFormGroup, ProFormText } from "@ant-design/pro-components"
+import { EditableFormInstance, EditableProTable, ProColumns, ProForm } from "@ant-design/pro-components"
 import { columnType, transportInput, transprotColumn } from "../../const/columnType.tsx"
-import { FolderOpenTwoTone } from "@ant-design/icons"
 import { Header, Content } from "antd/es/layout/layout"
 import url from "../../const/url.js"
 
@@ -108,7 +107,7 @@ const GroupForm = (prop: { group: Group, getEditAble: (columnName: string) => bo
         console.log(prop.getEditAble(value.columnDataName),value)
         row.push(transportInput(value.columnDataName, group.values, value as ColumnSimpleOut, prop.form, prop.getEditAble(value.columnDataName)))
         count++
-        if (count == 2 || (value as ColumnSimpleOut).columnType == columnType.areaText) {
+        if (count === 2 || (value as ColumnSimpleOut).columnType === columnType.areaText) {
             children.push(
                 <ProForm.Group style={{ width: "100vh" }} key={children.length} >{row}</ProForm.Group>
             )
@@ -233,8 +232,6 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: strin
     }
     const deletes = async () => {
         let param: any = { isVirtual: formOut.virtual, tableId: formOut.tableId, formId: formOut.dataId }
-        let s: string = new URLSearchParams(param).toString()
-        console.log()
         await deleteData(config.fronts.form + "/" + formOut.dataId, param)
         window.close()
     }

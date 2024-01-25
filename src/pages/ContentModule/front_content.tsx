@@ -9,7 +9,6 @@ import config from '../../const/config.js';
 import { getTree } from '../../utils/tree.tsx';
 import { useParams } from 'react-router';
 
-const { Title } = Typography
 
 type FileIn = {
   fileName: string

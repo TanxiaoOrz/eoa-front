@@ -1,6 +1,6 @@
-import { FolderOpenTwoTone, PlusOutlined, SnippetsFilled, UnorderedListOutlined } from "@ant-design/icons";
+import { PlusOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { ActionType, ModalForm, ProColumns, ProFormDependency, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components";
-import { Button, Dropdown, Form, Layout, List, MenuProps, Modal, Tabs } from "antd"
+import { Button, Dropdown, Form, Layout, MenuProps, Modal } from "antd"
 import Title from "antd/lib/typography/Title";
 import React, { useEffect, useRef, useState } from "react";
 import config from "../../const/config";
@@ -10,8 +10,6 @@ import { columnType, columnTypeSelect } from "../../const/columnType.tsx";
 import { getTree } from '../../utils/tree.tsx';
 import url from "../../const/url.js";
 import { Header, Content } from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
-import tabs from "antd/es/tabs/index";
 
 export type ColumnIn = {
     columnViewName: string,
