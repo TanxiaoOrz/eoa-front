@@ -58,6 +58,8 @@ const CreaterSection = (prop: { action: React.MutableRefObject<ActionType | unde
             submitTimeout={2000}
             autoFocusFirstInput
             onFinish={async (values: SectionIn) => {
+                if (values.belongSection === undefined)
+                    values.belongSection = 0
                 let dataId = await newData(config.backs.section, values)
                 if (dataId != -1) {
                     if (jump)
@@ -99,12 +101,13 @@ const CreaterSection = (prop: { action: React.MutableRefObject<ActionType | unde
                 name="belongSection"
                 label="所属分部"
                 tooltip="必须为非废弃分部"
-                placeholder="请选择上级分部"
+                placeholder="请选择上级分部,不选择代表隶属于总部"
                 required={true}
                 request={async () => {
-                    let params: any = { toBrowser: true, isDeperacted: 0 }
-                    let departs: SectionOut[] = (await getDataList(config.fronts.section, params)).data
-                    return departs.map((depart, index, array) => { return { title: depart.sectionName, value: depart.dataId } })
+                    let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
+                            let values = [{title:"总部", value: 0}]
+                            sections.forEach((depart) => { values.push({ title: depart.sectionName, value: depart.dataId } ) })
+                            return values
                 }} />
         </ModalForm>
 

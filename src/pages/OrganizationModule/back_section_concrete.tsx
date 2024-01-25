@@ -111,10 +111,11 @@ const BackSectionConcrete = () => {
                         label="所属分部"
                         tooltip="仅为未废弃分部"
                         placeholder="请选择分部"
-                        disabled
                         request={async () => {
                             let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
-                            return sections.map((depart) => { return { title: depart.sectionName, value: depart.dataId } })
+                            let values = [{title:"总部", value: 0}]
+                            sections.forEach((depart) => { values.push({ title: depart.sectionName, value: depart.dataId } ) })
+                            return values
                         }}
                         required={true}
                         addonAfter={<Button onClick={() => (window.open(url.frontUrl.humanResource + form.getFieldValue("belongSection")))}>查看</Button>}
