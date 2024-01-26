@@ -136,6 +136,7 @@ export type ContentOut = {
     creator: string
     createTime: string
     defaultEdit: string
+    defaultView: string
     defaultCreate: string
     defaultDelete: string
     defaultShare: string

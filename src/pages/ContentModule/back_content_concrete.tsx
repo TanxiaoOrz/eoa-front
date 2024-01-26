@@ -36,10 +36,12 @@ const BackContentConcrete = () => {
     if (content === undefined || content === null)
         return (<PageWait />)
     const upDateContent = async () => {
-        return await UpdateData(config.backs.content + "/" + contentId, content);
+        if (await UpdateData(config.backs.content + "/" + contentId, content))
+            setTimeout(()=>{window.location.reload()},1000)
     }
     const deleteContent = async () => {
-        return await deleteData(config.backs.content + "/" + contentId);
+        if (await deleteData(config.backs.content + "/" + contentId))
+            setTimeout(()=>{window.close()},1000)
     }
 
     const contentBase = (
@@ -154,6 +156,10 @@ const BackContentConcrete = () => {
 
                                 items={[
                                     {
+                                        key: "view",
+                                        label: (<span style={{ writingMode: "vertical-lr" }}>查看权限</span>),
+                                        children: (<AuthorityEdit entity={content} authorityName='defaultView' />)
+                                    },{
                                         key: "create",
                                         label: (<span style={{ writingMode: "vertical-lr" }}>创建权限</span>),
                                         children: (<AuthorityEdit entity={content} authorityName='defaultCreate' />)
