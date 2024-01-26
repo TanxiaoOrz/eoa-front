@@ -202,7 +202,7 @@ const LoginConfigList = () => {
             actionRef={actionRef}
             cardBordered
             request={async (params, sort, filter) => {
-                return getDataList(config.backs.login_config, params)
+                return getDataList(config.backs.page_config, params)
             }}
             rowKey='dataId'
             search={{
