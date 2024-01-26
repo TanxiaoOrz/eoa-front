@@ -153,6 +153,11 @@ const DepartList = (prop: { depart: number, section: number }) => {
             dataIndex: 'departName',
             ellipsis: true,
         }, {
+            key: 'fullName',
+            title: '全称',
+            dataIndex: 'fullName',
+            ellipsis: true,
+        }, {
             key:'departManager',
             hideInTable:true,
             dataIndex:'departManager',

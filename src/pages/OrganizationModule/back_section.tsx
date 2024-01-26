@@ -135,6 +135,11 @@ const SectionList = (prop: { section: number }) => {
             dataIndex: 'sectionName',
             ellipsis: true,
         }, {
+            key: 'fullName',
+            title: '全称',
+            dataIndex: 'fullName',
+            ellipsis: true,
+        }, {
             key:'sectionManager',
             hideInTable:true,
             dataIndex:'sectionManager',
@@ -190,7 +195,7 @@ const SectionList = (prop: { section: number }) => {
             dataIndex: "moduleTypeId",
             hideInSearch: true,
             render: (dom, entity, index, action) =>
-                <Button href={url.backUrl.section_concrete + entity.dataId}>编辑</Button>
+                <Button onClick={()=>window.open(url.backUrl.section_concrete + entity.dataId)}>编辑</Button>
         },
     ];
 

@@ -33,6 +33,11 @@ const SectionList = (prop: { section: number }) => {
             dataIndex: 'sectionName',
             ellipsis: true,
         }, {
+            key: 'fullName',
+            title: '全称',
+            dataIndex: 'fullName',
+            ellipsis: true,
+        }, {
             key:'sectionManager',
             hideInTable:true,
             dataIndex:'sectionManager',

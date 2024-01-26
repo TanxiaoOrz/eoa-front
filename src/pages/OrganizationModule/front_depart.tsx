@@ -32,7 +32,13 @@ const DepartList = (prop: { depart: number, section: number }) => {
             key: 'departCode',
             title: '部门编号',
             dataIndex: 'departCode',
+        }, {
+            key: 'fullName',
+            title: '全称',
+            dataIndex: 'fullName',
+            ellipsis: true,
         },
+        
         {
             key: 'departName',
             title: '部门名称',
