@@ -199,7 +199,7 @@ const OrganizationTree = (prop: { showDeprecated: boolean }) => {
         },
     };
 
-    return <OrganizationGraph data={tree} {...graphConfig} />;
+    return <OrganizationGraph data={tree} {...graphConfig} style={{width:'100%',height:'80vh'}}/>;
 };
 
 export default OrganizationTree 
