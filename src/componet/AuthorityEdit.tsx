@@ -971,6 +971,8 @@ function replacer(key:string, value:any) {
 function receiver(key:string, value:any) {
     if(key === "table" || key === "body") {
       let map =   new Map<string,string>()
+      if (value === null)
+        return map
       Object.entries(value).forEach((value)=>{
         map.set(value[0],value[1]+"")
       })
@@ -991,7 +993,7 @@ export const AuthorityEdit = (prop:{
 
     const tableId = prop.tableId;
     const useForm = tableId !== 0
-    // console.log("tableId",tableId)
+    
     let authority:Authority =JSON.parse(prop.entity[prop.authorityName],receiver) 
     
 
