@@ -28,6 +28,7 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
     const [form] = Form.useForm<{ isVirtual: boolean, tableId: number, columnId: number }>()
     const [virtual, setVirtual] = useState<boolean>(false)
     const trigger = <Button>编辑</Button>
+    console.log(virtual)
     switch (prop.type) {
         case columnType.browser:
 
@@ -61,7 +62,7 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                             { label: "虚拟视图", value: true }, { label: "实体表单", value: false }
                         ]}
                         onChange={(value, option) => {
-                            setVirtual(value === 1)
+                            setVirtual(value)
                         }} />
                     <ProFormTreeSelect
                         width="md"
@@ -69,6 +70,7 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                         label="选择表单"
                         placeholder="请选择链接表单"
                         required={true}
+                        params={{virtual}}
                         request={async () => {
                             let tables: TableOut[] = (await getDataList(config.backs.table, { isVirtual: virtual, toBrowser: true })).data
                             return tables.map((value, index, array) => { return { title: value.tableViewName, value: value.tableId } })
@@ -82,6 +84,7 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                                 label="选择显示字段"
                                 placeholder="请选择字段显示字段"
                                 required={true}
+                                params={{virtual}}
                                 request={async () => {
                                     let columns: ColumnOut[] = (await getDataList(config.backs.column, { isVirtual: object.isVirtual, tableNo: object.tableId, columnDetailNo: -1, toBrowser: true })).data
                                     let nodes = columns.map((value, index, array) => { return { title: value.columnDataName, label: value.columnDataName, value: value.columnId, key: value.columnId } })
@@ -541,7 +544,7 @@ const BackColumn = (prop: { table: TableOut | undefined }) => {
 
     if (prop.table === undefined)
         columnsList.push({
-            key: 'isVirtualSelect',
+            key: 'isVirtual',
             title: '是否虚拟',
             dataIndex: "isVirtual",
             valueType: 'select',
