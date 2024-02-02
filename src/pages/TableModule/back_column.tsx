@@ -10,6 +10,7 @@ import { columnType, columnTypeSelect } from "../../const/columnType.tsx";
 import { getTree } from '../../utils/tree.tsx';
 import url from "../../const/url.js";
 import { Header, Content } from "antd/es/layout/layout";
+import Meta from "antd/es/card/Meta";
 
 export type ColumnIn = {
     columnViewName: string,
@@ -27,6 +28,7 @@ export type ColumnIn = {
 const ColumnDescription = (prop: { type: string, set: (description: string) => boolean }) => {
     const [form] = Form.useForm<{ isVirtual: boolean, tableId: number, columnId: number }>()
     const [virtual, setVirtual] = useState<boolean>(false)
+    const [tableNo, setTableNo] = useState<number>(0)
     const trigger = <Button>编辑</Button>
     console.log(virtual)
     switch (prop.type) {
@@ -51,6 +53,10 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                     width={300}
                     onFinish={async (values: { isVirtual: boolean, tableId: number, columnId: number }) => {
                         return prop.set(JSON.stringify(values));
+                    }}
+                    onValuesChange={(changedValue,values)=>{
+                        if (changedValue.tableId !== undefined)
+                            setTableNo(changedValue.tableId)
                     }}>
                     <ProFormSelect
                         width="md"
@@ -62,7 +68,7 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                             { label: "虚拟视图", value: true }, { label: "实体表单", value: false }
                         ]}
                         onChange={(value, option) => {
-                            setVirtual(value)
+                            setVirtual(value as boolean)
                         }} />
                     <ProFormTreeSelect
                         width="md"
@@ -74,7 +80,8 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                         request={async () => {
                             let tables: TableOut[] = (await getDataList(config.backs.table, { isVirtual: virtual, toBrowser: true })).data
                             return tables.map((value, index, array) => { return { title: value.tableViewName, value: value.tableId } })
-                        }} />
+                        }} 
+                        onMetaChange={(meta)=>console.log(meta)}/>
 
                     <ProFormDependency name={['isVirtual', 'tableId']}>
                         {(object) => (
@@ -84,10 +91,11 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                                 label="选择显示字段"
                                 placeholder="请选择字段显示字段"
                                 required={true}
-                                params={{virtual}}
+                                params={{virtual,tableNo}}
                                 request={async () => {
-                                    let columns: ColumnOut[] = (await getDataList(config.backs.column, { isVirtual: object.isVirtual, tableNo: object.tableId, columnDetailNo: -1, toBrowser: true })).data
-                                    let nodes = columns.map((value, index, array) => { return { title: value.columnDataName, label: value.columnDataName, value: value.columnId, key: value.columnId } })
+                                    let columns: ColumnOut[] = (await getDataList(config.backs.column, { isVirtual: virtual, tableNo: tableNo, columnDetailNo: -1, toBrowser: true })).data
+                                    console.log(columns)
+                                    let nodes = columns.map((value, index, array) => { return { title: value.columnViewName, label: value.columnViewName, value: value.columnId, key: value.columnId } })
                                     console.log(nodes)
                                     return nodes
                                 }}
