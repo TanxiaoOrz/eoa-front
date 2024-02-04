@@ -84,6 +84,9 @@ const Page = () => {
             )
       })
   })
+  useEffect(()=>{
+    document.title = loginConfig?.loginTitle ?? "EOA"
+  },[loginConfig?.loginTitle])
 
   if (loginConfig === null || loginConfig === undefined)
     return <PageWait />
