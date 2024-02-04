@@ -149,7 +149,9 @@ const ColumnDescription = (prop: { type: string, set: (description: string) => b
                         placeholder="请选择上级目录,未选择代表处于根目录下"
                         request={async () => {
                             let contents: ContentOut[] = (await getDataList(config.backs.content)).data
+                            console.log(contents)
                             let treeBase = contents.map((content, index, array) => { return { title: content.contentName, parent: content.leadContent, value: content.dataId } })
+                            console.log(getTree(treeBase))
                             return getTree(treeBase)
                         }}
                         required={true} />
@@ -490,7 +492,6 @@ const BackColumn = (prop: { table: TableOut | undefined }) => {
         }, {
             key: 'columnViewNo',
             title: '显示顺序',
-            valueType: 'index',
             dataIndex: 'columnViewNo'
         }, {
             key: 'columnGroupNo',

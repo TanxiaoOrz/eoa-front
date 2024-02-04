@@ -12,7 +12,7 @@ export type TreeNode = {
 }
 
 export function getTree(bases:TreeBase[]):TreeNode[]{
-    let roots = bases.filter((value,index,array)=>value.parent === null)
+    let roots = bases.filter((value,index,array)=>value.parent === 0)
     let rests = bases.filter((value,index,array)=>value.parent !== null)
     return roots.map((root,index,array)=>{
         return {
