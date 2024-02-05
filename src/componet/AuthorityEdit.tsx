@@ -22,9 +22,13 @@ type Create = {
     sectionRecursive:boolean
 }
 
-type Character = {
+type Group = {
     characterId:number
     grade:number
+}
+
+type Character = {
+    characters:Group[]
 }
 
 type Proposed = {
@@ -275,8 +279,8 @@ const CreatorConstraint = (prop:{
 
 
 const CharacterConstraint = (prop:{
-    default:Character[]|undefined,
-    form:Character[]|undefined,
+    default:Group[]|undefined,
+    form:Group[]|undefined,
     useForm:boolean,
     update:(arg0: string) => boolean,
     updateForm:(arg0: string) => boolean,
@@ -291,7 +295,7 @@ const CharacterConstraint = (prop:{
             }
         })
     }
-    const columns:ProColumns<Character>[] = [
+    const columns:ProColumns<Group>[] = [
         {
             key:"name",
             title:"角色名称",
@@ -346,7 +350,7 @@ const CharacterConstraint = (prop:{
           }
     ]
     const actionRef = useRef<ActionType>();
-    const columnsForm:ProColumns<Character>[] = [
+    const columnsForm:ProColumns<Group>[] = [
         {
             key:"name",
             title:"指定角色字段名称",
@@ -395,16 +399,16 @@ const CharacterConstraint = (prop:{
                     news.forEach((value,index,array)=>{prop.form?.push(value)})
                     actionRef.current?.reload()
                     // console.log(prop.form)
-                    return prop.update(JSON.stringify(prop.form))
+                    return prop.update(JSON.stringify({characters:prop.form}))
                 }}
               >删除</Button>
           }
     ]
     
-    const CreateCharacterConstraint = (prop:{cons:Character[],update:(arg0: string) => boolean}) => {
-        const [form] = Form.useForm<Character>();
+    const CreateCharacterConstraint = (prop:{cons:Group[],update:(arg0: string) => boolean}) => {
+        const [form] = Form.useForm<Group>();
         return (
-            <ModalForm<Character> 
+            <ModalForm<Group> 
                 title="新建角色限制"
                 trigger={
                 <Button type="primary">
@@ -416,10 +420,10 @@ const CharacterConstraint = (prop:{
             form={form}
             submitTimeout={2000}
             autoFocusFirstInput
-            onFinish={async (values:Character)=>{
+            onFinish={async (values:Group)=>{
                 prop.cons.push(values)
                 actionRef.current?.reload()
-                return prop.update(JSON.stringify(prop.cons))
+                return prop.update(JSON.stringify({characters:prop.cons}))
             }}
             >
                 <ProFormTreeSelect
@@ -458,10 +462,10 @@ const CharacterConstraint = (prop:{
             </ModalForm>
         )
     }
-    const CreateCharacterConstraintForm = (prop:{cons:Character[],update:(arg0: string) => boolean,isVirtual:boolean,tableId:number}) => {
-        const [form] = Form.useForm<Character>();
+    const CreateCharacterConstraintForm = (prop:{cons:Group[],update:(arg0: string) => boolean,isVirtual:boolean,tableId:number}) => {
+        const [form] = Form.useForm<Group>();
         return (
-            <ModalForm<Character> 
+            <ModalForm<Group> 
                 title="新建角色限制"
                 trigger={
                 <Button type="primary">
@@ -473,7 +477,7 @@ const CharacterConstraint = (prop:{
             form={form}
             submitTimeout={2000}
             autoFocusFirstInput
-            onFinish={async (values:Character)=>{
+            onFinish={async (values:Group)=>{
                 prop.cons.push(values)
                 actionRef.current?.reload()
                 return prop.update(JSON.stringify(prop.cons))
@@ -525,7 +529,7 @@ const CharacterConstraint = (prop:{
         key:"default",
         label:"默认",
         children:(
-        <ProTable<Character>
+        <ProTable<Group>
             columns={columns}
             actionRef={actionRef}
             cardBordered
@@ -553,7 +557,7 @@ const CharacterConstraint = (prop:{
             key:"form",
             label:"表单选择",
             children:(
-                <ProTable<Character>
+                <ProTable<Group>
                     columns={columnsForm}
                     actionRef={actionRef}
                     cardBordered
@@ -596,6 +600,7 @@ const ProposedConstraint = (prop:{
     updateForm:(arg0: string) => boolean,
     tableId:number,
     isVirtual:boolean}) => {
+        console.log("prop",prop)
 
         type Row = {type:number,url:string,id:number}
 
@@ -608,6 +613,7 @@ const ProposedConstraint = (prop:{
         }
 
         const addConstraintFormRows = (rows:Row[],con:Proposed) => {
+            console.log(rows)
             rows.forEach((value,index,array)=>{
                 switch (value.type) {
                     case 0:
@@ -620,6 +626,7 @@ const ProposedConstraint = (prop:{
                         con.section.push(value.id)
                 }
             })
+            console.log("prop",prop)
         }
         const defaults = prop.default??{humans:[],departs:[],section:[]}
         const forms =prop.form??{humans:[],departs:[],section:[]}
@@ -631,6 +638,7 @@ const ProposedConstraint = (prop:{
                 title:"指定类型",
                 dataIndex:"type",
                 valueType:"select",
+                params:prop,
                 request:async () => {
                     return [
                         {
@@ -650,10 +658,11 @@ const ProposedConstraint = (prop:{
                 key:"type",
                 title:"指定对象字段名称",
                 dataIndex:"id",
-                valueType:"treeSelect",
+                //params:prop,
+                valueType:'treeSelect',
                 request:async () => {
                     let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
-                    let con = columns.map((value,index,array) => { return {title:value.columnViewName,value:value.columnId}})
+                    let con = columns.map((value,index,array) => { return {title:value.columnViewName,label:value.columnViewName,value:value.columnId,key:value.columnId}})
                     // console.log("con")
                     // console.log(con)
                     return con
@@ -771,6 +780,7 @@ const ProposedConstraint = (prop:{
                 values.id = parseInt(s[1])
                 values.type = parseInt(s[0])
                 addConstraintFormRows([values],defaults)
+                console.log(defaults)
                 prop.update(JSON.stringify(defaults))
                 // console.log(defaults)
                 actionRef.current?.reload()
@@ -849,7 +859,7 @@ const ProposedConstraint = (prop:{
                 <ProFormSelect 
                     placeholder="类型"
                     allowClear
-                    name="id"
+                    name="type"
                     width="md"
                     label="指定对象"
                     required                    
@@ -872,7 +882,7 @@ const ProposedConstraint = (prop:{
                 <ProFormTreeSelect 
                     placeholder="指定对象赋值字段"
                     allowClear
-                    name="type"
+                    name="id"
                     width="md"
                     label="指定对象"
                     
@@ -1005,7 +1015,7 @@ export const AuthorityEdit = (prop:{
         if (useForm) {
             authority.tableType = ""
             authority.table.forEach((value,key,map)=>{
-                authority.bodyType += (key+",")
+                authority.tableType += (key+",")
             })
         }
         // console.log(authority)
@@ -1058,11 +1068,11 @@ export const AuthorityEdit = (prop:{
             label:"角色",
             children:(<div >
                 <CharacterConstraint
-                    default={authority.body.get("characterConstraint")===undefined?undefined:JSON.parse(""+authority.body.get("characterConstraint"))}
-                    form={authority.table.get("characterConstraint")===undefined?undefined:JSON.parse(""+authority.table.get("characterConstraint"))}
+                    default={authority.body.get("characterConstraint")===undefined?undefined:JSON.parse(""+authority.body.get("characterConstraint")).characters}
+                    form={authority.table.get("characterConstraint")===undefined?undefined:JSON.parse(""+authority.table.get("characterConstraint")).characters}
                     useForm={useForm}
-                    update={(character)=>{authority.body.set("characterConstraint",character);saveAuthority();return true}}
-                    updateForm={(character)=>{authority.table.set("characterConstraint",character);saveAuthority();return true}}
+                    update={(characters)=>{authority.body.set("characterConstraint",characters);saveAuthority();return true}}
+                    updateForm={(characters)=>{authority.table.set("characterConstraint",characters);saveAuthority();return true}}
                     tableId={tableId}
                 />
             </div>)
