@@ -28,7 +28,7 @@ const CreateRoute = (prop: { workflowId: number, actionRef: React.MutableRefObje
     if (workflowId)
         return (
             <ModalForm<WorkflowRouteInSimple>
-                title="创建流程"
+                title="创建路径"
                 trigger={
                     <Button type="primary">
                         <PlusOutlined />
@@ -231,7 +231,7 @@ const BackRouteList = (prop: { workflowId: number }) => {
             actionRef={actionRef}
             cardBordered
             request={async (params, sort, filter) => {
-                if (prop.workflowId !== null)
+                if (prop.workflowId !== 0)
                     params.workflowId = prop.workflowId
                 return getDataList(config.backs.workflowRoute, params)
             }}

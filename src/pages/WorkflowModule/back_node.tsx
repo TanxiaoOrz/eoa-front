@@ -27,7 +27,7 @@ const CreateNode = (prop: { workflowId: number , actionRef: React.MutableRefObje
     let jump: boolean = false;
     return (
         <ModalForm<WorkflowNodeInSimple>
-            title="创建流程"
+            title="创建节点"
             trigger={
                 <Button type="primary">
                     <PlusOutlined />
@@ -248,7 +248,7 @@ const BackNodeList = (prop: { workflowId: number }) => {
             actionRef={actionRef}
             cardBordered
             request={async (params, sort, filter) => {
-                if (prop.workflowId !== null)
+                if (prop.workflowId !== 0)
                     params.workflowId = prop.workflowId
                 return getDataList(config.backs.workflowNode, params)
             }}
