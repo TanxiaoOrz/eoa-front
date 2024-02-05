@@ -62,6 +62,7 @@ const CreateWorkflow = (prop: { moduleTypeId: string | null, actionRef: React.Mu
           if (jump)
             window.open(url.backUrl.workflow_concrete + dataId);
           form.resetFields()
+          prop.actionRef.current?.reload()
           jump = false
           return true
         }
