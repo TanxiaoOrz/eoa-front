@@ -95,10 +95,10 @@ const CreateSearch = (prop: { moduleTypeId: string | null, actionRef: React.Muta
                 width="md"
                 name="tableId"
                 label="关联表单"
-                tooltip="请选择所属模块"
+                tooltip="请选择所属表单"
                 required={true}
                 request={async () => {
-                    let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual: false })).data
+                    let tableList: TableOut[] = (await getDataList(config.backs.table, { toBrowser: true, isVirtual: prop.isVirtual === 1 })).data
                     const valueEnumModule: { title: string, value: number, children: any[] }[] = tableList.map(
                         (item) => {
                             return { title: item.tableViewName, value: item.tableId, children: [] };
@@ -223,6 +223,7 @@ const SearchList = (prop: { isVirtual: 0 | 1 }) => {
             request={async (params, sort, filter) => {
                 if (moduleNo != null)
                     params.moduleTypeId = moduleNo
+                params.isVirtual = prop.isVirtual
                 return getDataList(config.backs.search_list, params)
             }}
             rowKey='dataId'

@@ -78,6 +78,7 @@ const BackSearchListConcrete = () => {
                     margin: "0 auto",
                     minHeight: "90vh"
                 }}
+
                 submitter={false}
                 layout="horizontal"
                 initialValues={searchList}
@@ -102,7 +103,7 @@ const BackSearchListConcrete = () => {
                         setVirtual(workflowIn.isVirtual)
                 }}
             >
-                <ProFormGroup size={"large"} title="基本信息">
+                <ProFormGroup size={"large"} title="基本信息" >
                     <ProFormText
                         width="md"
                         name="searchListName"
@@ -124,6 +125,7 @@ const BackSearchListConcrete = () => {
                                 })
                             return valueEnumModule
                         }} />
+                        <div style={{width:"50vh"}}/>
                     <ProFormTreeSelect
                         width="md"
                         name="tableId"

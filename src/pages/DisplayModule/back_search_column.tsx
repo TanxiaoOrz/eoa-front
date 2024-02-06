@@ -56,7 +56,7 @@ const CreateSearchListColumn = (prop: { searchListId: number, isVirtual: 0 | 1, 
                 name="title"
                 label="列表字段标题"
                 tooltip="最长为33位"
-                placeholder="请输入流程名称"
+                placeholder="请输入列表字段标题"
                 required={true} />
             <ProFormTreeSelect
                 width="md"
@@ -238,25 +238,14 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
             width: 48,
             align: "center"
         }, {
-            key: 'searchListName',
-            title: '所属列表名称',
-            dataIndex: 'searchListName',
-            hideInSearch: true,
-            render: (dom, entity, index, action, schema) => (
-                <Button
-                    type="link"
-                    onClick={() => {
-                        window.open(url.backUrl.search_list_concrete + '/' + entity.searchListId)
-                    }}
-                >
-                    {entity.searchListName}
-                </Button>
-            )
+            key: 'title',
+            title: '列表字段标题',
+            dataIndex: 'title',
         }, {
-            key: 'columName',
+            key: 'columnName',
             title: '关联字段',
             hideInSearch: true,
-            dataIndex: 'columName',
+            dataIndex: 'columnName',
         }, {
             key: 'isVirtual',
             title: '是否虚拟',
@@ -276,39 +265,59 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
             title: '显示顺序',
             valueType: 'index',
             dataIndex: 'viewNo'
-        }, {
-            key: 'action',
-            title: '操作',
-            dataIndex: "dataId",
-            width: 48 * 3,
-            hideInSearch: true,
-            render: (dom, entity, index, action) => {
-                let deleteB = <DeleteSearchListColumn key={"delete"} dataId={entity.dataId} actionRef={actionRef} />
-                if (prop.searchList === null)
-                    return deleteB
-                let updateB = <UpdateSearchListColumn key={"edit"} searchListColumn={entity} actionRef={actionRef} tableId={prop.searchList?.tableId} />
-                let items: MenuProps['items'] = [
-                    {
-                        key: "edit",
-                        label: updateB,
-                    }, {
-                        key: "delete",
-                        label: deleteB
-                    }
-                ]
-                return (
-                    <Dropdown
-                        menu={{ items }}
-                        placement='bottomLeft'
-
+        },
+    ]
+    if (prop.searchList === null)
+        columns.push(
+            {
+                key: 'searchListName',
+                title: '所属列表名称',
+                dataIndex: 'searchListName',
+                hideInSearch: true,
+                render: (dom, entity, index, action, schema) => (
+                    <Button
+                        type="link"
+                        onClick={() => {
+                            window.open(url.backUrl.search_list_concrete + '/' + entity.searchListId)
+                        }}
                     >
-                        <Button>操作</Button>
-                    </Dropdown>
-
+                        {entity.searchListName}
+                    </Button>
                 )
             }
+        )
+    columns.push({
+        key: 'action',
+        title: '操作',
+        dataIndex: "dataId",
+        width: 48 * 3,
+        hideInSearch: true,
+        render: (dom, entity, index, action) => {
+            let deleteB = <DeleteSearchListColumn key={"delete"} dataId={entity.dataId} actionRef={actionRef} />
+            if (prop.searchList === null)
+                return deleteB
+            let updateB = <UpdateSearchListColumn key={"edit"} searchListColumn={entity} actionRef={actionRef} tableId={prop.searchList?.tableId} />
+            let items: MenuProps['items'] = [
+                {
+                    key: "edit",
+                    label: updateB,
+                }, {
+                    key: "delete",
+                    label: deleteB
+                }
+            ]
+            return (
+                <Dropdown
+                    menu={{ items }}
+                    placement='bottomLeft'
+
+                >
+                    <Button>操作</Button>
+                </Dropdown>
+
+            )
         }
-    ]
+    })
     let create = <></>
     if (prop.searchList !== null)
         create = <CreateSearchListColumn key="create" tableId={prop.searchList.tableId} searchListId={prop.searchList.dataId} actionRef={actionRef} isVirtual={prop.searchList.isVirtual as 0 | 1} />
@@ -336,7 +345,7 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
                 onChange: (page) => console.log(page),
             }}
             dateFormatter="string"
-            headerTitle="工作流列表"
+            headerTitle="展示字段列表"
             toolBarRender={() => [
                 create
             ]}
@@ -345,7 +354,7 @@ const SearchListColumnList = (prop: { searchList: SearchListOut | null }) => {
 }
 
 const BackSearchListColumn = (prop: { searchList: SearchListOut | null }) => {
-    useEffect(()=>{
+    useEffect(() => {
         if (prop.searchList === null)
             document.title = '展示字段列表'
     })

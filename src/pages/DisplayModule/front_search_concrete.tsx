@@ -91,7 +91,7 @@ const FrontSearchConcrete = () => {
     if (searchList === undefined)
         return (<PageWait />)
 
-    const constraint: ModifyRow[] = searchList.searchListOut.defaultCondition === null ? [] : JSON.parse(searchList.searchListOut.defaultCondition)
+    const constraint: ModifyRow[] = searchList.searchListOut.defaultCondition === null ? {} : JSON.parse(searchList.searchListOut.defaultCondition)
     const order: Order = searchList.searchListOut.orders === null ? null : JSON.parse(searchList.searchListOut.orders)
 
     const table = (
@@ -113,7 +113,7 @@ const FrontSearchConcrete = () => {
             headerTitle="流程监控"
             request={async (params, sort, filter) => {
                 console.log("params",params)
-                for (let { columnDataName, input } of constraint)
+                for (let [ columnDataName, input ] of Object.entries(constraint))
                     params[columnDataName ?? ""] = [input]
                 if (order !== null)
                     params.order = [order.type, order.column]
