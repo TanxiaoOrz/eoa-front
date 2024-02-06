@@ -34,8 +34,8 @@
         page_config:'/back_page_config'
     },
     frontUrl: {
-        human: "/human_resouce",
-        humanResource: "/human_resouce/",
+        human: "/human_resource",
+        humanResource: "/human_resource/",
         depart: "/depart",
         depart_concrete: "/depart/",
         section: "/section",

@@ -169,10 +169,10 @@ const fronts = [
     path: "form/:formId",
     element: <FrontFormConcrete />
   }, {
-    path: "human_resouce",
+    path: "human_resource",
     element: <FrontHuman />
   }, {
-    path: "human_resouce/:dataId",
+    path: "human_resource/:dataId",
     element: <FrontHumanConcrete />
   }, {
     path: "depart",
