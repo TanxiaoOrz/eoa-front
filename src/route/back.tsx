@@ -409,7 +409,8 @@ export default () => {
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {
-                                    setPathname((item.path)as unknown as string);
+                                    if (item.path)
+                                        setPathname((item.path)as unknown as string);
                                 }}
                             >
                                 {dom}

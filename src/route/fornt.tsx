@@ -45,7 +45,7 @@ const getMenuDtoItem = (menuDto: MenuOut) => {
             name: menu.contentName,
             path: menu.contentUrl,
             component: menu.contentUrl,
-            routes: getMenuDtoItem(menu)
+            children: getMenuDtoItem(menu)
         }
     })
 }
@@ -281,7 +281,8 @@ export default () => {
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {
-                                    setPathname(item.path);
+                                    if (item.path)
+                                        setPathname(item.path);
                                 }}
                             >
                                 {dom}
