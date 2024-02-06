@@ -28,7 +28,7 @@ const SQLList = (prop: { values: Task[], tableId: number, save: () => boolean, t
             valueType: 'select',
             title: prop.title,
             request: async () => {
-                let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
+                let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableNo: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
                 return columns.map((column) => { return { label: column.columnViewName, value: column.columnId } })
             }
         }, {
@@ -90,7 +90,7 @@ const SQLList = (prop: { values: Task[], tableId: number, save: () => boolean, t
                 label={prop.title}
                 required={true}
                 request={async () => {
-                    let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
+                    let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableNo: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
                     return columns.map((column) => { return { label: column.columnViewName, value: column.columnId } })
                 }} />
             <ProFormTextArea
@@ -151,7 +151,7 @@ const InputList = (prop: { values: Task[], tableId: number, save: () => boolean,
             valueType: 'select',
             title: prop.title,
             request: async () => {
-                let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
+                let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableNo: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
                 return columns.map((column) => { return { label: column.columnViewName, value: column.columnId } })
             }
         }, {
@@ -211,7 +211,7 @@ const InputList = (prop: { values: Task[], tableId: number, save: () => boolean,
                 label={prop.title}
                 required={true}
                 request={async () => {
-                    let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
+                    let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableNo: prop.tableId, isVirtual: false, columnDetailNo:-1 })).data
                     return columns.map((column) => { return { label: column.columnViewName, value: column.columnId } })
                 }} />
             <ProFormText
