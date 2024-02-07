@@ -131,7 +131,6 @@ const RequestConcrete = () => {
     let comment: string = ''
     useEffect(() => {
         if (requestDto === undefined) {
-
             getDataOne(config.fronts.request + "/" + requestId + "?workflowId=" + workflowId).then((value) => {
                 if (value.success)
                     setRequestDto(value.data)
@@ -140,8 +139,13 @@ const RequestConcrete = () => {
     })
 
     useEffect(()=>{
-        document.title ="流程详情" + requestDto?.requestOut.requestTitle 
-    },[requestDto])
+        let title
+        if (requestId === "0")
+            title = requestDto?.workflow.workflowBaseTitle
+        else
+            title = requestDto?.requestOut?.requestTitle
+        document.title ="流程详情 - " +  title
+    },[requestDto?.requestOut?.requestTitle,requestDto?.workflow.workflowBaseTitle])
 
     const getFormIn: { get: () => FormIn | null } = { get: () => null }
 
