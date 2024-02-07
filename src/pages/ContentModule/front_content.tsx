@@ -349,7 +349,8 @@ const FrontContentConcrete = () => {
     defaultShare: "",
     leadContent: 0,
     creatorName: "系统管理员",
-    leadName: "无"
+    leadName: "无",
+    defaultView:""
   });
   useEffect(() => {
     if (contentId !== content.dataId)
