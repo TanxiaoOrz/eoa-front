@@ -60,7 +60,7 @@ const CreateSearch = (prop: { moduleTypeId: string | null, actionRef: React.Muta
                 let dataId: number = await newData(config.backs.search_list, values)
                 if (dataId != -1) {
                     if (jump)
-                        window.location.assign(url.backUrl.search_list_concrete + dataId);
+                        window.open(url.backUrl.search_list_concrete + dataId);
                     prop.actionRef.current?.reload()
                     form.resetFields()
                     jump = false
