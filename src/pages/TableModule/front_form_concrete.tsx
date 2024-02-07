@@ -109,11 +109,11 @@ const GroupForm = (prop: { group: Group, getEditAble: (columnName: string) => bo
         count++
         if (count === 2 || (value as ColumnSimpleOut).columnType === columnType.areaText) {
             children.push(
-                <ProForm.Group style={{ width: "100vh" }} key={children.length} >{row}</ProForm.Group>
+                <ProForm.Group key={children.length} >{row}</ProForm.Group>
             )
-            // children.push(
-            //     <div style={{width:"100vh"}} />
-            // )
+            children.push(
+                <div style={{width:"30vh"}} />
+            )
             row = []
             count = 0
         }
