@@ -31,8 +31,6 @@ service.interceptors.response.use((response) =>{
         localStorage.setItem("tokens",response.headers['tokens'])
     else
         window.location.replace("/login")
-    console.log(response.headers);
-    console.log(response.headers.tokens);
     return response
 })
 
@@ -55,6 +53,7 @@ export const getDataList = async (url:string,params:any = {current:1,pageSize:10
         return returns
     }else {
         message.error(data.description)
+        console.log("httpFailure",url,params)
         return {
             data:[],
             success:true,
@@ -73,6 +72,7 @@ export const getDataOne =async (url:string) => {
         }
     }else {
         message.error(data.description)
+        console.log("httpFailure",url)
         return {
             data:null,
             success:false,
@@ -88,6 +88,7 @@ export const UpdateData =async (url:string,params:any):Promise<boolean> => {
         return true
     } else {
         message.error(data.description)
+        console.log("httpFailure",url,params)
         return false;
     }
 }
@@ -106,6 +107,7 @@ export const deleteData =async (url:string,params:any = null):Promise<boolean> =
         return true
     } else {
         message.error(data.description)
+        console.log("httpFailure",url,params)
         return false;
     }
 }
@@ -119,6 +121,7 @@ export const newData =async (url:string,params:any):Promise<number> => {
         return data.entity
     } else {
         message.error(data.description)
+        console.log("httpFailure",url,params)
         return -1;
     }
 }
@@ -135,6 +138,7 @@ export const RequestAction =async (url:string,params:any):Promise<number|false> 
             duration: 0,
             description: data.description,
         });
+        console.log("httpFailure",url,params)
         return false;
     }
 }
@@ -149,6 +153,7 @@ export const loginPost = async (url,params) => {
             success:true,
         }
     }else {
+        console.log("httpFailure",url,params)
         return {
             data:data.description,
             success:false,
