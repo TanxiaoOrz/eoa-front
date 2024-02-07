@@ -58,7 +58,7 @@ const CreateMenu = (prop: { belongContent: number | null, actionRef: React.Mutab
                 let dataId: number = await newData(config.backs.menu, values)
                 if (dataId != -1) {
                     if (jump)
-                        window.location.assign(url.backUrl.menu_concrete + dataId);
+                        window.open(url.backUrl.menu_concrete + dataId);
                     prop.actionRef.current?.reload()
                     form.resetFields()
                     jump = false
