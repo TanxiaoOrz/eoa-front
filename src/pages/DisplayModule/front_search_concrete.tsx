@@ -110,11 +110,13 @@ const FrontSearchConcrete = () => {
             }}
             pagination={{ pageSize: 10 }}
             dateFormatter="string"
-            headerTitle="流程监控"
+            headerTitle={searchList.searchListOut.tableName}
             request={async (params, sort, filter) => {
                 console.log("params",params)
-                for (let [ columnDataName, input ] of Object.entries(constraint))
-                    params[columnDataName ?? ""] = [input]
+                for (let [ columnDataName, input ] of Object.entries(constraint)){
+                    if (!params[columnDataName ?? ""])
+                        params[columnDataName ?? ""] = [input]
+                }
                 if (order !== null)
                     params.order = [order.type, order.column]
                 params.isVirtual = searchList.searchListOut.isVirtual === 1
