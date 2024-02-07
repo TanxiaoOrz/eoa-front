@@ -6,7 +6,7 @@ import { ProCard } from "@ant-design/pro-components"
 import url from "../../const/url"
 import PageWait from "../../componet/PageWait.tsx"
 import { FolderOpenTwoTone } from "@ant-design/icons"
-import { Col, Layout, Row, Typography } from "antd"
+import { Button, Col, Layout, Row, Typography } from "antd"
 import { Header, Content } from "antd/es/layout/layout"
 const { Title } = Typography
 
@@ -21,7 +21,18 @@ const ModeuleCard = (prop: { workflows: WorkflowOut[], moduleName: string }) => 
         )
 
     let workflowLinks = prop.workflows.map((workflow) =>
-        <div key={workflow.dataId}><a href={url.frontUrl.request_concrete + '0?workflowId=' + workflow.dataId} >{workflow.workFlowName}</a></div>
+        <div key={workflow.dataId}>
+            <Button
+                onClick={() => { window.open(url.frontUrl.request_concrete + '0?workflowId=' + workflow.dataId) }}
+                style={{
+                    width: "90%",
+                    marginBottom: "2px",
+                    marginLeft: "5%"
+                }}
+            >
+                {workflow.workFlowName}
+            </Button>
+        </div>
     )
 
     return (
