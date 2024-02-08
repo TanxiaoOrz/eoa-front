@@ -181,14 +181,13 @@ const BackSearchListConcrete = () => {
             </ProForm>
         </div>
     )
-    let order: Order = {
-        column: '',
-        type: 'asc'
-    }
-    if (searchList.orders !== undefined) {
+    let order: Order = {column:"dataId",type:"desc"}
+    if (searchList.orders !== undefined && searchList.orders !== null) {
+        console.log("orders",searchList.orders, searchList.orders !== null)
         order = JSON.parse(searchList.orders)
     }
     const orderChange = (value: any, type: 0 | 1) => {
+        console.log(value)
         if (type === 0)
             order.column = value
         else
@@ -201,11 +200,11 @@ const BackSearchListConcrete = () => {
 
     const modifyColumn: ProColumns<ModifyRow>[] = [
         {
-            key: "columnId",
+            key: "columnDataName",
             dataIndex: "columnDataName",
             title: "字段名称",
         }, {
-            key: "edit",
+            key: "input",
             dataIndex: "input",
             title: "条件值",
         }, {
@@ -251,8 +250,8 @@ const BackSearchListConcrete = () => {
                     success: true
                 }
             }}
-            dataSource={modifyRows}
             value={modifyRows}
+            dataSource={modifyRows}
             onChange={setModifyRows}
             editable={{
                 type: 'multiple',
@@ -267,7 +266,7 @@ const BackSearchListConcrete = () => {
     const configPage = (
         <div style={{ margin: "5px" }}>
             <p>排序字段</p>
-            <Input placeholder="请输入排序字段" onChange={(value) => { orderChange(value, 0) }} style={{ width: "30%" }} />
+            <Input placeholder="请输入排序字段" defaultValue={order.column} onChange={(e) => {orderChange(e.target.value, 0) }} style={{ width: "30%" }} />
             <Select
                 options={[
                     {
@@ -278,6 +277,7 @@ const BackSearchListConcrete = () => {
                         value: 'desc'
                     }
                 ]}
+                defaultValue={order.type}
                 placeholder='请输入排序选项'
                 onChange={(value) => { orderChange(value, 1) }} />
             <p>默认条件</p>
