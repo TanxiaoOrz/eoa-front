@@ -31,7 +31,7 @@ type PageConfig = {
 const getRootMenuItem = (menus: MenuOut[]): { icon: string, title: string, desc: string, url: string }[] => {
     return menus.map((menu) => {
         return {
-            icon: "https://img0.baidu.com/it/u=3620010257,3904026948&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=557",
+            icon: "https://s1.4sai.com/src/img/png/f2/f2af6b24a3b945bfa197de975b8f74f6.png?imageView2/2/w/149&e=1735488000&token=1srnZGLKZ0Aqlz6dk7yF4SkiYf4eP-YrEOdM1sob:DLsrVwDdI58ylYSEIhrE7mBSCh8=",
             title: menu.contentName,
             desc: "",
             url: url.front + "?menuId=" + menu.dataId
