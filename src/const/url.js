@@ -2,10 +2,10 @@
     backUrl: {
         module: "/back_module",
         table: '/back_table',
-        table_concrete: '/back_table/{id}',
+        table_concrete: '/back_table/',
         column: '/back_column',
         content: '/back_content',
-        content_concrete: '/back_content/{id}',
+        content_concrete: '/back_content/',
         character: '/back_character',
         character_concrete: '/back_character/',
         human: '/back_human',

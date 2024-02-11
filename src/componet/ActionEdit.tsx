@@ -315,6 +315,7 @@ const JAVAList = (prop: { javas: string[], save: () => boolean, javaToolitip:str
                 if (prop.save()) {
                     message.success("新建成功,请保存后刷新页面查看或继续修改")
                     actionRef.current?.reload()
+                    return true
                 }
                 else
                     message.error("新建失败")
