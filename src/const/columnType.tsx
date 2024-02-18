@@ -78,7 +78,7 @@ export const transprotColumn = (key:string,values:any[],columnSimple:ColumnSimpl
                     items:string
                 } = JSON.parse(columnSimple.columnTypeDescription);
                 return description.items.split(',').map((value,index,array)=>{
-                    return {label:value,value,index}
+                    return {label:value,value:index}
                 })
             }
             return column
@@ -187,7 +187,7 @@ export const transportInput = (key:string,values:any,columnSimple:ColumnSimpleOu
                         if (columnSimple.columnTypeDescription === null || columnSimple.columnTypeDescription === "")
                             returns = []
                         returns = JSON.parse(columnSimple.columnTypeDescription).items.split(',').map((value,index,array)=>{
-                            return {label:value,value,index}
+                            return {label:value,value:index}
                         })
                         return returns
                     }}
@@ -281,7 +281,7 @@ export const transprotColumnSearch = (columnSimple:ColumnOut, title:string):ProC
                     items:string
                 } = JSON.parse(columnSimple.columnTypeDescription);
                 return description.items.split(',').map((value,index,array)=>{
-                    return {label:value,value,index}
+                    return {label:value,value:index}
                 })
             }
             return [column]
