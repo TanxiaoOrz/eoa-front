@@ -77,9 +77,9 @@ const HistroyCommit = (prop: { commit: Commit }) => {
     })
     let avaters: React.JSX.Element[] = []
     if (avater)
-        avaters.push(<Avatar style={{ width: "100%", marginTop:"15px" }} shape="square" size={64} src={config.backUrl + avater} />)
+        avaters.push(<Avatar style={{ width: "100%", marginTop: "15px" }} shape="square" size={64} src={config.backUrl + avater} />)
     else
-        avaters.push(<Avatar style={{ width: "100%", marginTop:"15px" }} shape="square" size={64} icon={<UserOutlined />} />)
+        avaters.push(<Avatar style={{ width: "100%", marginTop: "15px" }} shape="square" size={64} icon={<UserOutlined />} />)
 
     avaters.push(
         <Divider>
@@ -112,7 +112,7 @@ const HistroyCommit = (prop: { commit: Commit }) => {
                 <Sider width={"20%"} style={{ backgroundColor: "#ffffff" }}>
                     {avaters}
                 </Sider>
-                <Content style={{backgroundColor: "#ffffff", marginLeft:"5px", paddingLeft:"20px"}}>
+                <Content style={{ backgroundColor: "#ffffff", marginLeft: "5px", paddingLeft: "20px" }}>
                     <Title level={5}>{"节点: " + prop.commit.workflowNodeName}</Title>
                     <blockquote>{prop.commit.comment}</blockquote>
                 </Content>
@@ -137,15 +137,14 @@ const RequestConcrete = () => {
             })
         }
     })
-
-    useEffect(()=>{
+    useEffect(() => {
         let title
         if (requestId === "0")
             title = requestDto?.workflow.workflowBaseTitle
         else
             title = requestDto?.requestOut?.requestTitle
-        document.title ="流程详情 - " +  title
-    },[requestDto?.requestOut?.requestTitle,requestDto?.workflow.workflowBaseTitle])
+        document.title = "流程详情 - " + title
+    }, [requestDto?.requestOut?.requestTitle, requestDto?.workflow.workflowBaseTitle])
 
     const getFormIn: { get: () => FormIn | null } = { get: () => null }
 
@@ -310,20 +309,28 @@ const RequestConcrete = () => {
     else
         commentGroup = <div></div>
 
+    if (requestDto.currentNode.dataId !== requestDto.requestOut?.currentNode && requestDto.requestOut !== null) {
+        actionButtons = [<div key='empty'></div>]
+        commentGroup = <div></div>
+    }
+
     const baseStyle: React.CSSProperties = {
         width: '25%',
     };
 
     const editObject = JSON.parse(requestDto.currentNode.tableModifyAuthority)
-    const defaultEdit = requestDto.currentNode.nodeType === 0 || requestDto.currentNode.nodeType === 1
+    const defaultEdit = (requestDto.currentNode.dataId === requestDto.requestOut?.currentNode || requestDto.requestOut === null) && (requestDto.currentNode.nodeType === 0 || requestDto.currentNode.nodeType === 1)
 
     console.log(editObject)
     const editableFun = (str: string) => {
-        let strEditFromObject = editObject[str]
-        if (strEditFromObject !== undefined)
-            return strEditFromObject as boolean
-        else
-            return defaultEdit
+        if (requestDto.currentNode.dataId === requestDto.requestOut?.currentNode || requestDto.requestOut === null) {
+            let strEditFromObject = editObject[str]
+            if (strEditFromObject !== undefined)
+                return strEditFromObject as boolean
+            else
+                return defaultEdit
+        } else
+            return false
     }
 
     const commitHistorys: React.JSX.Element[] = []
@@ -341,12 +348,12 @@ const RequestConcrete = () => {
                 </div>
             </Header>
             <Flex vertical={false} style={{ background: "#ffffff", padding: "10px" }}>{Array.from({ length: 4 }).map((_, i) => (
-                <div key={i+"empty"} style={{ ...baseStyle }} />
+                <div key={i + "empty"} style={{ ...baseStyle }} />
             ))}{actionButtons}<div style={{ width: "2.5%" }}></div></Flex>
             <Content style={{ padding: '15px 50px', minHeight: '100%', overflowY: 'auto' }}>
                 <FrontFormConcrete formOut={requestDto.formOut} getEdit={editableFun} getDetailAuthority={() => defaultEdit} setGetFunction={(fun) => { getFormIn.get = fun }} />
                 {commentGroup}
-                <div style={{height:"10px"}} />
+                <div style={{ height: "10px" }} />
                 {commitHistorys}
             </Content>
         </Layout>
