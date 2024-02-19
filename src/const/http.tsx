@@ -20,6 +20,23 @@ const login = axios.create({
     timeout: 20000 // 设置接口超时20s
 })
 
+const errorMessage = (code:number,messageString:string) => {
+    switch (code) {
+        case 2:
+        case 3:     
+            message.error(messageString+",请联系管理员")
+            break
+        case -1:
+            message.warning(messageString)
+            message.warning("请联系管理员添加权限")
+        default:
+            message.info(messageString)
+    }
+       
+    
+        
+}
+
 service.interceptors.request.use(config =>{
     config.headers['tokens'] = localStorage.getItem('tokens')
     console.log("up")
@@ -52,7 +69,7 @@ export const getDataList = async (url:string,params:any = {current:1,pageSize:10
         //console.log(returns)
         return returns
     }else {
-        message.error(data.description)
+        errorMessage(data.code,data.description)
         console.log("httpFailure",url,params)
         return {
             data:[],
@@ -71,7 +88,7 @@ export const getDataOne =async (url:string) => {
             success:true,
         }
     }else {
-        message.error(data.description)
+        errorMessage(data.code,data.description)
         console.log("httpFailure",url)
         return {
             data:null,
@@ -84,10 +101,10 @@ export const UpdateData =async (url:string,params:any):Promise<boolean> => {
     let response = await service.put(url,params);
     let data:Data = response.data;
     if (data.code == 0) {
-        message.info(data.entity)
+        message.success(data.entity)
         return true
     } else {
-        message.error(data.description)
+        errorMessage(data.code,data.description)
         console.log("httpFailure",url,params)
         return false;
     }
@@ -103,10 +120,10 @@ export const deleteData =async (url:string,params:any = null):Promise<boolean> =
     let response = await service.delete(urlSend);
     let data:Data = response.data;
     if (data.code == 0) {
-        message.info(data.entity)
+        message.success(data.entity)
         return true
     } else {
-        message.error(data.description)
+        errorMessage(data.code,data.description)
         console.log("httpFailure",url,params)
         return false;
     }
@@ -117,10 +134,10 @@ export const newData =async (url:string,params:any):Promise<number> => {
     let response = await service.post(url,params);
     let data:Data = response.data;
     if (data.code == 0) {
-        message.info(data.description)
+        message.success(data.description)
         return data.entity
     } else {
-        message.error(data.description)
+        errorMessage(data.code,data.description)
         console.log("httpFailure",url,params)
         return -1;
     }
@@ -153,6 +170,7 @@ export const loginPost = async (url,params) => {
             success:true,
         }
     }else {
+        errorMessage(data.code,data.description)
         console.log("httpFailure",url,params)
         return {
             data:data.description,
