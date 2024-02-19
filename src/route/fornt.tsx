@@ -1,4 +1,5 @@
 import {
+    AlertOutlined,
     AppstoreAddOutlined,
     CrownFilled,
     PoweroffOutlined,
@@ -14,6 +15,7 @@ import {
     Button,
     ConfigProvider,
     Dropdown,
+    FloatButton,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import url from '../const/url';
@@ -50,6 +52,31 @@ const getMenuDtoItem = (menuDto: MenuOut) => {
     })
 }
 
+const Anouce = () =>{
+    const [backLogCounts,setBackLogCounts] = useState<number>()
+    useEffect(() => {
+        if (backLogCounts === undefined)
+            getDataList(config.fronts.request,{type:"backlog"}).then((value) => {
+                if (value.success) {
+                    setBackLogCounts(value.total)
+                }
+            })
+    })
+    if  (backLogCounts)
+        return (
+        <FloatButton 
+        icon={<AlertOutlined />} 
+        badge={{ count: backLogCounts, color: 'blue' }}
+        style={{ right: "12vh" }} 
+        tooltip={"您有"+backLogCounts+"条待办流程"}
+        onClick={()=>{
+            window.open(url.frontUrl.request_backlog)
+        }} />
+        )
+    else
+        return <></>
+}
+
 export default () => {
     const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
         fixSiderbar: true,
@@ -64,6 +91,7 @@ export default () => {
     const [menuDto, setMenuDto] = useState<MenuOut>()
     const [pageConfig, setPageConfig] = useState<PageConfig>()
     const [pathname, setPathname] = useState<string>()
+    
 
     useEffect(() => {
         if (pageConfig === undefined)
@@ -113,6 +141,7 @@ export default () => {
             })
         }
     })
+    
     useEffect(() => {
         document.body.style.overflow = 'hidden'
     })
@@ -218,7 +247,7 @@ export default () => {
                             if (typeof window === 'undefined') return [];
                             return [
                                 <p key={"Text"}>前台应用中心</p>,
-                                <AppstoreAddOutlined key='icon'/>
+                                <AppstoreAddOutlined key='icon'/>,
                             ];
                         }}
                         avatarProps={{
@@ -291,8 +320,10 @@ export default () => {
                         {...settings}
                     >
                         <iframe title='page' width="100%" src={pathname} style={{ border: "none", display: "block", height: "100vh", overflowX: 'hidden' }} />
+
                     </ProLayout>
                 </ConfigProvider>
+                <Anouce />
             </ProConfigProvider>
         </div>
     );
