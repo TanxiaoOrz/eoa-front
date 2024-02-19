@@ -162,7 +162,7 @@ const BackSectionConcrete = () => {
                         ],
                     },
                     extra: [
-                        <Button key='save' type="primary" onClick={() => { form.submit() }}>{section.isDeprecated === 0 ? "保存" : "保存并复职"}</Button>,
+                        <Button key='save' type="primary" onClick={() => { form.submit() }}>{section.isDeprecated === 0 ? "保存" : "保存并启用"}</Button>,
                         <Button key='reset' onClick={() => { form.resetFields() }}>重置</Button>,
                         <Button key='drop' type='default' danger onClick={dropSection} disabled={section.isDeprecated === 1} >封存</Button>
                     ]
