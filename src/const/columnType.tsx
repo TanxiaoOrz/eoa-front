@@ -256,7 +256,7 @@ export const transprotColumnSearch = (columnSimple:ColumnOut, title:string):ProC
             column.key = columnSimple.columnDataName+"show"
             let columnSearch:ProColumns = JSON.parse(JSON.stringify(column))
             column.hideInSearch = true
-            columnSearch.hideInForm = true
+            columnSearch.hideInTable = true
             columnSearch.valueType = 'digitRange'
             columnSearch.key = columnSimple.columnDataName
             return [column, columnSearch]
@@ -266,7 +266,7 @@ export const transprotColumnSearch = (columnSimple:ColumnOut, title:string):ProC
             column.valueType = 'dateTime'
             column.key = columnSimple.columnDataName
             column.hideInSearch = true
-            columnSearch.hideInForm = true
+            columnSearch.hideInTable = true
             columnSearch.valueType = 'dateRange'
             columnSearch.key = columnSimple.columnDataName
             return [column, columnSearch]
@@ -287,21 +287,24 @@ export const transprotColumnSearch = (columnSimple:ColumnOut, title:string):ProC
             return [column]
         }
         case columnType.browser :{
+            const valueEnum:{val:any[]} = {val:[]}
             const description:{
                 isVirtual:false,
                 tableId:undefined,
                 columnId:undefined
             } = JSON.parse(columnSimple.columnTypeDescription);
-            column.valueType = 'treeSelect'
+            column.valueType = 'select'
             column.request = async () => {
                 let formOut:FormOut[] = (await getDataList(config.fronts.form,description)).data
-                return formOut.map((value,index,array)=>{return {title:value.title,value:value.dataId}})
+                let con = formOut.map((value,index,array)=>{return {label:value.title,title:value.title,value:value.dataId,index:value.dataId}})
+                valueEnum.val = con
+                console.log("valueEnum",valueEnum)
+                return con
             }
             column.render = (text,entity,index,action) => {
-                let title = text?.valueOf().toString()
                 let param:any = {isVirtual:description.isVirtual,tableId:description.tableId} 
                 let s = new URLSearchParams(param).toString()
-                return <a href={url.frontUrl.form_concrete+"/"+entity[key]+"&"+s}>{title??""}</a>
+                return <a href={url.frontUrl.form_concrete+entity[key]+"&"+s}>{text}</a>
             }
             return [column]
         }
