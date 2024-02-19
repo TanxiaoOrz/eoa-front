@@ -10,6 +10,7 @@ import React from "react"
 import { ActionType, ModalForm, ProColumns, ProFormGroup, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from "@ant-design/pro-components"
 import { useLocation } from "react-router"
 import url from "../../const/url.js"
+import PageWait from "../../componet/PageWait.tsx"
 
 const { Title } = Typography;
 
@@ -268,16 +269,21 @@ const WorkflowList = () => {
 
 
 const BackWorkflow = () => {
-  const [moduleList, setModuleList] = useState<ModuleOut[]>([])
+  const [moduleList, setModuleList] = useState<ModuleOut[]>()
   useEffect(() => {
-    if (moduleList.length == 0)
-      (getDataList(config.backs.module)).then((value) => {
+    if (moduleList === undefined)
+      (getDataList("/api/v1/table/back/module", { toBrowser: true })).then((value) => {
         setModuleList(value.data)
       })
   })
   useEffect(() => {
     document.title = '流程列表'
   })
+  if (moduleList === undefined)
+    return <PageWait />
+  if (moduleList?.length === 0)
+    return <PageWait />
+  
   return (
     <Layout style={{ minHeight: '98.5vh' }}>
       <Header style={{ display: 'flex', alignItems: 'center', background: "#ffffff", borderRadius: "8px", }}>

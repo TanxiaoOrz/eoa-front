@@ -10,6 +10,7 @@ import { ActionType, ModalForm, ProFormText, ProFormTextArea, ProColumns, ProTab
 import url from '../../const/url.js';
 import { useLocation } from 'react-router';
 import config from '../../const/config.js';
+import PageWait from '../../componet/PageWait.tsx';
 
 const baseURL = "/api/v1/table/back/table"
 
@@ -197,10 +198,10 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
     title = "虚拟视图"
   else
     title = "实体表单"
-  
+
   if (moduleNo === "")
     moduleNo = null;
-  
+
   return (
     <ModalForm<TableInSimple>
       title={title}
@@ -304,18 +305,22 @@ const CreateTable = (prop: { isVirtual: boolean, actionRef: React.MutableRefObje
 
 
 const BackTable = () => {
-  const position ='top'
+  const position = 'top'
   const align = 'center';
-  const [moduleList, setModuleList] = useState<ModuleOut[]>([])
-  useEffect(()=>{
+  const [moduleList, setModuleList] = useState<ModuleOut[]>()
+  useEffect(() => {
     document.title = "表单列表"
   })
   useEffect(() => {
-    if (moduleList.length === 0)
+    if (moduleList === undefined)
       (getDataList("/api/v1/table/back/module", { toBrowser: true })).then((value) => {
         setModuleList(value.data)
       })
   })
+  if (moduleList === undefined)
+    return <PageWait />
+  if (moduleList?.length === 0)
+    return <PageWait />
   const tabs = [
     {
       key: "Entity",
