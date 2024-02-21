@@ -89,16 +89,15 @@ export const transprotColumn = (key:string,values:any[],columnSimple:ColumnSimpl
                 tableId:undefined,
                 columnId:undefined
             } = JSON.parse(columnSimple.columnTypeDescription);
-            column.valueType = 'treeSelect'
+            column.valueType = 'select'
             column.request = async () => {
                 let formOut:FormOut[] = (await getDataList(config.fronts.form,description)).data
-                return formOut.map((value,index,array)=>{return {title:value.title,value:value.dataId}})
+                return formOut.map((value,index,array)=>{return {label:value.title,value:value.dataId}})
             }
             column.render = (text,entity,index,action) => {
-                let title = text?.valueOf().toString()
                 let param:any = {isVirtual:description.isVirtual,tableId:description.tableId} 
                 let s = new URLSearchParams(param).toString()
-                return <a href={url.frontUrl.form_concrete+"/"+values[index][key]+"&"+s}>{title??""}</a>
+                return <a href={url.frontUrl.form_concrete+text?.valueOf().toString()+"?"+s}>{text}</a>
             }
             return column
         }
@@ -304,7 +303,7 @@ export const transprotColumnSearch = (columnSimple:ColumnOut, title:string):ProC
             column.render = (text,entity,index,action) => {
                 let param:any = {isVirtual:description.isVirtual,tableId:description.tableId} 
                 let s = new URLSearchParams(param).toString()
-                return <a href={url.frontUrl.form_concrete+entity[key]+"&"+s}>{text}</a>
+                return <a href={url.frontUrl.form_concrete+entity[key]+"?"+s}>{text}</a>
             }
             return [column]
         }
