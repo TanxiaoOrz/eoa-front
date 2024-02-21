@@ -145,7 +145,7 @@ const BackWorkflowConcrete = () => {
                         label="流程标题字段"
                         placeholder="请选择流程标题字段"
                         request={async () => {
-                            let columnList: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: tableId, isVirtual: false })).data
+                            let columnList: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableNo: tableId, isVirtual: false })).data
                             return columnList.map((item) => { return { title: item.columnViewName, value: item.columnId } })
                         }}
                     />
