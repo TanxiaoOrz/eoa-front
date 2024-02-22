@@ -201,6 +201,9 @@ const FrontFormConcrete = (prop: { formOut: FormOut | null, getEdit: (str: strin
                 })
         }
     })
+    useEffect(()=>{
+        document.title = formOut?.tableName ?? ""
+    },[formOut?.tableName])
     const baseStyle: React.CSSProperties = {
         width: '25%',
     };
