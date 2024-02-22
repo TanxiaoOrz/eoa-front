@@ -62,6 +62,7 @@ export const transprotColumn = (key:string,values:any[],columnSimple:ColumnSimpl
         }
         case columnType.number :{
             column.valueType = 'digit'
+            column.fieldProps = {min:-1000000000000}
             return column
         }
         case columnType.date :{
