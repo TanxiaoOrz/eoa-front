@@ -2,6 +2,7 @@
 import config from './config.js';
 import { Button, message, notification } from 'antd';
 import React from 'react';
+import url from './url.js';
 
 type Data = {
     code:number
@@ -143,8 +144,8 @@ export const newData =async (url:string,params:any):Promise<number> => {
     }
 }
 
-export const RequestAction =async (url:string,params:any):Promise<number|false> => {
-    let response = await service.put(url,params);
+export const RequestAction =async (urlask:string,params:any):Promise<number|false> => {
+    let response = await service.put(urlask,params);
     let data:Data = response.data;
     console.log(data)
     if (data.code == 0) {
@@ -154,8 +155,9 @@ export const RequestAction =async (url:string,params:any):Promise<number|false> 
             message: '操作失败',
             duration: 0,
             description: data.description,
+            btn: <Button type='primary' href={url.frontUrl.request_concrete+data.entity}>确认</Button>
         });
-        console.log("httpFailure",url,params)
+        console.log("httpFailure",urlask,params)
         return false;
     }
 }
