@@ -51,8 +51,10 @@ import BackMenuConcrete from "../pages/MenuModule/back_menu_concrete.tsx";
 import BackLoginConfig from "../pages/MenuModule/back_login.tsx";
 import BackPageConfig from "../pages/MenuModule/back_page.tsx";
 import BackPage from "./back.tsx";
-import MainPage from "./main.tsx";
+import MainPage from "../pages/Main/main.tsx";
 import BackColumn from "../pages/TableModule/back_column.tsx";
+import FlowPage from "../pages/Main/flow.tsx";
+import CharacterPage from "../pages/Main/character.tsx";
 
 const backs = [
   {
@@ -210,6 +212,12 @@ const fronts = [
   },{
     path: '/main',
     element: <MainPage />
+  },{
+    path: '/flow',
+    element: <FlowPage />
+  },{
+    path: '/character',
+    element: <CharacterPage />
   }
 ]
 
