@@ -77,8 +77,10 @@ const BackWorkflowNodeConcrete = () => {
             dataIndex: "columnId",
             valueType: "select",
             title: "字段名称",
+            params:{table:node.tableId},
             request: async () => {
-                let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableId: node.tableId, isVirtual: false })).data
+                let columns: ColumnOut[] = (await getDataList(config.backs.column, { ...config.toBrowser, tableNo: node.tableId, isVirtual: false })).data
+                console.log("node_column",node.tableId,columns)
                 return columns.map((column) => { return { label: column.columnViewName, value: column.columnId } })
             }
         }, {

@@ -196,7 +196,7 @@ const HumanList = (prop: { depart: number, section: number }) => {
 
 const FrontHuman = (prop: { depart: number, section: number }) => {
     useEffect(() => {
-        if ( prop.section === 0)
+        if ( prop.section === 0 && prop.depart === 0)
             document.title = '人员列表'
     }, [prop])
     

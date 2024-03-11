@@ -319,7 +319,7 @@ export default () => {
                         )}
                         {...settings}
                     >
-                        <iframe title='page' width="100%" src={pathname} style={{ border: "none", display: "block", height: "100vh", overflowX: 'hidden' }} />
+                        <iframe title='page' width="100%" src={pathname} style={{ border: "none", display: "block", height: "88vh", overflowX: 'hidden' }} />
 
                     </ProLayout>
                 </ConfigProvider>

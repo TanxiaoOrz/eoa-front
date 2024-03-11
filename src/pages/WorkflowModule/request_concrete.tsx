@@ -131,7 +131,10 @@ const RequestConcrete = () => {
     let comment: string = ''
     useEffect(() => {
         if (requestDto === undefined) {
-            getDataOne(config.fronts.request + "/" + requestId + "?workflowId=" + workflowId).then((value) => {
+            let url = config.fronts.request + "/" + requestId
+            if (requestId === "0")
+                url += "?workflowId=" + workflowId
+            getDataOne(url).then((value) => {
                 if (value.success)
                     setRequestDto(value.data)
             })
