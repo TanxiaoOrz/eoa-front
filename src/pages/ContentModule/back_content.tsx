@@ -206,7 +206,7 @@ const ContentList = (prop: { leadContent: number | undefined }) => {
           }
           onClick={() => {
             // alert(url.backUrl.content_concrete.replace("{id}",entity.dataId+""))
-            window.open(url.backUrl.content_concrete.replace("{id}", entity.dataId + ""))
+            window.open(url.backUrl.content_concrete + entity.dataId)
           }}>编辑</Dropdown.Button>
       )
     }
