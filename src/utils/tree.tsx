@@ -12,8 +12,8 @@ export type TreeNode = {
 }
 
 export function getTree(bases:TreeBase[]):TreeNode[]{
-    let roots = bases.filter((value,index,array)=>value.parent === 0)
-    let rests = bases.filter((value,index,array)=>value.parent !== null)
+    let roots = bases.filter((value,index,array)=>value.parent === 0 || value.parent === null)
+    let rests = bases.filter((value,index,array)=>value.parent !== null && value.parent !== 0)
     return roots.map((root,index,array)=>{
         return {
             value:root.value,

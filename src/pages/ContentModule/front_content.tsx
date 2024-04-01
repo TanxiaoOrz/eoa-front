@@ -1,5 +1,5 @@
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { ActionType, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
+import { ActionType, ModalForm, PageContainer, ProColumns, ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown, Form, Typography, Upload, UploadProps, message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import url from '../../const/url.js';
@@ -94,17 +94,17 @@ const CreateFile = (prop: { action: React.MutableRefObject<ActionType | undefine
         readonly
         addonAfter={<Upload {...upLoadProos}><Button icon={<UploadOutlined />} /></Upload>}
       />
-      <ProFormTreeSelect
+      <ProFormSelect
         width="md"
         name="leadContent"
-        label="上级目录"
+        label="所属目录"
         tooltip="文件所在目录"
-        placeholder="请选择上级目录"
+        placeholder="请选择所属目录"
         initialValue={prop.leadContent}
         request={async () => {
           let contents: ContentOut[] = (await getDataList(config.fronts.content, { toBrowser: true })).data
-          let treeBase = contents.map((content, index, array) => { return { title: content.contentName, parent: content.leadContent, value: content.dataId } })
-          return getTree(treeBase)
+          let treeBase = contents.map((content, index, array) => { return { label: content.contentName, value: content.dataId } })
+          return treeBase
         }}
         required={true}
         readonly />
@@ -365,7 +365,7 @@ const FrontContentConcrete = () => {
 
   })
   useEffect(() => {
-    document.title = '目录编辑-' + content?.contentName
+    document.title = '目录-' + content?.contentName
   }, [content?.contentName])
   const contentBase = (
     <div style={{ height: "85vh", display: "flex", background: "#fdfdfd", paddingTop: "30px" }}>

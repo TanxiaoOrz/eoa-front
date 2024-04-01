@@ -60,7 +60,7 @@ const CreateContent = (prop: { action: React.MutableRefObject<ActionType | undef
           form.resetFields()
         }
         if (jump && dataId !== -1)
-          window.open(url.backUrl.content_concrete.replace("{id}", dataId + ""))
+          window.open(url.backUrl.content_concrete + dataId )
         jump = false
         return dataId !== -1
       }}
