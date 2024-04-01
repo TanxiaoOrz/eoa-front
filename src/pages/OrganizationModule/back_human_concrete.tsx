@@ -216,7 +216,7 @@ const BackHumanConcrete = () => {
                             label="所属分部"
                             tooltip="仅为未废弃分部"
                             placeholder="请选择分部"
-                            readonly
+                            disabled
                             request={async () => {
                                 let sections: SectionOut[] = (await getDataList(config.fronts.section, { toBrowser: true, isDeperacted: 0 })).data
                                 return sections.map((section, index, array) => { return { title: section.sectionName, value: section.dataId } })

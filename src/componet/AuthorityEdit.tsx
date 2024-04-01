@@ -34,7 +34,7 @@ type Character = {
 type Proposed = {
     humans:number[]
     departs:number[]
-    section:number[]
+    sections:number[]
 }
 
 type Authority = {
@@ -608,7 +608,7 @@ const ProposedConstraint = (prop:{
             let rows:Row[] = []
             con.humans.forEach((value,index,array)=>{rows.push({type:0,url:"0:"+value,id:value,})})
             con.departs.forEach((value,index,array)=>{rows.push({type:1,url:"1:"+value,id:value})})
-            con.section.forEach((value,index,array)=>{rows.push({type:2,url:"2:"+value,id:value})})
+            con.sections.forEach((value,index,array)=>{rows.push({type:2,url:"2:"+value,id:value})})
             return rows
         }
 
@@ -623,13 +623,13 @@ const ProposedConstraint = (prop:{
                         con.departs.push(value.id)
                         break
                     case 3:
-                        con.section.push(value.id)
+                        con.sections.push(value.id)
                 }
             })
             console.log("prop",prop)
         }
-        const defaults = prop.default??{humans:[],departs:[],section:[]}
-        const forms =prop.form??{humans:[],departs:[],section:[]}
+        const defaults = prop.default??{humans:[],departs:[],sections:[]}
+        const forms =prop.form??{humans:[],departs:[],sections:[]}
         const actionRef = useRef<ActionType>();
         const actionForm = useRef<ActionType>()
         const columnsForm:ProColumns<Row>[] = [
@@ -663,8 +663,8 @@ const ProposedConstraint = (prop:{
                 request:async () => {
                     let columns:ColumnOut[] =(await getDataList(config.backs.column,{isVirtual:prop.isVirtual,tableNo:prop.tableId,toBrowser:true})).data
                     let con = columns.map((value,index,array) => { return {title:value.columnViewName,label:value.columnViewName,value:value.columnId,key:value.columnId}})
-                    // console.log("con")
-                    // console.log(con)
+                    console.log("con")
+                    console.log(con)
                     return con
                 }
             },{
@@ -686,7 +686,7 @@ const ProposedConstraint = (prop:{
                                 forms.departs = forms.departs.filter((value,index,array)=>value!==entity.id)
                                 break
                             case 2:
-                                forms.section = forms.section.filter((value,index,array)=>value!==entity.id)
+                                forms.sections = forms.sections.filter((value,index,array)=>value!==entity.id)
                         }
                     prop.updateForm(JSON.stringify(forms))
                     // console.log(forms)
@@ -751,7 +751,7 @@ const ProposedConstraint = (prop:{
                                 defaults.departs = defaults.departs.filter((value,index,array)=>value!==entity.id)
                                 break
                             case 2:
-                                defaults.section = defaults.section.filter((value,index,array)=>value!==entity.id)
+                                defaults.sections = defaults.sections.filter((value,index,array)=>value!==entity.id)
                         }
                     prop.update(JSON.stringify(defaults))
                     // console.log(defaults)
@@ -917,7 +917,7 @@ const ProposedConstraint = (prop:{
                     }
                 }}
                 dataSource={getRowsFormConstraint(defaults)}
-                headerTitle="角色限制"
+                headerTitle="指定对象"
                 pagination={{
                     pageSize: 10,
                 }}
@@ -936,13 +936,14 @@ const ProposedConstraint = (prop:{
                     cardBordered
                     request={async (params,sort,filter) => {
                         let con =getRowsFormConstraint(forms)
+                        console.log(con)
                         return {
                             total:con.length,
                             data:con,
                             success:true
                         }
                     }}
-                    headerTitle="角色限制"
+                    headerTitle="指定对象"
                     search={false}
                     pagination={{
                         pageSize: 10,
